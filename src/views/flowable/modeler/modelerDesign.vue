@@ -196,7 +196,7 @@
 </template>
 
 <script>
-  import bpmnModeler from "workflow-bpmn-modeler";
+  import bpmnModeler from "workflow-bpmn-modeler-jeecgboot";
   import {
     categoryList,
     delDeployment,

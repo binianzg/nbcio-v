@@ -146,7 +146,7 @@
               <h6>待选人员</h6>
               <el-table ref="singleTable" :data="userDataList" border style="width: 100%"
                 @selection-change="handleSelectionChange">
-                <el-table-column type="selection" width="50" align="center" />
+                <el-table-column type="selection" width="50" align="center"  />
                 <el-table-column label="用户名" align="center" prop="realname" />
                 <el-table-column label="部门" align="center" prop="orgCodeTxt" />
               </el-table>
@@ -233,7 +233,7 @@
   import {
     getUserList
   } from "@/api/api"
-  import bpmnModeler from "workflow-bpmn-modeler";
+  import bpmnModeler from "workflow-bpmn-modeler-jeecgboot";
   import DeptUserInfo from '@/views/system/modules/DeptUserInfo'
   import {
     flowableMixin
@@ -350,7 +350,7 @@
         returnOpen: false,
         rejectOpen: false,
         rejectTitle: null,
-        userData: [],
+        userData: [],     //选中用户
         checkSendUser: false // 是否展示选择人员模块
       };
     },
@@ -477,6 +477,7 @@
       fillColor() {
         const modeler = this.$refs.refNode.modeler;
         const canvas = modeler.get('canvas')
+        console.log("fillColor modeler=",modeler)
         modeler._definitions.rootElements[0].flowElements.forEach(n => {
           const completeTask = this.taskList.find(m => m.key === n.id)
           const todoTask = this.taskList.find(m => !m.completed)
@@ -528,7 +529,7 @@
               })
             }
           } else if (n.$type === 'bpmn:StartEvent') {
-            //console.log("n.outgoing=",n.outgoing)
+            console.log("n.outgoing=",n.outgoing)
             n.outgoing.forEach(nn => {
               const completeTask = this.taskList.find(m => m.key === nn.targetRef.id)
               if (completeTask) {
@@ -549,7 +550,7 @@
       // 多选框选中数据
       handleSelectionChange(selection) {
         this.userData = selection
-        const val = selection.map(item => item.username)[0];
+        const val = selection.map(item => item.username);
         console.log("val=", val);
         if (val instanceof Array) {
           this.taskForm.values = {
@@ -560,6 +561,7 @@
             "approval": val,
           }
         }
+        console.log("this.taskForm.values=", this.taskForm.values);
       },
       clearSelectedDepartKeys() {
         this.checkedKeys = [];
@@ -589,16 +591,10 @@
         this.$refs.singleTable.toggleRowSelection(tag, false)
       },
       /** 流程变量赋值 */
-      handleCheckChange(val) {
-        if (val instanceof Array) {
-          this.taskForm.values = {
-            "approval": val.join(',')
-          }
-        } else {
-          this.taskForm.values = {
-            "approval": val
-          }
-        }
+      handleCheckChange(selection) {
+       const val = selection.map(item => item.username);
+       this.taskForm.values = {approval:val};
+       console.log("this.taskForm.values=",this.taskForm.values);
       },
       /** 流程流转记录 */
       getFlowRecordList(procInsId, deployId, businessKey) {
@@ -751,11 +747,15 @@
           const data = res.result;
           if (data) {
             this.checkSendUser = true
-            //console.log("data=",data)
+            console.log("data=",data)
             if (data.type === 'assignee') { // 指定人员
               this.userDataList = res.result.userList;
+              this.checkSendUser = false;
             } else if (data.type === 'candidateUsers') { // 指定人员(多个)
               this.userDataList = res.result.userList;
+              if(this.userDataList&&this.userDataList.length===1) {
+                this.checkSendUser = false;
+              }
               this.taskForm.multiple = true;
               //console.log("res.result.userList=",res.result.userList);
               //console.log("userDataList=",this.userDataList)
@@ -766,9 +766,11 @@
               })
               this.userDataList = res.result.roleList;
               this.taskForm.multiple = false;
-            } else if (data.type === 'multiInstance') { // 会签?
+            } else if (data.type === 'multiInstance') { // 会签，不让用户选择，固定流程设置的人员
               this.userDataList = res.result.userList;
+              this.userData = this.userDataList;
               this.taskForm.multiple = true;
+              this.checkSendUser = false;
             } else if (data.type === 'fixed') { // 已经固定人员接收下一任务
               this.checkSendUser = false;
             }
@@ -778,15 +780,28 @@
       /** 审批任务选择 */
       handleComplete() {
         this.completeOpen = true;
-        this.completeTitle = "审批流程";
+        if(this.counterSign) {
+          this.completeTitle = "审批流程-会签节点";
+        }
+        else {
+          this.completeTitle = "审批流程";
+        }
         this.getTreeselect();
       },
       /** 审批任务 */
       taskComplete() {
-        if (!this.taskForm.values && this.checkSendUser) {
-          this.$message.error("请选择流程接收人员");
-          return;
+        if(this.counterSign) {
+          console.log("this.userData=", this.userData);
+          console.log("this.taskForm1=", this.taskForm);
+          this.handleCheckChange(this.userData);
         }
+        else {
+            if (!this.taskForm.values && this.checkSendUser) {
+              this.$message.error("请选择流程接收人员");
+              return;
+            }
+        }
+        
         if (!this.taskForm.comment) {
           this.$message.error("请输入审批意见");
           return;
