@@ -48,7 +48,7 @@
   import store from '@/store/'
   import Result from '../../result/Result'
   import {getFlowViewerByName, readXmlByName} from "@views/flowable/api/definition";
-  import bpmnModeler from "workflow-bpmn-modeler";
+  import bpmnModeler from "workflow-bpmn-modeler-jeecgboot";
 
   const ruleBaseURL = '/sys/fillRule/executeRuleByCode/'
   export default {

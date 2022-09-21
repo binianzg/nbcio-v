@@ -58,7 +58,7 @@
 <script>
 import {flowRecordBydataid} from "@views/flowable/api/finished";
 import {getFlowViewerByDataId, readXmlByDataId} from "@views/flowable/api/definition";
-import bpmnModeler from "workflow-bpmn-modeler";
+import bpmnModeler from "workflow-bpmn-modeler-jeecgboot";
 
 export default {
     name: 'HistoricDetail',

@@ -62,7 +62,7 @@
   import Vue from 'vue'
   import store from '@/store/'
   import {getFlowViewerByName, readXmlByName} from "@views/flowable/api/definition";
-  import bpmnModeler from "workflow-bpmn-modeler";
+  import bpmnModeler from "workflow-bpmn-modeler-jeecgboot";
   import moment from 'moment';
   
   export default {

@@ -63,12 +63,17 @@ if (process.env.VUE_APP_MODE === "web") {
 import utils from '@/utils/utils'
 //for formdesigner  add by nbchang 2022-09-03
 import formDesigner from '@/components/formdesigner/components/index'
+//for highlightjs add by nbchang 2022-09-20
+import highlightPlugin from "@highlightjs/vue-plugin";
+import 'highlight.js/styles/dark.css'; // 引入内置样式
 
 //For IM add by nbacheng 2022-08-17
 Vue.use(ElementUI);
 Vue.use(ViewUI);
 //for formdesigner  add by nbchang 2022-09-03
 Vue.use(formDesigner);
+Vue.use(highlightPlugin);//for highlightjs add by nbchang 2022-09-20
+
 //表单验证
 import { rules } from '@/utils/rules'
 Vue.prototype.rules = rules

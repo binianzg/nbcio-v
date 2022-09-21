@@ -181,7 +181,7 @@
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import SysCustomFormModal from './modules/SysCustomFormModal'
   import { categoryList, listDefinition, readXml } from "@views/flowable/api/definition";
-  import bpmnModeler from "workflow-bpmn-modeler";
+  import bpmnModeler from "workflow-bpmn-modeler-jeecgboot";
   import { updateCustom }from "@/api/form";
   
   export default {
