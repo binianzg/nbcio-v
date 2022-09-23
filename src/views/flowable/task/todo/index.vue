@@ -271,6 +271,7 @@ export default {
           deployId: row.deployId,
           taskId: row.taskId,
           businessKey: row.businessKey,
+          nodeType: row.nodeType,
           finished: true
         }})
     },

@@ -298,7 +298,7 @@
         variablesForm: {}, // 流程变量数据
         taskForm: {
           returnTaskShow: false, // 是否展示回退表单
-          delegateTaskShow: false, // 是否展示回退表单
+          delegateTaskShow: false, // 是否展示委派表单
           defaultTaskShow: true, // 默认处理
           sendUserShow: false, // 审批用户
           multiple: false,
@@ -314,6 +314,7 @@
           procDefId: "", // 流程编号
           businessKey: "", //业务主键编号
           dataId: "",//业务主键编号
+          nodeType: "", //当前节点类型 目前只针对多实例会签做处理
           vars: "",
           targetKey: ""
         },
@@ -363,6 +364,7 @@
       this.taskForm.procDefId = this.$route.query && this.$route.query.procDefId;
       this.taskForm.businessKey = this.$route.query && this.$route.query.businessKey;
       this.taskForm.dataId = this.$route.query && this.$route.query.businessKey;
+      this.taskForm.nodeType = this.$route.query && this.$route.query.nodeType;
       // 回显流程记录
       //
       this.getModelDetail(this.taskForm.deployId);
@@ -715,23 +717,27 @@
         console.log("fillFormData formConf=",formConf);
         list.forEach((item, i) => {
           // 特殊处理el-upload，包括 回显图片
-          if (item.ele === 'el-upload') {
+          if(formConf.formValue[item.id] != '') {
             const val = formConf.formValue[item.id];
-            //console.log('item=',item['list-type'])
-            if(item['list-type'] != 'text') {//图片
-              this.fileList = []    //隐藏加的el-upload文件列表
-              //item['file-list'] = JSON.parse(val)
-              item['file-list'] = JSON.parse(val)
-              console.log("图片fillFormData item['file-list']",item['file-list'])
+            if (item.ele === 'el-upload') {
+              console.log('fillFormData val=',val)
+              if(item['list-type'] != 'text') {//图片
+                this.fileList = []    //隐藏加的el-upload文件列表
+                //item['file-list'] = JSON.parse(val)
+                if(val != '') {
+                  item['file-list'] = JSON.parse(val)
+                }
+              }
+              else {  //列表
+                console.log("列表fillFormData val",val)
+                this.fileList = JSON.parse(val)
+                item['file-list'] = [] //隐藏加的表单设计器的文件列表
+              }
+              // 回显图片
+              this.fileDisplay = true
             }
-            else {  //列表
-              console.log("列表fillFormData val",val)
-              this.fileList = JSON.parse(val)
-              item['file-list'] = [] //隐藏加的表单设计器的文件列表
-            }
-            // 回显图片
-            this.fileDisplay = true
           }
+          
           if (Array.isArray(item.columns)) {
             this.fillFormData(item.columns, formConf)
           }
@@ -753,9 +759,24 @@
               this.checkSendUser = false;
             } else if (data.type === 'candidateUsers') { // 指定人员(多个)
               this.userDataList = res.result.userList;
-              if(this.userDataList&&this.userDataList.length===1) {
+              //console.log("candidateUsers nodeType,bmutiInstanceFinish=",this.taskForm.nodeType,this.taskForm.bmutiInstanceFinish) 
+              if(this.userDataList.length===1) {
                 this.checkSendUser = false;
               }
+              else if(this.userDataList.length>1) {
+                 console.log("candidateUsers nodeType=",this.taskForm.nodeType) 
+                 if(this.taskForm.nodeType === 'multiInstance') {
+                
+                   console.log("candidateUsers res.result.bmutiInstanceFinish=",res.result.bmutiInstanceFinish) 
+                     if(res.result.bmutiInstanceFinish) {//根据会签条件，最后一个审批才弹出多用户选择
+                       this.checkSendUser = true;
+                     }
+                     else {
+                       this.checkSendUser = false;
+                     }
+                 }
+              }  
+              
               this.taskForm.multiple = true;
               //console.log("res.result.userList=",res.result.userList);
               //console.log("userDataList=",this.userDataList)
@@ -774,39 +795,31 @@
             } else if (data.type === 'fixed') { // 已经固定人员接收下一任务
               this.checkSendUser = false;
             }
+            //console.log("checkSendUser,userDataList=",this.checkSendUser,this.userDataList)
           }
         })
       },
       /** 审批任务选择 */
       handleComplete() {
         this.completeOpen = true;
-        if(this.counterSign) {
-          this.completeTitle = "审批流程-会签节点";
-        }
-        else {
-          this.completeTitle = "审批流程";
-        }
+        this.completeTitle = "审批流程";
         this.getTreeselect();
       },
       /** 审批任务 */
       taskComplete() {
-        if(this.counterSign) {
-          console.log("this.userData=", this.userData);
-          console.log("this.taskForm1=", this.taskForm);
-          this.handleCheckChange(this.userData);
+        if (!this.taskForm.values && this.checkSendUser) {
+            this.$message.error("请选择流程接收人员");
+            return;
         }
-        else {
-            if (!this.taskForm.values && this.checkSendUser) {
-              this.$message.error("请选择流程接收人员");
-              return;
-            }
+        else if( this.checkSendUser && (this.taskForm.values.approval.split(",").length>1)) {
+            this.$message.error("目前流程只能选择一个接收人员");
+            return;
         }
-        
+
         if (!this.taskForm.comment) {
           this.$message.error("请输入审批意见");
           return;
         }
-        console.log("this.taskForm=", this.taskForm);
         complete(this.taskForm).then(response => {
           this.$message.success(response.message);
           this.goBack();
@@ -872,8 +885,8 @@
       submitForm() {
         this.$refs.formBuilder.validate();
         if(this.formVal !='') {
-          console.log("submitForm formVal",this.formVal);
-          console.log("submitForm formCode",this.formCode);
+          //console.log("submitForm formVal",this.formVal);
+          //console.log("submitForm formCode",this.formCode);
           this.formViewOpen = true;
           this.formConfOpen = false;
           const variables=JSON.parse(this.formVal);
