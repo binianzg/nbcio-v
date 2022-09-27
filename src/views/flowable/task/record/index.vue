@@ -667,6 +667,8 @@
             console.log("this.variablesData=",this.variablesData)
             this.formViewData = JSON.stringify(this.variablesData);
             this.formVal = JSON.stringify(this.variablesData.formValue);
+            this.taskForm.values = JSON.parse(this.formVal);
+            console.log("this.taskForm.values=",this.taskForm.values);
             this.variableOpen = true
           });
         }
