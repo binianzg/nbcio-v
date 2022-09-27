@@ -138,7 +138,7 @@
     </el-card>
 
     <!--审批正常流程-->
-    <el-dialog :title="completeTitle" :visible.sync="completeOpen" :width="checkSendUser? '60%':'40%'" append-to-body>
+    <el-dialog :z-index="1000" :title="completeTitle" :visible.sync="completeOpen" :width="checkSendUser? '60%':'40%'" append-to-body>
       <el-form ref="taskForm" :model="taskForm" label-width="160px">
         <el-form-item v-if="checkSendUser" prop="targetKey">
           <el-row :gutter="20">
@@ -1046,5 +1046,9 @@
     color: red;
     width: 100px;
     top: -20px !important;
+  }
+  
+  .el-form-item {
+      margin-bottom: 20px;
   }
 </style>
