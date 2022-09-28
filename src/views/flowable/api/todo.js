@@ -19,6 +19,24 @@ export function todoListNew(query) {
   })
 }
 
+// 查询待签任务列表
+export function claimList(query) {
+  return request({
+    url: '/flowable/task/claimList',
+    method: 'get',
+    params: query
+  })
+}
+
+// 签收任务
+export function claimTask(data) {
+  return request({
+    url: '/flowable/task/claim',
+    method: 'post',
+    data: data
+  })
+}
+
 // 完成任务
 export function complete(data) {
   return request({
