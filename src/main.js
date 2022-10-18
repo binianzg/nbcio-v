@@ -64,15 +64,28 @@ import utils from '@/utils/utils'
 //for formdesigner  add by nbchang 2022-09-03
 import formDesigner from '@/components/formdesigner/components/index'
 //for highlightjs add by nbchang 2022-09-20
-import highlightPlugin from "@highlightjs/vue-plugin";
-import 'highlight.js/styles/dark.css'; // 引入内置样式
+//import highlightPlugin from "@highlightjs/vue-plugin";
+//import 'highlight.js/styles/dark.css'; // 引入内置样式
+// 引入bpmn-process-designer插件 add by nbacheng 2022-09-29
+import "@/plugins/package/theme/element-variables.scss";
+import "@/plugins/package/theme/index.scss";
+
+import { vuePlugin } from "@/plugins/package/highlight";
+import "highlight.js/styles/atom-one-dark-reasonable.css";
+Vue.use(vuePlugin);
+
+// 引入bpmn插件
+import "bpmn-js/dist/assets/diagram-js.css";
+import "bpmn-js/dist/assets/bpmn-font/css/bpmn.css";
+import "bpmn-js/dist/assets/bpmn-font/css/bpmn-codes.css";
 
 //For IM add by nbacheng 2022-08-17
 Vue.use(ElementUI);
 Vue.use(ViewUI);
 //for formdesigner  add by nbchang 2022-09-03
 Vue.use(formDesigner);
-Vue.use(highlightPlugin);//for highlightjs add by nbchang 2022-09-20
+//Vue.use(highlightPlugin);//for highlightjs add by nbchang 2022-09-20
+
 
 //表单验证
 import { rules } from '@/utils/rules'

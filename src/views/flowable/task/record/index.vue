@@ -22,11 +22,16 @@
           <div > <!--处理流程过程中显示formdesigner表单信息-->
             <form-viewer ref="formViewer" v-model="formVal" :buildData="formViewData"></form-viewer>
 		      </div>
-        <div style="margin-left:10%;margin-bottom: 20px">
+        <div style="margin-left:10%;margin-bottom: 30px">
            <!--对上传文件进行显示处理，临时方案 add by nbacheng 2022-07-27 -->
            <el-upload action="#" :on-preview="handleFilePreview" :file-list="fileList" v-if="fileDisplay" />
+        </div>  
+        <div class="test-form" v-if="taskFormViewOpen" v-for="(taskform,index) in taskFormList">
+          <form-viewer ref="taskFormView" v-model="taskFormVal[index]" :buildData="taskform" />
+        </div>  
+        <div class="test-form" v-if="taskFormOpen && finished === 'true'">
+          <form-builder ref="taskFormBuilder" v-model="taskFormVal" :buildData="taskFormData" />
         </div>
-           
         <div style="margin-left:10%;margin-bottom: 20px;font-size: 14px;" v-if="finished === 'true'">
           <el-button icon="el-icon-edit-outline" type="success" size="mini" @click="handleComplete">审批</el-button>
           <!--                <el-button  icon="el-icon-edit-outline" type="primary" size="mini" @click="handleDelegate">委派</el-button>-->
@@ -45,7 +50,6 @@
             @getData="getData" />
         </div>
       </el-col>-->
-      
       <!--初始化流程加载默认formdesigner表单信息-->
       <el-col :span="16" :offset="4" v-if="formConfOpen">
         <div class="test-form">
@@ -61,6 +65,13 @@
           <form-viewer ref="formView" v-model="formVal" :buildData="formCode" />
         </div>
       </el-col>
+      <!--流程各个节点表单加载显示formdesigner表单-->
+      <!-- <el-col :span="16" :offset="4" v-if="taskFormViewOpen">
+        <div class="test-form" v-for="(taskform,index) in taskFormList">
+          <form-viewer ref="taskFormView" v-model="taskFormVal[index]" :buildData="taskform" />
+        </div>
+      </el-col> -->
+      
     </el-card>
 
     <!--流程流转记录-->
@@ -352,7 +363,12 @@
         rejectOpen: false,
         rejectTitle: null,
         userData: [],     //选中用户
-        checkSendUser: false // 是否展示选择人员模块
+        checkSendUser: false ,// 是否展示选择人员模块,
+        taskFormOpen: false, //任务表单
+        taskFormData: '',//流程任务录入表单
+        taskFormVal: [], //流程任务显示表单数据填充值
+        taskFormList: [], // 流程任务变量数据列表
+        taskFormViewOpen: false, //任务表单
       };
     },
     created() {
@@ -367,6 +383,8 @@
       this.taskForm.nodeType = this.$route.query && this.$route.query.nodeType;
       // 回显流程记录
       //
+      console.log("created this.taskForm.taskId=",this.taskForm.taskId);
+      console.log("created this.taskForm.deployId=",this.taskForm.deployId);
       this.getModelDetail(this.taskForm.deployId);
       //this.getFlowViewer(this.taskForm.procInsId);
       // 流程任务重获取变量表单
@@ -374,10 +392,12 @@
         this.processVariables(this.taskForm.taskId)
         this.getNextFlowNode(this.taskForm.taskId)
         console.log("userDataList=", this.userDataList)
-        this.taskForm.deployId = null
+        //this.taskForm.deployId = null
+        //this.getFlowRecordList(this.taskForm.procInsId, this.taskForm.deployId, this.taskForm.businessKey, this.taskForm.taskId);
       }
-      this.getFlowRecordList(this.taskForm.procInsId, this.taskForm.deployId, this.taskForm.businessKey);
+      this.getFlowRecordList(this.taskForm.procInsId, this.taskForm.deployId, this.taskForm.businessKey, this.taskForm.taskId);
       this.finished = this.$route.query && this.$route.query.finished
+      console.log("this.finished",this.finished)
 
     },
     mounted() {
@@ -599,12 +619,13 @@
        console.log("this.taskForm.values=",this.taskForm.values);
       },
       /** 流程流转记录 */
-      getFlowRecordList(procInsId, deployId, businessKey) {
-        console.log("procInsId=, deployId=, businessKey=", procInsId, deployId, businessKey)
+      getFlowRecordList(procInsId, deployId, businessKey, taskId) {
+        console.log("procInsId=, deployId=, businessKey=, taskId=", procInsId, deployId, businessKey,taskId);
         const params = {
           procInsId: procInsId,
           deployId: deployId,
-          businessKey: businessKey
+          businessKey: businessKey,
+          taskId: taskId
         }
         if (businessKey == 'newkey') {
            this.customForm.formId = this.$route.query && this.$route.query.formId;
@@ -625,14 +646,33 @@
             if (res.success) {
               this.flowRecordList = res.result.flowList;
               console.log("this.flowRecordList", this.flowRecordList);
+              if (res.result.hasOwnProperty('flowList')) {
+                this.flowRecordList.forEach((item, index) => {
+                  this.taskFormList[index] = JSON.stringify(item.taskFormValues);
+                  //对下个节点是会签同时可以选择用户的做特殊处理taskformvalues
+                  if(item.taskFormValues.formValue.hasOwnProperty('taskformvalues')) {
+                    this.taskFormVal[index] = JSON.stringify(item.taskFormValues.formValue.taskformvalues);
+                  }
+                  else {
+                    this.taskFormVal[index] = JSON.stringify(item.taskFormValues.formValue);
+                  }
+                  //console.log("index,",index);
+                  //console.log("item=",item);
+                });
+                //倒序显示,跟流程记录刚好相反
+                this.taskFormList.reverse();
+                this.taskFormVal.reverse();
+                this.taskFormViewOpen = true;
+                console.log("this.taskFormList=",this.taskFormList);
+                console.log("this.taskFormVal=",this.taskFormVal);
+              }  
               // 流程过程中不存在初始化表单 直接读取的流程变量中存储的表单值
               if (res.result.hasOwnProperty('formData')) {
-                console.log("flowRecord res.result.formData", res.result.formData);
+                //console.log("flowRecord res.result.formData", res.result.formData);
                 this.formConf = res.result.formData;
-                console.log("flowRecord this.formConf", this.formConf);
+                //console.log("flowRecord this.formConf", this.formConf);
                 this.formCode = JSON.stringify(res.result.formData);
-                console.log("flowRecord this.formCode", this.formCode);
-                
+                //console.log("flowRecord this.formCode", this.formCode);             
                 this.customForm.disabled = true;
                 this.customForm.visible = true;
                 this.customForm.formComponent = this.getFormComponent(res.result.routeName).component;
@@ -642,6 +682,12 @@
                 this.formConfOpen = true;
 
               }
+              else if (res.result.hasOwnProperty('taskFormData')) {
+                //console.log("flowRecord res.result.taskFormData", res.result.taskFormData);
+                this.taskFormData = JSON.stringify(res.result.taskFormData);
+                //console.log("flowRecord this.taskFormData", this.taskFormData);
+                this.taskFormOpen = true;
+              }  
             } else {
               this.$message.error(res.message);
               return;
@@ -662,6 +708,7 @@
         if (taskId) {
           // 提交流程申请时填写的表单存入了流程变量中后续任务处理时需要展示
           getProcessVariables(taskId).then(res => {
+            //console.log("getProcessVariables res=",res);
             // this.variables = res.result.variables;
             this.variablesData = res.result.variables;
             console.log("this.variablesData=",this.variablesData)
@@ -803,9 +850,21 @@
       },
       /** 审批任务选择 */
       handleComplete() {
-        this.completeOpen = true;
-        this.completeTitle = "审批流程";
-        this.getTreeselect();
+        const taskFormRef = this.$refs.taskFormBuilder;
+        console.log("taskFormRef=",taskFormRef);
+        const isExistTaskForm = taskFormRef !== undefined;
+        
+        // 若无任务表单，则 taskFormPromise 为 true，即不需要校验
+        const taskFormPromise = !isExistTaskForm ? true : new Promise((resolve, reject) => {
+          taskFormRef.$refs[taskFormRef.formConf.formModel].validate(valid => {
+            valid ? resolve() : reject()
+          })
+        });
+        Promise.all([taskFormPromise]).then(() => {//校验通过
+          this.completeOpen = true;
+          this.completeTitle = "审批流程";
+          this.getTreeselect();
+        })  
       },
       /** 审批任务 */
       taskComplete() {
@@ -822,6 +881,12 @@
           this.$message.error("请输入审批意见");
           return;
         }
+        const taskFormRef = this.$refs.taskFormBuilder;
+        const isExistTaskForm = taskFormRef !== undefined;
+        if (isExistTaskForm) {
+          this.taskForm.values.taskformvalues = taskFormRef.form;
+        }
+        console.log("this.taskForm.values.taskFormValues=",this.taskForm.values.taskformvalues);
         complete(this.taskForm).then(response => {
           this.$message.success(response.message);
           this.goBack();
