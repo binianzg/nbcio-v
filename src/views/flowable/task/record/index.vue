@@ -26,6 +26,7 @@
            <!--对上传文件进行显示处理，临时方案 add by nbacheng 2022-07-27 -->
            <el-upload action="#" :on-preview="handleFilePreview" :file-list="fileList" v-if="fileDisplay" />
         </div>  
+        <!--流程各个节点表单加载显示formdesigner表单-->
         <div class="test-form" v-if="taskFormViewOpen" v-for="(taskform,index) in taskFormList">
           <form-viewer ref="taskFormView" v-model="taskFormVal[index]" :buildData="taskform" />
         </div>  
@@ -65,12 +66,6 @@
           <form-viewer ref="formView" v-model="formVal" :buildData="formCode" />
         </div>
       </el-col>
-      <!--流程各个节点表单加载显示formdesigner表单-->
-      <!-- <el-col :span="16" :offset="4" v-if="taskFormViewOpen">
-        <div class="test-form" v-for="(taskform,index) in taskFormList">
-          <form-viewer ref="taskFormView" v-model="taskFormVal[index]" :buildData="taskform" />
-        </div>
-      </el-col> -->
       
     </el-card>
 
@@ -149,7 +144,7 @@
     </el-card>
 
     <!--审批正常流程-->
-    <el-dialog :z-index="1000" :title="completeTitle" :visible.sync="completeOpen" :width="checkSendUser? '60%':'40%'" append-to-body>
+    <el-dialog :z-index="100" :title="completeTitle" :visible.sync="completeOpen" :width="checkSendUser? '60%':'40%'" append-to-body>
       <el-form ref="taskForm" :model="taskForm" label-width="160px">
         <el-form-item v-if="checkSendUser" prop="targetKey">
           <el-row :gutter="20">
@@ -175,6 +170,9 @@
         </el-form-item>
         <el-form-item label="附件"  prop="commentFileDto.fileurl">
           <j-upload v-model="taskForm.commentFileDto.fileurl"   ></j-upload>
+        </el-form-item>
+        <el-form-item label="选择抄送人" prop="ccUsers">
+          <j-select-user-by-dep v-model="taskForm.ccUsers" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -569,7 +567,7 @@
           }
         })
       },
-      // 多选框选中数据
+      // 单选框选中下一个流程人员
       handleSelectionChange(selection) {
         this.userData = selection
         const val = selection.map(item => item.username);
@@ -886,7 +884,7 @@
         if (isExistTaskForm) {
           this.taskForm.values.taskformvalues = taskFormRef.form;
         }
-        console.log("this.taskForm.values.taskFormValues=",this.taskForm.values.taskformvalues);
+        console.log("this.taskForm=",this.taskForm);
         complete(this.taskForm).then(response => {
           this.$message.success(response.message);
           this.goBack();
