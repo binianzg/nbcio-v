@@ -8,6 +8,7 @@
 	      </div>
         <el-radio label="USERS">候选用户</el-radio>
         <el-radio label="ROLES">候选角色</el-radio>
+        <el-radio label="INITIATOR">发起人</el-radio>
       </el-radio-group>
     </el-row>
     <el-row>
@@ -114,6 +115,10 @@ export default {
                this.bpmnElement.businessObject.candidateGroups != null) {
             this.defaultTaskForm.dataType = "ROLES";
           }
+          if (this.containsKey(this.bpmnElement.businessObject, 'assignee') &&
+               this.bpmnElement.businessObject.assignee === '${INITIATOR}') {
+            this.defaultTaskForm.dataType = "INITIATOR";
+          }
         }
         this.$nextTick(() => this.resetTaskForm());
       }
@@ -141,6 +146,13 @@ export default {
       // 清空 userTaskForm 所有属性值
       //Object.keys(this.userTaskForm).forEach(key => this.userTaskForm[key] = null);
       //this.userTaskForm.dataType = val;
+      if (val === 'INITIATOR') {
+        this.userTaskForm.assignee = "${INITIATOR}";
+        this.userTaskForm.text = "流程发起人";
+        const taskAttr = Object.create(null);
+        taskAttr['assignee'] = this.userTaskForm['assignee'] || null;
+        window.bpmnInstances.modeling.updateProperties(this.bpmnElement, taskAttr);
+      }
     },  
     updateElementTask(key) {
       const taskAttr = Object.create(null);

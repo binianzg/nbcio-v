@@ -28,7 +28,7 @@
         </div>  
         <!--流程各个节点表单加载显示formdesigner表单-->
         <div class="test-form" v-if="taskFormViewOpen" v-for="(taskform,index) in taskFormList">
-          <form-viewer ref="taskFormView" v-model="taskFormVal[index]" :buildData="taskform" />
+          <form-viewer v-if="taskFormVal[index] != '{}'" ref="taskFormView" v-model="taskFormVal[index]" :buildData="taskform" />
         </div>  
         <div class="test-form" v-if="taskFormOpen && finished === 'true'">
           <form-builder ref="taskFormBuilder" v-model="taskFormVal" :buildData="taskFormData" />
