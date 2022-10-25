@@ -155,7 +155,19 @@
          </el-dialog>   
         
     <!--挂载表单-->
-    <el-dialog :title="formDeployTitle" :visible.sync="formDeployOpen" width="60%" append-to-body>
+    <el-dialog :title="formDeployTitle" :visible.sync="formDeployOpen" width="70%" append-to-body >
+      <el-row :gutter="64">
+        <el-form :model="formQueryParams" ref="queryDeployForm" :inline="true" label-width="100px">
+          <el-form-item label="表单名称" prop="formName">
+            <el-input v-model="formQueryParams.formName" placeholder="请输入名称" clearable size="small"
+              @keyup.enter.native="handleFormQuery" />
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" icon="el-icon-search" size="mini" @click="handleFormQuery">搜索</el-button>
+            <el-button icon="el-icon-refresh" size="mini" @click="resetFormQuery">重置</el-button>
+          </el-form-item>
+        </el-form>
+      </el-row>
       <el-row :gutter="64">
         <el-col :span="20" :xs="64">
           <el-table ref="singleTable" :data="formList" border highlight-current-row
@@ -169,8 +181,8 @@
             </el-table-column>
           </el-table>
 
-          <el-pagination small layout="prev, pager, next" v-show="formTotal>0" :total="formTotal"
-            :page.sync="formQueryParams.pageNum" :limit.sync="formQueryParams.pageSize" @pagination="ListFormDeploy" />
+          <el-pagination v-show="formTotal>0" :total="formTotal" :current-page.sync="formQueryParams.pageNo"
+            :page-size.sync="formQueryParams.pageSize" @size-change="ListFormDeploy" @current-change="ListFormDeploy" />  
         </el-col>
         <el-col :span="14" :xs="24">
           <div v-if="currentRow">
@@ -182,6 +194,18 @@
     
     <!--挂载自定义表单-->
     <el-dialog :title="formCustomTitle" :visible.sync="formCustomOpen" width="60%" append-to-body>
+      <el-row :gutter="64">
+        <el-form :model="formQueryParams" ref="queryCustomForm" :inline="true" label-width="100px">
+          <el-form-item label="表单名称" prop="businessName">
+            <el-input v-model="formQueryParams.businessName" placeholder="请输入名称" clearable size="small"
+              @keyup.enter.native="handleCustomFormQuery" />
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" icon="el-icon-search" size="mini" @click="handleCustomFormQuery">搜索</el-button>
+            <el-button icon="el-icon-refresh" size="mini" @click="resetCustomFormQuery">重置</el-button>
+          </el-form-item>
+        </el-form>
+      </el-row>
       <el-row :gutter="64">
         <el-col :span="20" :xs="64">
           <el-table ref="singleTable" :data="formList" border highlight-current-row
@@ -198,7 +222,7 @@
           </el-table>
     
           <el-pagination small layout="prev, pager, next" v-show="formTotal>0" :total="formTotal"
-            :page.sync="formQueryParams.pageNum" :limit.sync="formQueryParams.pageSize" @pagination="ListCustomForm" />
+            :page.sync="formQueryParams.pageNo" :limit.sync="formQueryParams.pageSize" @pagination="ListCustomForm" />
         </el-col>
         <el-col :span="14" :xs="24">
           <div v-if="currentRow">
@@ -281,10 +305,11 @@
           open: false,
           src: "",
         },
-
+        // 显示搜索条件
+        showSearch: true,
         // 查询参数
         queryParams: {
-          pageNum: 1,
+          pageNo: 1,
           pageSize: 10,
           name: null,
           category: null,
@@ -303,8 +328,10 @@
           src: "",
         },
         formQueryParams:{
-          pageNum: 1,
+          pageNo: 1,
           pageSize: 10,
+          formName: '', 
+          businessName: '',
         },
         // 挂载表单到流程实例
         formDeployParam: {
@@ -429,6 +456,30 @@
       resetForm(formName) {
         this.$refs[formName].resetFields()
       },
+      /** 表单查询里查询按钮操作 */
+      handleFormQuery() {
+        this.formQueryParams.pageNo = 1;
+        this.ListFormDeploy();
+      },
+      /** 表单查询里重置按钮操作 */
+      resetFormQuery() {
+        this.resetForm("queryDeployForm");
+        this.handleFormQuery();
+      },
+      /** 自定义表单查询里查询按钮操作 */
+      handleCustomFormQuery() {
+        this.formQueryParams.pageNo = 1;
+        this.ListCustomForm()
+      },
+      /** 自定义表单查询里重置按钮操作 */
+      resetCustomFormQuery() {
+        this.resetForm("queryCustomForm");
+        this.handleCustomFormQuery();
+      },
+      resetForm(formName) {
+        this.$refs[formName].resetFields()
+      },
+      
       /** 打开流程设计弹窗页面 */
       handleLoadXml(row) {
         this.designerData.title = "流程设计 - " + row.name;
@@ -577,6 +628,16 @@
           this.formCustomTitle = "挂载自定义表单";
         })
       },
+      /** 搜索按钮操作 */
+      handleOnlineQuery() {
+        this.queryProcessParams.pageNo = 1;
+        this.listDefinition();
+      },
+      /** 重置按钮操作 */
+      resetOnlineQuery() {
+        this.resetForm("queryOnlineForm");
+        this.handleOnlineQuery();
+      },
       
       // },
       /** 挂载表单 */
@@ -686,3 +747,10 @@
     }
   };
 </script>
+<style lang="less" scope>
+    .el-dialog__body{
+            height: 80vh;
+            overflow: hidden;
+            overflow-y: auto;
+    }
+</style>

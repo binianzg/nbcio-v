@@ -2,6 +2,22 @@
   <div class="page-header-index-wide">
     <a-row :gutter="24">
       <a-col :sm="24" :md="12" :xl="6" :style="{ marginBottom: '24px' }">
+        <chart-card :loading="loading" title="项目信息">
+          <a-tooltip title="指标说明" slot="action">
+            <a-icon type="info-circle-o" />
+          </a-tooltip>
+          <div >
+            <a target="_blank" href="https://gitee.com/nbacheng/nbcio-boot"><span class="profile-name">后端代码</span></a><br/>
+            <a target="_blank" href="https://gitee.com/nbacheng/nbcio-vue.git"><span class="profile-name">前端代码</span></a><br/>
+            <a target="_blank" href="http://www.nbcio.com:9888"><span class="profile-name">在线演示</span></a><br/>
+            <a target="_blank" href="https://blog.csdn.net/qq_40032778"><span class="profile-name">博客地址</span></a>
+          </div>
+          <template slot="footer">
+             <a target="_blank" href="https://qm.qq.com/cgi-bin/qm/qr?k=NH67tV_dqCGQaFhzxsl2B_fdXxWvkBs6&jump_from=webapi&authKey=nf2iLush7UnIOgdVfEl+qqPZdLiUnH1LG+3nEHlwtAAWAJX4UuH1IEOj3APFZDmR"><img border="0" src="//pub.idqqimg.com/wpa/images/group.png" alt="NBCIO 亿事达企业管理平" title="NBCIO 亿事达企业管理平"></a>
+          </template>
+        </chart-card> 
+      </a-col>
+      <a-col :sm="24" :md="12" :xl="6" :style="{ marginBottom: '24px' }">
         <chart-card :loading="loading" title="总销售额" total="￥126,560">
           <a-tooltip title="指标说明" slot="action">
             <a-icon type="info-circle-o" />
@@ -41,7 +57,7 @@
           <template slot="footer">转化率 <span>60%</span></template>
         </chart-card>
       </a-col>
-      <a-col :sm="24" :md="12" :xl="6" :style="{ marginBottom: '24px' }">
+      <!-- <a-col :sm="24" :md="12" :xl="6" :style="{ marginBottom: '24px' }">
         <chart-card :loading="loading" title="运营活动效果" total="78%">
           <a-tooltip title="指标说明" slot="action">
             <a-icon type="info-circle-o" />
@@ -59,8 +75,8 @@
               80%
             </trend>
           </template>
-        </chart-card>
-      </a-col>
+        </chart-card> 
+      </a-col> -->
     </a-row>
 
     <a-card :loading="loading" :bordered="false" :body-style="{padding: '0'}">
