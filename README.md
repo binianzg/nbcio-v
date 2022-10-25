@@ -140,7 +140,7 @@ Docker 镜像使用
    
    ![输入图片说明](https://img-blog.csdnimg.cn/863a745945624a45acfe8e7856c6134e.png "在这里输入图片标题")
 	 
-   ![输入图片说明](https://img-blog.csdnimg.cn/898e102ca3d5452bb2d23d989be008ab.png "在这里输入图片标题")
+   ![输入图片说明](https://img-blog.csdnimg.cn/3abad422efee4cca9f16af5d1fbd86b8.png "在这里输入图片标题")
 	 
    ![输入图片说明](https://img-blog.csdnimg.cn/c63e81a73b0e40b8b3f21963e92199ec.png "在这里输入图片标题")
 	 

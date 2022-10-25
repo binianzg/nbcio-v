@@ -45,12 +45,12 @@
 
 
       <!--初始化流程加载默认formgenerator表单信息-->
-      <!--<el-col :span="16" :offset="4" v-if="formConfOpen">
+      <!-- <el-col :span="16" :offset="4" v-if="formConfOpen">
         <div class="test-form">
           <parser :key="new Date().getTime()" :form-conf="formConf" @submit="submitForm" ref="parser"
             @getData="getData" />
         </div>
-      </el-col>-->
+      </el-col> -->
       <!--初始化流程加载默认formdesigner表单信息-->
       <el-col :span="16" :offset="4" v-if="formConfOpen">
         <div class="test-form">
@@ -628,7 +628,7 @@
         if (businessKey == 'newkey') {
            this.customForm.formId = this.$route.query && this.$route.query.formId;
             getCustomForm(this.customForm.formId).then(res => {
-            console.log("res=",res);
+            console.log("newkey res=",res);
             this.customForm.disabled = false;
             this.customForm.isNew = true;
             this.customForm.visible = true;
@@ -677,8 +677,12 @@
                 this.customForm.model = res.result.formData;
                 this.customForm.customFormData = res.result.formData;
                 console.log("model=", this.customForm.model);
-                this.formConfOpen = true;
-
+                if(res.result.formData.hasOwnProperty('config')) {
+                  this.formConfOpen = true;
+                }
+                else {
+                  this.formConfOpen = false;
+                }
               }
               else if (res.result.hasOwnProperty('taskFormData')) {
                 //console.log("flowRecord res.result.taskFormData", res.result.taskFormData);
@@ -710,11 +714,11 @@
             // this.variables = res.result.variables;
             this.variablesData = res.result.variables;
             console.log("this.variablesData=",this.variablesData)
+            this.variableOpen = true;
             this.formViewData = JSON.stringify(this.variablesData);
             this.formVal = JSON.stringify(this.variablesData.formValue);
             this.taskForm.values = JSON.parse(this.formVal);
             console.log("this.taskForm.values=",this.taskForm.values);
-            this.variableOpen = true
           });
         }
       },
@@ -1113,5 +1117,11 @@
   
   .el-form-item {
       margin-bottom: 20px;
+  }
+  
+  .el-dialog__body{
+          height: auto;
+          overflow: hidden;
+          overflow-y: auto;
   }
 </style>

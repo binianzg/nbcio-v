@@ -97,7 +97,7 @@
       </el-dialog>
       
       <!--挂载流程定义-->
-      <el-dialog :title="flowTitle" :visible.sync="flowOpen" width="60%" append-to-body>
+      <el-dialog :title="flowTitle" :visible.sync="flowOpen" width="70%" append-to-body>
         <el-row :gutter="64">
           <el-form :model="queryParams" ref="queryForm" :inline="true" label-width="100px">
             <el-form-item label="流程名称" prop="name">

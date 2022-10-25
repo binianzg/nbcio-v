@@ -8,7 +8,7 @@
     <div class="copyright">
       Copyright
       <a-icon type="copyright"/>
-      2022 <span>NBCIO 亿事达出品</span>
+      2022 <span>NBCIO 亿事达出品 QQ群:655054809</span>
     </div>
   </div>
 </template>

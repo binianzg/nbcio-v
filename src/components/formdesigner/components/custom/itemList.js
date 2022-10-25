@@ -26,9 +26,14 @@ import {link} from "./items/link";
 import {text} from "./items/text";
 import {barCode} from "./items/barCode";
 
+//provide by Tom 网友
+import {userList} from "./items/userList.js"
+import {userDept} from "./items/userDept.js"
+
 export  const formItems = [
   input,select,radio,checkbox,Switch,inputNumber,textarea,slider
-  ,rate,date,time,editor,colorPicker,cascader,upload,dialogList,barCode,dynamicTable
+  ,rate,date,time,editor,colorPicker,cascader,upload,dialogList
+  ,barCode,dynamicTable,userList,userDept
 ];
 export  const assistFormItems = [button,divider,alert,link,text];
 export  const layoutFormItems = [row,table];
