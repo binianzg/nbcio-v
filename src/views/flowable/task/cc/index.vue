@@ -115,6 +115,7 @@
   import '@/assets/less/TableExpand.less'
   import { mixinDevice } from '@/utils/mixin'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
+  import { putActions,putAppraisal } from '@/api/manage'
 
   export default {
     name: 'FlowCcList',
@@ -177,6 +178,11 @@
             dataIndex: 'createTime'
           },
           {
+            title:'查看状态',
+            align:"center",
+            dataIndex: 'state'
+          },
+          {
             title: '操作',
             dataIndex: 'action',
             align:"center",
@@ -191,7 +197,7 @@
           deleteBatch: "/flowable/flowCc/deleteBatch",
           exportXlsUrl: "/flowable/flowCc/exportXls",
           importExcelUrl: "flowable/flowCc/importExcel",
-          
+          updateViewStatus: "/flowable/flowCc/updateViewStatus",
         },
         dictOptions:{},
         superFieldList:[],
@@ -211,6 +217,13 @@
       /** 流程流转记录 */
       handleFlowRecord(row){
         console.log("handleFlowRecord row=",row);
+        putAppraisal(this.url.updateViewStatus, { id: row.id }).then(res => {
+			if (res.success) {
+			  console.log(res);
+			} else {
+			  this.$message.warning(res.message)
+			}
+        })
         this.$router.push({ path: '/flowable/task/record/index',
           query: {
             procInsId: row.instanceId,

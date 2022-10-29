@@ -104,7 +104,7 @@
             <el-button type="primary" @click="handlerSaveFormConf">确 定</el-button>
         </span>
     </el-dialog>
-    <el-dialog :visible.sync="previewVisible" width="70%" title="预览">
+    <el-dialog :zIndex="300" :visible.sync="previewVisible" width="70%" title="预览">
       <preview :itemList="itemList"  :formConf="formConf" v-if="previewVisible"/>
     </el-dialog>
     <el-dialog :visible.sync="JSONVisible" width="70%" title="JSON" center :close-on-click-modal="false">

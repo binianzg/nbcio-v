@@ -1,60 +1,151 @@
 <template>
     <div>
-      <el-input
-        :value="value | hiddenId"
-        :disabled="disabled"
-        prefix-icon="el-icon-search"
-        placeholder="请选择用户"
-        @focus="onFocus"
-      />
-      <!-- 部门弹窗 -->
-      <user-dialog
-        ref="UserDialog"
-        :multi="multi"
-        @onSelect="onSelect"
-      />
+      <j-select-user-by-dep :value="value | hiddenId" @changes="handleUserChange"></j-select-user-by-dep>
     </div>
   </template>
   
   <script>
-  import UserDialog from './UserDialog'
+  import { JEditableTableMixin } from '@/mixins/JEditableTableMixin'
+  import JSelectMultiUser from '@/components/jeecgbiz/JSelectMultiUser'
+  import { underLinetoHump } from '@/components/_util/StringUtil'
   
   export default {
-    components: {
-      UserDialog
-    },
+    mixins: [JEditableTableMixin],
+    components: {JSelectMultiUser},
     filters: {
       hiddenId(val) {
-        return val && val.indexOf('_*_') !== -1 ? val.split('_*_')[0] : val
+        return val && val.indexOf('_*_') !== -1 ? val.split('_*_')[1] : val
       }
     },
     props: {
+      modalWidth: {
+        type: Number,
+        default: 1250,
+        required: false
+      },
       value: {
         type: String,
-        default: ''
-      },
-      multi: {
-        type: Boolean,
-        default: false
+        default: '',
+        required: false
       },
       disabled: {
         type: Boolean,
+        required: false,
         default: false
+      },
+      multi: {
+        type: Boolean,
+        default: true,
+        required: false
+      },
+      backUser: {
+        type: Boolean,
+        default: false,
+        required: false
+      },
+      // 存储字段 [key field]
+      store: {
+        type: String,
+        default: 'username',
+        required: false
+      },
+      // 显示字段 [label field]
+      text: {
+        type: String,
+        default: 'realname',
+        required: false
       }
     },
     data() {
-      return {}
+      return {
+        storeVals: '', //[key values]
+        textVals: '', //[label values]
+      }
     },
-    watch: {},
-    methods: {
-      onFocus() {
-        this.$refs.UserDialog.dialogVisible = true
+    computed:{
+      storeField(){
+        let field = this.customReturnField
+        if(!field){
+          field = this.store;
+        }
+        return underLinetoHump(field)
       },
-      onSelect(obj) {
+      textField(){
+        return underLinetoHump(this.text)
+      }
+    },
+    mounted() {
+      this.storeVals = this.value
+    },
+    watch: {
+      value(val) {
+        this.storeVals = val
+      }
+    },
+    model: {
+      prop: 'value',
+      event: 'change'
+    },
+    methods: {
+      handleUserChange(users) {
+      console.log(users);
+      const arr1 = users.map((item) => item.realname)
+        const arr2 = users.map((item) => item.username)
+        const obj = {
+          names: arr1.length ? arr1.join(',') : '',
+          ids: arr2.length ? arr2.join(',') : '',
+        }
+        console.log('obj:', obj)
         this.$emit(
           'input',
           obj.names && obj.ids ? `${obj.names}_*_${obj.ids}` : ''
         )
+        this.users(obj.ids)
+      },
+      users(ids){
+        console.log(ids);
+        return ids
+      },
+      initComp(textVals) {
+        this.textVals = textVals
+      },
+      //返回选中的用户信息
+      backDeparInfo(){
+        if(this.backUser===true){
+          if(this.storeVals && this.storeVals.length>0){
+            let arr1 = this.storeVals.split(',')
+            let arr2 = this.textVals.split(',')
+            let info = []
+            for(let i=0;i<arr1.length;i++){
+              info.push({
+                value: arr1[i],
+                text: arr2[i]
+              })
+            }
+            this.$emit('back', info)
+          }
+        }
+      },
+      onSearchDepUser() {
+        this.$refs.selectModal.showModal()
+      },
+      selectOK(rows) {
+        console.log("当前选中用户", rows)
+        if (!rows) {
+          this.storeVals = ''
+          this.textVals = ''
+        } else {
+          let temp1 = []
+          let temp2 = []
+          for (let item of rows) {
+            temp1.push(item[this.storeField])
+            temp2.push(item[this.textField])
+          }
+          this.storeVals = temp1.join(',')
+          this.textVals = temp2.join(',')
+        }
+        this.$emit("change", this.storeVals)
+        this.$emit("changes", rows)
       }
     }
   }

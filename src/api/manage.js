@@ -88,6 +88,14 @@ export function getUserList(parameter) {
     params: parameter
   })
 }
+//抄送人已读状态
+export function putAppraisal(url,parameter) {
+  return axios({
+    url: url,
+    method:'get',
+    params: parameter
+  })
+}
 
 export function queryByUsername(parameter) {
   return axios({
