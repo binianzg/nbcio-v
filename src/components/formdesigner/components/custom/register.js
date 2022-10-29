@@ -26,7 +26,9 @@ const components = [
   'row',
   'dynamicTable',
   'table',
-  'tdItem'
+  'tdItem',
+  'userList',
+  'userDept',
 ];
 
 
