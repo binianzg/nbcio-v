@@ -44,7 +44,10 @@
         </el-table-column>
         <el-table-column  label="表单名称" align="center" :show-overflow-tooltip="true">
           <template slot-scope="scope">
-            <el-button v-if="(scope.row.formId) && (scope.row.category == 'zdyyw')" type="text" @click="handleCustomForm(scope.row.formId)">
+	    <el-button v-if="(scope.row.formId) && (scope.row.category == 'zdyyw')" type="text" @click="handleCustomForm(scope.row.formId)">
+              <span>{{ scope.row.formName }}</span>
+            </el-button>
+            <el-button v-if="(scope.row.formId) && (scope.row.category == 'online')" type="text" @click="handleOnlineForm(scope.row.formId,scope.row.formName)">
               <span>{{ scope.row.formName }}</span>
             </el-button>
             <el-button v-else-if="scope.row.formId" type="text" @click="handleForm(scope.row.formId)">
@@ -79,12 +82,18 @@
                  v-if="scope.row.formId == null && (scope.row.category == 'oa' || scope.row.category == 'cw')">
                 配置表单
                </el-dropdown-item>
-               <el-dropdown-item icon="el-icon-connection" @click.native="handleAddCustomForm(scope.row)"
+	       <el-dropdown-item icon="el-icon-connection" @click.native="handleAddCustomForm(scope.row)"
                  v-if="scope.row.formId == null && (scope.row.category == 'zdyyw')">
                 配置自定义业务表单
                </el-dropdown-item>
+               <el-dropdown-item icon="el-icon-connection" @click.native="handleAddOnlineForm(scope.row)"
+                 v-if="scope.row.formId == null && (scope.row.category == 'online')">
+                配置online表单
+               </el-dropdown-item>
                <el-dropdown-item icon="el-icon-connection" @click.native="SubmitApplication(scope.row)" 
                  v-if="(scope.row.formId != null && (scope.row.category == 'oa' || scope.row.category == 'cw' )) 
+                       || (scope.row.formId != null && (scope.row.category == 'zdyyw'))
+		       || (scope.row.formId != null && (scope.row.category == 'online'))
                        || (scope.row.formId == null && (scope.row.category == 'ddxz' || scope.row.category == 'ddcw'))">
                 发起申请
                </el-dropdown-item>
@@ -141,6 +150,52 @@
       <component :disabled= "customForm.disabled" v-bind:is="customForm.formComponent" :model= "customForm.model"
                  :customFormData= "customForm.customFormData"></component>
     </a-modal>
+    <!--online表单弹窗预览-->
+    <a-modal :title="onlineForm.title"  :visible.sync="onlineForm.visible" :footer="null" :maskClosable="false" 
+             closable @cancel="()=>{onlineForm.visible=false}" width="896px">
+        <a-form ref="previewOnlForm">    
+            <!-- 主表单区域 -->
+            <a-row v-for="(itemCommon, indexInner) in onlineForm.onlineFormData" v-if="indexInner==0" :key="indexInner"  :label="itemCommon.onlTitleName" :model="itemCommon.cgformHeadId" >
+              <a-col :span="parseInt(itemField.fieldDataTopInfo)" v-for="(itemField, index2) in itemCommon.fieldAll" :key="index2">
+                  <a-form-item :label="itemField.dbFieldTxt"  :model="itemField" :key="index2">
+                    <component :is="itemField.tableTypeCode" :model="itemField" :key="index2" :fcz="itemField" @commonComponent ="commonComponent" >
+                    </component>
+                  </a-form-item>
+              </a-col>
+            </a-row>
+            <!-- 子表单区域 -->
+            <a-tabs >
+                <a-tab-pane v-for="(itemCommon, indexInner) in onlineForm.onlineFormData" :key="indexInner" 
+                  v-if = "indexInner>0 && itemCommon.tableName === onlineFormItem.tableForm.tableName[indexInner-1] && onlineFormItem.tableForm.columns[indexInner-1] != undefined" 
+                  :tab="itemCommon.tableTxt"  :forceRender="true" >
+                  <j-editable-table  
+                      :model="itemCommon.cgformHeadId"
+                      :columns="onlineFormItem.tableForm.columns[indexInner-1]"
+                      :maxHeight="300" 
+                      :rowNumber="true"
+                      :rowSelection="true"
+                      :actionButton="true"/>
+                </a-tab-pane>
+                <a-tab-pane v-else-if = "indexInner>0 && itemCommon.tableName === onlineFormItem.tableForm.tableName[indexInner-1]" 
+                  :tab="itemCommon.tableTxt" :model="itemCommon.cgformHeadId" :forceRender="true" >
+                  <a-row>
+                   <a-col :span="parseInt(itemField.fieldDataTopInfo)" v-for="(itemField, index2) in itemCommon.fieldAll" :key="index2">
+                       <a-form-item :label="itemField.dbFieldTxt"  :model="itemField" :key="index2">
+                         <component :is="itemField.tableTypeCode" :model="itemField" :key="index2" :fcz="itemField" @commonComponent ="commonComponent" >
+                         </component>
+                       </a-form-item>
+                   </a-col>
+                  </a-row>
+                </a-tab-pane>
+            </a-tabs>
+            
+            <a-form-item style="text-align: center;">
+              <a-button type="primary" @click="submitOnlForm">提交</a-button>
+              <a-button style="margin-left:30px;" @click="resetOnlForm">重置</a-button>
+            </a-form-item>
+        </a-form>  
+        
+    </a-modal>
     <!--表单配置详情formgenerator-->
       <!--  <el-dialog :title="formTitle" :visible.sync="formConfOpen" width="60%" append-to-body>
           <div class="test-form">
@@ -155,7 +210,7 @@
          </el-dialog>   
         
     <!--挂载表单-->
-    <el-dialog :title="formDeployTitle" :visible.sync="formDeployOpen" width="70%" append-to-body >
+    <a-modal :title="formDeployTitle" @cancel="formDeployOpen = false" :visible.sync="formDeployOpen" width="70%" append-to-body >
       <el-row :gutter="64">
         <el-form :model="formQueryParams" ref="queryDeployForm" :inline="true" label-width="100px">
           <el-form-item label="表单名称" prop="formName">
@@ -190,10 +245,10 @@
           </div>
         </el-col>
       </el-row>
-    </el-dialog>
+    </a-modal>
     
     <!--挂载自定义表单-->
-    <el-dialog :title="formCustomTitle" :visible.sync="formCustomOpen" width="60%" append-to-body>
+    <a-modal :title="formCustomTitle" @cancel="formCustomOpen = false" :visible.sync="formCustomOpen" width="60%" append-to-body>
       <el-row :gutter="64">
         <el-form :model="formQueryParams" ref="queryCustomForm" :inline="true" label-width="100px">
           <el-form-item label="表单名称" prop="businessName">
@@ -230,8 +285,48 @@
           </div>
         </el-col>
       </el-row>
-    </el-dialog>
+    </a-modal>
     
+    <!--挂载online表单-->
+    <div class="eldialog">
+    <a-modal :z-index="1000" :title="formOnlineTitle" @cancel="formOnlineOpen = false" :visible.sync="formOnlineOpen" width="70%">
+      <el-form :model="formQueryParams" ref="queryOnlineForm" :inline="true" v-show="showSearch" label-width="68px">
+        <el-form-item label="表名称" prop="tableName">
+          <el-input
+            v-model="formQueryParams.tableName"
+            placeholder="请输入名称"
+            clearable
+            size="small"
+            @keyup.enter.native="handleOnlineQuery"
+          />
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" icon="el-icon-search" size="mini" @click="handleOnlineQuery">搜索</el-button>
+          <el-button icon="el-icon-refresh" size="mini" @click="resetOnlineQuery">重置</el-button>
+        </el-form-item>
+      </el-form>
+      <el-row :gutter="64">
+        <el-col :span="20" :xs="64">          
+          <el-table ref="singleTable" :data="formList" border highlight-current-row
+            @current-change="handleCurrentChange" style="width: 100%">
+            <el-table-column label="表编号" align="center" prop="id" />
+            <el-table-column label="表名称" align="center" prop="tableName" />
+            <el-table-column label="表说明" align="center" prop="tableTxt" />
+            <el-table-column label="表类型" align="center" prop="tableType" />
+            <el-table-column label="是否树" align="center" prop="isTree" />
+            <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+              <template slot-scope="scope">
+                <el-button size="mini" type="text" @click="submitOnlineForm(scope.row)">确定</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-col>
+        
+      </el-row>
+      <el-pagination v-show="formTotal>0" :total="formTotal" :current-page.sync="formQueryParams.pageNo"
+        :page-size.sync="formQueryParams.pageSize" @size-change="ListOnlineForm" @current-change="ListOnlineForm" />
+    </a-modal>
+    </div>
   </div>
 </template>
 
@@ -247,23 +342,76 @@
     updateState,
     userList
   } from "@views/flowable/api/definition";
-  import { getForm, addDeployForm ,listForm ,listCustomForm ,addCustomForm ,getCustomForm ,addCustomDeployForm } from "@/api/form";
+  import { getForm, addDeployForm ,listForm ,listOnlineForm ,addOnlineForm ,
+           getOnlineForm ,addDeployOnline, listCustomForm ,addCustomForm ,
+           getCustomForm ,addCustomDeployForm ,saveOnlineFormData ,getOnlineFormItem } from "@/api/form";
   import Parser from '@/components/parser/Parser'
   //import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import { flowableMixin } from '@/views/flowable/mixins/flowableMixin'
   import preview from "@/components/formdesigner/components/preview";
   import ProcessDesigner from '@/components/ProcessDesigner';
   import ProcessViewer from '@/components/ProcessViewer'
-
+  
+  //online表单显示组件
+  import { handongRule } from '@comp/formdesigner/hanDongYuZhou/handongCommon'
+  import hanDongInput from "@comp/formdesigner/hanDongYuZhou/hanDongInput";
+  import hanDongPassword from "@comp/formdesigner/hanDongYuZhou/hanDongPassword";
+  import hanDongSwitch from "@comp/formdesigner/hanDongYuZhou/hanDongSwitch";
+  import hanDongList from "@comp/formdesigner/hanDongYuZhou/hanDongList";
+  import hanDongRadio from "@comp/formdesigner/hanDongYuZhou/hanDongRadio";
+  import hanDongCheckbox from "@comp/formdesigner/hanDongYuZhou/hanDongCheckbox";
+  import hanDongListMulti from "@comp/formdesigner/hanDongYuZhou/hanDongListMulti";
+  import hanDongSelSearch from "@comp/formdesigner/hanDongYuZhou/hanDongSelSearch";
+  import hanDongTextArea from "@comp/formdesigner/hanDongYuZhou/hanDongTextArea";
+  import hanDongDate from "@comp/formdesigner/hanDongYuZhou/hanDongDate";
+  import hanDongDateTime from "@comp/formdesigner/hanDongYuZhou/hanDongDateTime";
+  import hanDongTime from "@comp/formdesigner/hanDongYuZhou/hanDongTime";
+  import hanDongImage from "@comp/formdesigner/hanDongYuZhou/hanDongImage";
+  import hanDongFile from "@comp/formdesigner/hanDongYuZhou/hanDongFile";
+  import hanDongUmeditor from "@comp/formdesigner/hanDongYuZhou/hanDongUmeditor";
+  import hanDongSelUser from "@comp/formdesigner/hanDongYuZhou/hanDongSelUser";
+  import hanDongSelDepart from "@comp/formdesigner/hanDongYuZhou/hanDongSelDepart";
+  import hanDongMarkDown from "@comp/formdesigner/hanDongYuZhou/hanDongMarkDown";
+  import hanDongPca from "@comp/formdesigner/hanDongYuZhou/hanDongPca";
+  import hanDongPopup from "@comp/formdesigner/hanDongYuZhou/hanDongPopup";
+  import hanDongSelTree from "@comp/formdesigner/hanDongYuZhou/hanDongSelTree";
+  import hanDongCatTree from "@comp/formdesigner/hanDongYuZhou/hanDongCatTree";
+  import hanDongLinkDown from "@comp/formdesigner/hanDongYuZhou/hanDongLinkDown";
+  
   export default {
     //mixins: [flowableMixin, JeecgListMixin],
     mixins: [flowableMixin],
+    handongRule:[handongRule],
     components: {
       ProcessDesigner,
       ProcessViewer,
      // bpmnModeler,
       Parser,
       preview,
+      //online
+      hanDongInput,
+      hanDongPassword,
+      hanDongSwitch,
+      hanDongList,
+      hanDongRadio,
+      hanDongCheckbox,
+      hanDongListMulti,
+      hanDongSelSearch,
+      hanDongTextArea,
+      hanDongDate,
+      hanDongDateTime,
+      hanDongTime,
+      hanDongImage,
+      hanDongFile,
+      hanDongUmeditor,
+      hanDongSelUser,
+      hanDongSelDepart,
+      hanDongMarkDown,
+      hanDongPca,
+      hanDongPopup,
+      hanDongSelTree,
+      hanDongCatTree,
+      hanDongLinkDown,
     },
     data() {
       return {
@@ -298,6 +446,29 @@
            customFormData:{},
            isNew : false  
         },
+        formOnlineOpen: false,
+        formDeployTitle: "",
+        formOnlineTitle: "",
+        onlineForm: {     //online表单
+           title:'',
+           disabled:false,
+           visible:false,
+           formComponent : null,
+           /*online表单数据*/
+           onlineFormData:[],
+           isNew : false  
+        },   
+        onlineFormItem: {// online FormItem数据,作为主从表生成来源
+          formData: [],
+          subTable: [],
+          tableForm: {
+            tableName: [],
+            columns: [],
+          },
+        }, 
+        saveOnlineFormData: { //提交online表单数据
+          dataList: {},
+        },
         formList: [],
         formTotal: 0,
         formConf: {}, // 默认表单数据
@@ -330,8 +501,8 @@
         formQueryParams:{
           pageNo: 1,
           pageSize: 10,
-          formName: '', 
-          businessName: '',
+          tableName: '',
+          tableTxt: '',
         },
         // 挂载表单到流程实例
         formDeployParam: {
@@ -442,11 +613,19 @@
       getList() {
         this.loading = true;
         listDefinition(this.queryParams).then(response => {
-          console.log(response)
+          console.log("getList response=",response)
           this.definitionList = response.result.records;
           this.total = response.result.total;
           this.loading = false;
         });
+      },
+      /** 重置按钮操作 */
+      resetQuery() {
+        this.resetForm("queryForm");
+        this.handleQuery();
+      },
+      resetForm(formName) {
+        this.$refs[formName].resetFields()
       },
       /** 重置按钮操作 */
       resetQuery() {
@@ -545,7 +724,7 @@
           this.itemList = this.formConf.list
         })
       },
-      // 打开自定义业务表单
+       // 打开自定义业务表单
       handleCustomForm(formId) {
         getCustomForm(formId).then(res => {
           console.log("res=",res);
@@ -553,6 +732,47 @@
           this.customForm.visible  = true;
           this.customForm.formComponent = this.getFormComponent(res.result.routeName).component;
            console.log("this.customForm.formComponent=",this.customForm.formComponent);
+        })  
+      },
+      // 打开Online表单
+      handleOnlineForm(formId,formName) {
+        getOnlineForm(formId).then(res => {
+          console.log("res=",res);
+          if (res.success) {
+            this.onlineForm.title = "online表单" + formName + "详情";
+            this.onlineForm.onlineFormData = res.result.formData;
+            console.log("onlineForm.onlineFormData=",this.onlineForm.onlineFormData);
+            if (this.onlineForm.onlineFormData.length > 1) {
+              getOnlineFormItem(formId).then(itemres => {//获取从表相关信息
+                if (itemres.success) {
+                  console.log("getOnlineFormItem itemres=",itemres)
+                  this.onlineFormItem.formData = itemres.result
+                  var subTable = itemres.result.head.subTableStr
+                  this.onlineFormItem.subTable = subTable.split(",")
+                  console.log("this.onlineFormItem.subTable=",this.onlineFormItem.subTable)
+                  for (var i=0;i<this.onlineFormItem.subTable.length;i++) {
+                    var tablename = this.onlineFormItem.subTable[i]
+                    if(this.onlineFormItem.formData.schema.properties.hasOwnProperty(tablename)) {
+                      this.onlineFormItem.tableForm.tableName[i] = tablename
+                      this.onlineFormItem.tableForm.columns[i] = this.onlineFormItem.formData.schema.properties[tablename].columns
+                    }
+                  }
+                  console.log("this.onlineFormItem.tableForm=",this.onlineFormItem.tableForm)
+                  this.onlineForm.visible  = true;
+                }
+                else {
+                  this.$message.error(itemres.message);
+                }  
+              })
+            }
+            else {
+              this.onlineForm.visible  = true;
+            }
+          }
+          else {
+            this.$message.error(res.message);
+          }
+          
         })  
       },
       /** 启动流程 */
@@ -571,6 +791,11 @@
         this.formDeployParam.deployId = row.deploymentId
         this.ListCustomForm()
       },
+      /** 配置online表单弹框 */
+      handleAddOnlineForm(row) {
+        this.formDeployParam.deployId = row.deploymentId
+        this.ListOnlineForm()
+      },
       /** 发起申请 */
       SubmitApplication(row) {
         if(row.category == 'oa') {
@@ -578,7 +803,8 @@
            this.$router.push({ path: '/flowable/task/record/index',
              query: {
                deployId: row.deploymentId,
-               procDefId:row.id,
+               procDefId: row.id,
+               category: row.category,
                finished: true
                }
            })
@@ -589,6 +815,7 @@
              query: {
                deployId: row.deploymentId,
                procDefId:row.id,
+               category: row.category,
                finished: true
                }
            })
@@ -604,6 +831,28 @@
         else if(row.category == 'zdyyw'){
           /**  发起自定义业务流程申请 */
          
+        }
+        else if(row.category == 'online'){
+          /**  online表单业务流程申请 */
+         /*this.$router.push({ path: '/flowable/task/record/index',
+           query: {
+             deployId: row.deploymentId,
+             procDefId:row.id,
+             onlineId: row.formId,
+             category: row.category,
+             finished: true
+             }
+         })*/
+         //查询对于online表单数据进行选择流程提交申请
+         this.$router.push({ path: '/flowable/model/onlinetablelist',
+           query: {
+             deployId: row.deploymentId,
+             procDefId:row.id,
+             onlineId: row.formId,
+             category: row.category,
+             finished: true
+             }
+         })
         }
         else {
           
@@ -628,6 +877,19 @@
           this.formCustomTitle = "挂载自定义表单";
         })
       },
+      
+      /** 挂载Online表单列表 */
+      ListOnlineForm() {
+        listOnlineForm(this.formQueryParams).then(res => {
+          console.log("this.formQueryParams=",this.formQueryParams);
+          console.log("listOnlineForm res=",res);
+          this.formList = res.result.records;
+          this.formTotal = res.result.total;
+          this.formOnlineOpen = true;
+          this.formOnlineTitle = "挂载Online表单";
+        })
+      },
+      
       /** 搜索按钮操作 */
       handleOnlineQuery() {
         this.queryProcessParams.pageNo = 1;
@@ -661,6 +923,91 @@
           this.getList();
         })
       },
+      /** 挂载配置Online表单 */
+      submitOnlineForm(row) {
+        // if(row.tableType == '1' ) {
+          this.formDeployParam.onlineId = row.id;
+          this.formDeployParam.tableName = row.tableName;
+          this.formDeployParam.formFlag = '1';//人工设置表单都给予开始表单标志
+          addDeployOnline(this.formDeployParam).then(res => {
+            this.$message.success(res.message);
+            this.formOnlineOpen = false;
+            this.getList();
+          })
+        // }
+        // else {
+        //   this.$message.warn("目前仅支持单表!");
+        // }
+        
+      },
+      //online表单提交数据信息
+      submitOnlForm(){
+        console.log("submitOnlForm this.onlineForm.onlineFormData",this.onlineForm.onlineFormData)
+        this.saveOnlineFormData.formId = this.onlineForm.onlineFormData[0].id;
+        this.saveOnlineFormData.fieldList = this.onlineForm.onlineFormData[0].fieldAll;
+        let code = this.saveOnlineFormData.formId + "?" + "tabletype=1"
+        console.log("submitOnlForm this.saveOnlineFormData",this.saveOnlineFormData)
+        /*saveOnlineFormData(this.saveOnlineFormData.dataList,code).then(res => {
+          console.log("saveOnlineFormData res=",res);
+          if(res.sucess) {
+            this.$message.success(res.message);
+          }
+        })*/
+      },
+      resetOnlForm(){
+        this.resetForm("previewOnlForm");
+      },
+      submitTestForm(){
+        console.log("submitTestForm testForm.testmodel=",this.testmodel);
+      },
+      resetTestForm(){
+        this.resetForm("testForm");
+      },
+      commonComponent(zcf){
+       console.log("commonComponent zcf=",zcf);
+       console.log("this.saveOnlineFormData.dataList1=",this.saveOnlineFormData.dataList)
+        for(var i = 0;i<this.onlineForm.onlineFormData.length;i++){
+          if(this.onlineForm.onlineFormData[i].id == zcf.cgformHeadId){
+            var flagInfo =0;
+            let fieldname = zcf.dbFieldName
+            this.saveOnlineFormData.dataList[fieldname] = zcf.commonDataInfo
+            console.log("this.saveOnlineFormData.dataList[fieldname]",this.saveOnlineFormData.dataList[fieldname])
+            for(var k = 0;k<this.saveOnlineFormData.dataList[fieldname].length;k++){
+              if(this.saveOnlineFormData.dataList[fieldname][k].id == zcf.id){
+                this.saveOnlineFormData.dataList[fieldname][k] = zcf
+                flagInfo = 1;
+              }
+              if(this.saveOnlineFormData.dataList[fieldname][k].tableTypeCode =='hanDongLinkDown' || this.saveOnlineFormData.dataList[fieldname][k].linkDowmIz =='1'){
+                //判断当前组件类型是否是linkDown相关组件
+                nextLinkDown(this.saveOnlineFormData.dataList[fieldname][k].linkDowmFieldNext,this.saveOnlineFormData.dataList[fieldname][k].commonLinkDownCodeChild)
+              }
+            }
+            if(flagInfo == 0){
+              //this.saveOnlineFormData.dataList[fieldname].push(zcf);
+              this.saveOnlineFormData.dataList[fieldname] = zcf.commonDataInfo
+            }
+            console.log("this.saveOnlineFormData.dataList3=",this.saveOnlineFormData.dataList)
+          }
+        }
+      },
+      //设置下一级的linkDown 下拉框的值
+      nextLinkDown(fieldName,childrenLinkDown){
+        console.log("nextLinkDown fieldName=",fieldName)
+        for(var i = 0;i<this.onlineForm.onlineFormData.length;i++){
+          console.log(this.onlineForm.onlineFormData[i])
+          console.log(this.onlineForm.onlineFormData[i].id)
+          console.log(zcf.cgformHeadId)
+          if(this.onlineForm.onlineFormData[i].id == zcf.cgformHeadId){
+            var flagInfo =0;
+            for(var k = 0;k<this.saveOnlineFormData.dataList[this.onlineForm.onlineFormData[i].id].length;k++){
+              if(this.saveOnlineFormData.dataList[this.onlineForm.onlineFormData[i].id][k].dbFieldName == fieldName){
+                this.saveOnlineFormData.dataList[this.onlineForm.onlineFormData[i].id][k].commonDictCode = childrenLinkDown
+              }
+            }
+          }
+        }
+      },
+      
       handleCurrentChange(data) {
         if (data) {
           this.currentRow = JSON.parse(data.formContent);
@@ -749,7 +1096,7 @@
 </script>
 <style lang="less" scope>
     .el-dialog__body{
-            height: 80vh;
+            height: auto;
             overflow: hidden;
             overflow-y: auto;
     }

@@ -28,7 +28,7 @@
     <el-row>
       <div v-if="defaultTaskForm.dataType === 'ROLES'">
         <el-select v-model="userTaskForm.candidateGroups" multiple collapse-tags @change="updateElementTask('candidateGroups')">
-          <el-option v-for="gk in groups" :key="gk.name" :label="gk.name" :value="gk.name" />
+          <el-option v-for="gk in groups" :key="gk.id" :label="gk.name" :value="gk.id" />
         </el-select>
       </div>  
     </el-row>

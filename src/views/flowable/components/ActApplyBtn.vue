@@ -70,7 +70,7 @@ export default {
           definitionStartByDataId(this.dataId, this.serviceName, params)
                 .then(res => {
                     if (res.success) {
-                        this.$message.success('操作成功,请在到我的待办里进行流程的提交流转.');
+                        this.$message.success(res.message);
                         this.$emit('success');
                     } else {
                         this.$message.error(res.message);

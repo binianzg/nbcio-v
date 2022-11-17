@@ -12,6 +12,82 @@
             <component :disabled="customForm.disabled" v-bind:is="customForm.formComponent" :model="customForm.model"
                         :customFormData="customForm.customFormData" :isNew = "customForm.isNew"></component> 
         </div>
+        <div style="margin-left:10%;margin-bottom: 20px;font-size: 14px;" v-if="finished === 'true'">
+          <el-button icon="el-icon-edit-outline" type="success" size="mini" @click="handleComplete">审批</el-button>
+          <!--                <el-button  icon="el-icon-edit-outline" type="primary" size="mini" @click="handleDelegate">委派</el-button>-->
+          <!--                <el-button  icon="el-icon-edit-outline" type="primary" size="mini" @click="handleAssign">转办</el-button>-->
+          <!--                <el-button  icon="el-icon-edit-outline" type="primary" size="mini" @click="handleDelegate">签收</el-button>-->
+          <el-button icon="el-icon-refresh-left" type="warning" size="mini" @click="handleReturn">退回</el-button>
+          <el-button icon="el-icon-circle-close" type="danger" size="mini" @click="handleReject">驳回</el-button>
+        </div>
+      </el-col>
+      
+      <!--初始化流程加载online提交表单信息 目前先不用这个了-->
+      <el-col :span="16" :offset="4" v-if="onlineForm.visible">
+            <a-form ref="refOnlForm">
+                <a-row v-for="(itemCommon, indexInner) in onlineForm.onlineFormData" :key="indexInner"  :label="itemCommon.onlTitleName" :model="itemCommon.cgformHeadId" >
+                  <a-col :span="parseInt(itemField.fieldDataTopInfo)" v-for="(itemField, index2) in itemCommon.fieldAll" :key="index2">
+                      <a-form-item :label="itemField.dbFieldTxt"  :model="itemField" :key="index2">
+                        <component :is="itemField.tableTypeCode" :model="itemField" :key="index2" :fcz="itemField" @commonComponent ="commonComponent" >
+                        </component>
+                      </a-form-item>
+                  </a-col>
+                </a-row>
+                <a-form-item style="text-align: center;" v-if="onlineForm.isNew != false">
+                  <a-button type="primary" @click="submitOnlForm">提交</a-button>
+                  <a-button style="margin-left:30px;" @click="resetOnlForm">重置</a-button>
+                </a-form-item>
+            </a-form>   
+      </el-col>
+      
+      <!--流程加载online显示表单信息-->
+      <el-col :span="16" :offset="4" v-if="onlineViewForm.visible">
+            <a-form ref="refOnlForm">
+                <a-row v-for="(itemCommon, indexInner) in onlineViewForm.onlineFormData" v-if="indexInner==0" :key="indexInner"  :label="itemCommon.onlTitleName" :model="itemCommon.cgformHeadId" >
+                  <a-col :span="parseInt(itemField.fieldDataTopInfo)" v-for="(itemField, index2) in itemCommon.fieldAll" :key="index2">
+                      <a-form-item :label="itemField.dbFieldTxt"  :model="itemField" :key="index2">
+                        <component :is="itemField.tableTypeCode" :disabled="true" :value="onlineViewForm.model[itemField.dbFieldName]" :key="index2" :fcz="itemField" @commonComponent ="commonComponent" >
+                        </component>
+                      </a-form-item>
+                  </a-col>
+                </a-row>
+                <!-- 子表单区域 -->
+                <a-tabs >
+                    <a-tab-pane v-for="(itemCommon, indexInner) in onlineViewForm.onlineFormData" :key="indexInner" v-if = "indexInner>0 && itemCommon.tableName === onlineFormItem.tableForm.tableName[indexInner-1] && onlineFormItem.tableForm.columns[indexInner-1] != undefined" 
+                      :tab="itemCommon.tableTxt"  :forceRender="true" >
+                      <j-editable-table  
+                          :model="itemCommon.cgformHeadId"
+                          :columns="onlineFormItem.tableForm.columns[indexInner-1]"
+                          :dataSource="onlineFormItem.dataSource[indexInner-1]"
+                          :maxHeight="300" 
+                          :rowNumber="true"
+                          />
+                    </a-tab-pane>
+                    <a-tab-pane v-else-if = "indexInner>0 && itemCommon.tableName === onlineFormItem.tableForm.tableName[indexInner-1] && onlineFormItem.tableForm.columns[indexInner-1] == undefined" 
+                      :tab="itemCommon.tableTxt" :model="itemCommon.cgformHeadId" :forceRender="true" >
+                      <a-row>
+                       <a-col :span="parseInt(itemField.fieldDataTopInfo)" v-for="(itemField, index2) in itemCommon.fieldAll" :key="index2">
+                           <a-form-item :label="itemField.dbFieldTxt"  :model="itemField" :key="index2" v-if="onlineFormItem.dataSource[indexInner-1][0] != undefined"> 
+                             <component :is="itemField.tableTypeCode" :disabled="true" :value="onlineFormItem.dataSource[indexInner-1][0][itemField.dbFieldName]" :key="index2" :fcz="itemField" @commonComponent ="commonComponent" >
+                             </component>
+                           </a-form-item>
+                           <a-form-item :label="itemField.dbFieldTxt"  :model="itemField" :key="index2" v-else>
+                             <component :is="itemField.tableTypeCode" :disabled="true"  :key="index2" :fcz="itemField" @commonComponent ="commonComponent" >
+                             </component>
+                           </a-form-item>
+                       </a-col>
+                      </a-row>
+                    </a-tab-pane>
+                </a-tabs>
+            </a-form>   
+            <div style="margin-left:10%;margin-bottom: 20px;font-size: 14px;" v-if="finished === 'true'">
+              <el-button icon="el-icon-edit-outline" type="success" size="mini" @click="handleComplete">审批</el-button>
+              <!--                <el-button  icon="el-icon-edit-outline" type="primary" size="mini" @click="handleDelegate">委派</el-button>-->
+              <!--                <el-button  icon="el-icon-edit-outline" type="primary" size="mini" @click="handleAssign">转办</el-button>-->
+              <!--                <el-button  icon="el-icon-edit-outline" type="primary" size="mini" @click="handleDelegate">签收</el-button>-->
+              <el-button icon="el-icon-refresh-left" type="warning" size="mini" @click="handleReturn">退回</el-button>
+              <el-button icon="el-icon-circle-close" type="danger" size="mini" @click="handleReject">驳回</el-button>
+            </div>
       </el-col>
 
       <!--流程处理表单设计器模块,从flowable表里获取表单数据-->
@@ -144,7 +220,7 @@
     </el-card>
 
     <!--审批正常流程-->
-    <el-dialog :z-index="100" :title="completeTitle" :visible.sync="completeOpen" :width="checkSendUser? '60%':'40%'" append-to-body>
+    <a-modal :z-index="100" :title="completeTitle" @cancel="completeOpen = false" :visible.sync="completeOpen" :width="checkSendUser? '60%':'40%'" append-to-body>
       <el-form ref="taskForm" :model="taskForm" label-width="160px">
         <el-form-item v-if="checkSendUser" prop="targetKey">
           <el-row :gutter="20">
@@ -179,10 +255,10 @@
         <el-button @click="completeOpen = false">取 消</el-button>
         <el-button type="primary" @click="taskComplete">确 定</el-button>
       </span>
-    </el-dialog>
+    </a-modal>
 
     <!--退回流程-->
-    <el-dialog :title="returnTitle" :visible.sync="returnOpen" width="40%" append-to-body>
+    <el-dialog :z-index="100" :title="returnTitle" :visible.sync="returnOpen" width="40%" append-to-body>
       <el-form ref="taskForm" :model="taskForm" label-width="80px">
         <el-form-item label="退回节点" prop="targetKey">
           <el-radio-group v-model="taskForm.targetKey">
@@ -222,6 +298,7 @@
   import Parser from '@/components/parser/Parser'
   import {
     definitionStartByDefId,
+    definitionStartByOnlineDataId,
     getProcessVariables,
     readXml,
     getFlowViewer
@@ -248,13 +325,37 @@
     flowableMixin
   } from '@/views/flowable/mixins/flowableMixin'
 
-  import { getCustomForm  } from "@/api/form";
+  import { getCustomForm, getOnlineForm, saveOnlineFormData, getOnlineFormData, getOnlineFormItem  } from "@/api/form";
   import Vue from 'vue'
   import { ACCESS_TOKEN } from "@/store/mutation-types"
   //for formdesigner
   import formBuilder from '@/components/formdesigner/components/formBuilder'
   import formViewer from '@/components/formdesigner/components/formViewer'
-
+  //online表单显示组件
+  import { handongRule } from '@comp/formdesigner/hanDongYuZhou/handongCommon'
+  import hanDongInput from "@comp/formdesigner/hanDongYuZhou/hanDongInput";
+  import hanDongPassword from "@comp/formdesigner/hanDongYuZhou/hanDongPassword";
+  import hanDongSwitch from "@comp/formdesigner/hanDongYuZhou/hanDongSwitch";
+  import hanDongList from "@comp/formdesigner/hanDongYuZhou/hanDongList";
+  import hanDongRadio from "@comp/formdesigner/hanDongYuZhou/hanDongRadio";
+  import hanDongCheckbox from "@comp/formdesigner/hanDongYuZhou/hanDongCheckbox";
+  import hanDongListMulti from "@comp/formdesigner/hanDongYuZhou/hanDongListMulti";
+  import hanDongSelSearch from "@comp/formdesigner/hanDongYuZhou/hanDongSelSearch";
+  import hanDongTextArea from "@comp/formdesigner/hanDongYuZhou/hanDongTextArea";
+  import hanDongDate from "@comp/formdesigner/hanDongYuZhou/hanDongDate";
+  import hanDongDateTime from "@comp/formdesigner/hanDongYuZhou/hanDongDateTime";
+  import hanDongTime from "@comp/formdesigner/hanDongYuZhou/hanDongTime";
+  import hanDongImage from "@comp/formdesigner/hanDongYuZhou/hanDongImage";
+  import hanDongFile from "@comp/formdesigner/hanDongYuZhou/hanDongFile";
+  import hanDongUmeditor from "@comp/formdesigner/hanDongYuZhou/hanDongUmeditor";
+  import hanDongSelUser from "@comp/formdesigner/hanDongYuZhou/hanDongSelUser";
+  import hanDongSelDepart from "@comp/formdesigner/hanDongYuZhou/hanDongSelDepart";
+  import hanDongMarkDown from "@comp/formdesigner/hanDongYuZhou/hanDongMarkDown";
+  import hanDongPca from "@comp/formdesigner/hanDongYuZhou/hanDongPca";
+  import hanDongPopup from "@comp/formdesigner/hanDongYuZhou/hanDongPopup";
+  import hanDongSelTree from "@comp/formdesigner/hanDongYuZhou/hanDongSelTree";
+  import hanDongCatTree from "@comp/formdesigner/hanDongYuZhou/hanDongCatTree";
+  import hanDongLinkDown from "@comp/formdesigner/hanDongYuZhou/hanDongLinkDown";
   
   export default {
     name: "Record",
@@ -265,6 +366,30 @@
       DeptUserInfo,
       formBuilder,
       formViewer,
+      //online
+      hanDongInput,
+      hanDongPassword,
+      hanDongSwitch,
+      hanDongList,
+      hanDongRadio,
+      hanDongCheckbox,
+      hanDongListMulti,
+      hanDongSelSearch,
+      hanDongTextArea,
+      hanDongDate,
+      hanDongDateTime,
+      hanDongTime,
+      hanDongImage,
+      hanDongFile,
+      hanDongUmeditor,
+      hanDongSelUser,
+      hanDongSelDepart,
+      hanDongMarkDown,
+      hanDongPca,
+      hanDongPopup,
+      hanDongSelTree,
+      hanDongCatTree,
+      hanDongLinkDown,
     },
     props: {},
     data() {
@@ -325,7 +450,10 @@
           dataId: "",//业务主键编号
           nodeType: "", //当前节点类型 目前只针对多实例会签做处理
           vars: "",
-          targetKey: ""
+          targetKey: "",
+          category: "",//流程类别，目前主要区别online与自定义使用
+          onlineId: "",//online表单Id
+          onlineDataId: "",//online数据Id
         },
         userDataList: [], // 流程候选人
         assignee: null,
@@ -343,6 +471,42 @@
           isNew: false,
           disableSubmit: true
         },
+        onlineForm: { //online提交表单
+          formId: '',
+          title: '',
+          disabled: false,
+          visible: false,
+          formComponent: null,
+          model: {},
+          /*流程数据*/
+          onlineFormData: {},
+          isNew: false,
+          disableSubmit: true
+        },
+        onlineFormItem: {// online FormItem数据,作为主从表生成来源
+          formData: [],
+          subTable: [],
+          tableForm: {
+            tableName: [],
+            columns: [],
+          },
+          dataSource:[],
+        }, 
+        saveOnlineFormData: { //提交online表单数据
+          dataList: {},
+        }, 
+        onlineViewForm: { //online显示表单
+          formId: '',
+          title: '',
+          disabled: false,
+          visible: false,
+          formComponent: null,
+          model: {},
+          /*流程数据*/
+          onlineFormData: {},
+          isNew: false,
+          disableSubmit: true
+        },       
         formCode:'',
         formVal:'',
         formViewOpen: false,  //是否显示formdesigner的输入后提交的表单
@@ -368,7 +532,7 @@
         taskFormList: [], // 流程任务变量数据列表
         taskFormViewOpen: false, //任务表单
       };
-    },
+    }, 
     created() {
       this.taskForm.deployId = this.$route.query && this.$route.query.deployId;
       this.taskForm.taskId = this.$route.query && this.$route.query.taskId;
@@ -377,8 +541,16 @@
       // 初始化表单
       this.taskForm.procDefId = this.$route.query && this.$route.query.procDefId;
       this.taskForm.businessKey = this.$route.query && this.$route.query.businessKey;
+      this.taskForm.category = this.$route.query && this.$route.query.category;
       this.taskForm.dataId = this.$route.query && this.$route.query.businessKey;
+      //节点类型
       this.taskForm.nodeType = this.$route.query && this.$route.query.nodeType;
+      //online表单id和数据id
+      this.taskForm.onlineId = this.$route.query && this.$route.query.onlineId;
+      if (this.taskForm.category === 'online') {
+        this.taskForm.onlineDataId = this.$route.query && this.$route.query.businessKey;
+      }
+
       // 回显流程记录
       //
       console.log("created this.taskForm.taskId=",this.taskForm.taskId);
@@ -393,7 +565,7 @@
         //this.taskForm.deployId = null
         //this.getFlowRecordList(this.taskForm.procInsId, this.taskForm.deployId, this.taskForm.businessKey, this.taskForm.taskId);
       }
-      this.getFlowRecordList(this.taskForm.procInsId, this.taskForm.deployId, this.taskForm.businessKey, this.taskForm.taskId);
+      this.getFlowRecordList(this.taskForm.procInsId, this.taskForm.deployId, this.taskForm.businessKey, this.taskForm.taskId, this.taskForm.category);
       this.finished = this.$route.query && this.$route.query.finished
       console.log("this.finished",this.finished)
 
@@ -402,13 +574,12 @@
       //表单数据回填，模拟异步请求场景
       setTimeout(() => {
         // 回填数据,这里主要是处理文件列表显示,临时解决，以后应该在form设计器完成
-        this.fillFormData(this.variablesData.list, this.variablesData)
-        // 更新表单
-        this.key = +new Date().getTime()
+        if (this.variablesData.hasOwnProperty('list')) {
+          this.fillFormData(this.variablesData.list, this.variablesData)
+          // 更新表单
+          this.key = +new Date().getTime()
+        }
       }, 1000)
-    },
-    computed:{
-      
     },
     methods: {
       /** 查询部门下拉树结构 */
@@ -617,15 +788,53 @@
        console.log("this.taskForm.values=",this.taskForm.values);
       },
       /** 流程流转记录 */
-      getFlowRecordList(procInsId, deployId, businessKey, taskId) {
-        console.log("procInsId=, deployId=, businessKey=, taskId=", procInsId, deployId, businessKey,taskId);
+      getFlowRecordList(procInsId, deployId, businessKey, taskId, category) {
+        console.log("procInsId=, deployId=, businessKey=, taskId=， category=", procInsId, deployId, businessKey, taskId, category);
         const params = {
           procInsId: procInsId,
           deployId: deployId,
           businessKey: businessKey,
-          taskId: taskId
+          taskId: taskId,
+          category: category
         }
-        if (businessKey == 'newkey') {
+        console.log("this.taskForm.onlineId=",this.taskForm.onlineId);
+        console.log("this.taskForm.category=",this.taskForm.category);
+        console.log("this.taskForm.onlineDataId=",this.taskForm.onlineDataId);
+        if (this.taskForm.category === 'online' && this.taskForm.onlineDataId === undefined) {//online申请提交
+           this.onlineForm.formId = this.$route.query && this.$route.query.onlineId;
+            getOnlineForm(this.onlineForm.formId).then(res => {
+            console.log("getOnlineForm res=",res);
+            this.onlineForm.onlineFormData = res.result.formData;
+            this.onlineForm.disabled = false;
+            this.onlineForm.isNew = true;
+            //this.onlineForm.disableSubmit = false;
+            this.onlineForm.visible = true;
+            console.log("onlineForm.onlineFormData=",this.onlineForm.onlineFormData);
+            getOnlineFormItem(formId).then(itemres => {//获取从表相关信息
+              if (itemres.success) {
+                console.log("getOnlineFormItem itemres=",itemres)
+                this.onlineFormItem.formData = itemres.result
+                var subTable = itemres.result.head.subTableStr
+                this.onlineFormItem.subTable = subTable.split(",")
+                console.log("this.onlineFormItem.subTable=",this.onlineFormItem.subTable)
+                for (var i=0;i<this.onlineFormItem.subTable.length;i++) {
+                  var tablename = this.onlineFormItem.subTable[i]
+                  if(this.onlineFormItem.formData.schema.properties.hasOwnProperty(tablename)) {
+                    this.onlineFormItem.tableForm.tableName[i] = tablename
+                    this.onlineFormItem.tableForm.columns[i] = this.onlineFormItem.formData.schema.properties[tablename].columns
+                  }
+                }
+                console.log("this.onlineFormItem.tableForm=",this.onlineFormItem.tableForm)
+                this.onlineForm.visible  = true;
+              }
+              else {
+                this.$message.error(itemres.message);
+              }  
+            })
+            //this.formConfOpen = true;
+          })    
+        }
+        else if (businessKey == 'newkey') {
            this.customForm.formId = this.$route.query && this.$route.query.formId;
             getCustomForm(this.customForm.formId).then(res => {
             console.log("newkey res=",res);
@@ -664,18 +873,64 @@
                 console.log("this.taskFormList=",this.taskFormList);
                 console.log("this.taskFormVal=",this.taskFormVal);
               }  
+              //流程过程中有online表单数据，获取online表单配置与数据
+              if (res.result.hasOwnProperty('onlineConfig')) {
+                this.onlineViewForm.onlineFormData = res.result.onlineConfig;
+                console.log("onlineViewForm.onlineFormData=",this.onlineViewForm.onlineFormData);
+                console.log("this.taskForm=",this.taskForm)
+                var sonlineId = res.result.onlineId
+                getOnlineFormData(sonlineId,this.taskForm.onlineDataId).then(res => {
+                  console.log("getOnlineFormData res=",res);
+                  if (res.success) {
+                    this.onlineViewForm.model = res.result;
+                    console.log("onlineViewForm.model=",this.onlineViewForm.model);
+                    getOnlineFormItem(sonlineId).then(itemres => {//获取从表相关信息
+                      if (itemres.success) {
+                        console.log("getOnlineFormItem itemres=",itemres)
+                        this.onlineFormItem.formData = itemres.result
+                        if(itemres.result.head.subTableStr != null) {
+                          var subTable = itemres.result.head.subTableStr
+                          this.onlineFormItem.subTable = subTable.split(",")
+                          console.log("this.onlineFormItem.subTable=",this.onlineFormItem.subTable)
+                          for (var i=0;i<this.onlineFormItem.subTable.length;i++) {
+                            var tablename = this.onlineFormItem.subTable[i]
+                            if(this.onlineFormItem.formData.schema.properties.hasOwnProperty(tablename)) {
+                              this.onlineFormItem.tableForm.tableName[i] = tablename
+                              this.onlineFormItem.tableForm.columns[i] = this.onlineFormItem.formData.schema.properties[tablename].columns
+                              this.onlineFormItem.dataSource[i] = this.onlineViewForm.model[tablename]
+                            }
+                          }
+                          console.log("this.onlineFormItem.tableForm=",this.onlineFormItem.tableForm)
+                          console.log("this.onlineFormItem.dataSource=",this.onlineFormItem.dataSource)
+                        }
+                        
+                        this.onlineViewForm.disabled = true;
+                        this.onlineViewForm.isNew = false;
+                        this.onlineViewForm.visible = true;
+                      }
+                      else {
+                        this.$message.error(itemres.message);
+                      }  
+                    })
+                  }
+                  
+                })    
+              }  
               // 流程过程中不存在初始化表单 直接读取的流程变量中存储的表单值
-              if (res.result.hasOwnProperty('formData')) {
+              else if (res.result.hasOwnProperty('formData')) {
                 //console.log("flowRecord res.result.formData", res.result.formData);
                 this.formConf = res.result.formData;
                 //console.log("flowRecord this.formConf", this.formConf);
                 this.formCode = JSON.stringify(res.result.formData);
-                //console.log("flowRecord this.formCode", this.formCode);             
-                this.customForm.disabled = true;
-                this.customForm.visible = true;
-                this.customForm.formComponent = this.getFormComponent(res.result.routeName).component;
-                this.customForm.model = res.result.formData;
-                this.customForm.customFormData = res.result.formData;
+                //console.log("flowRecord this.formCode", this.formCode); 
+                if(res.result.hasOwnProperty('routeName')) {
+                  this.customForm.disabled = true;
+                  this.customForm.visible = true;
+                  this.customForm.formComponent = this.getFormComponent(res.result.routeName).component;
+                  this.customForm.model = res.result.formData;
+                  this.customForm.customFormData = res.result.formData;
+                }
+                
                 console.log("model=", this.customForm.model);
                 if(res.result.formData.hasOwnProperty('config')) {
                   this.formConfOpen = true;
@@ -710,15 +965,18 @@
         if (taskId) {
           // 提交流程申请时填写的表单存入了流程变量中后续任务处理时需要展示
           getProcessVariables(taskId).then(res => {
-            //console.log("getProcessVariables res=",res);
+            console.log("getProcessVariables res=",res);
             // this.variables = res.result.variables;
-            this.variablesData = res.result.variables;
-            console.log("this.variablesData=",this.variablesData)
-            this.variableOpen = true;
-            this.formViewData = JSON.stringify(this.variablesData);
-            this.formVal = JSON.stringify(this.variablesData.formValue);
-            this.taskForm.values = JSON.parse(this.formVal);
-            console.log("this.taskForm.values=",this.taskForm.values);
+            if(res.result.hasOwnProperty('variables')) {
+              this.variablesData = res.result.variables;
+              console.log("this.variablesData=",this.variablesData)
+              this.variableOpen = true;
+              this.formViewData = JSON.stringify(this.variablesData);
+              this.formVal = JSON.stringify(this.variablesData.formValue);
+              this.taskForm.values = JSON.parse(this.formVal);
+              console.log("this.taskForm.values=",this.taskForm.values);
+            }
+           
           });
         }
       },
@@ -804,7 +1062,7 @@
           const data = res.result;
           if (data) {
             this.checkSendUser = true
-            console.log("data=",data)
+            console.log("getNextFlowNode data=",data)
             if (data.type === 'assignee') { // 指定人员
               this.userDataList = res.result.userList;
               this.checkSendUser = false;
@@ -885,7 +1143,7 @@
         }
         const taskFormRef = this.$refs.taskFormBuilder;
         const isExistTaskForm = taskFormRef !== undefined;
-        if (isExistTaskForm) {
+        if (isExistTaskForm) {//流程里的设置表单
           this.taskForm.values.taskformvalues = taskFormRef.form;
         }
         console.log("this.taskForm=",this.taskForm);
@@ -973,6 +1231,76 @@
           }
         }
       },
+      //online表单提交数据信息
+      submitOnlForm(){
+        console.log("submitOnlForm this.onlineForm.onlineFormData",this.onlineForm.onlineFormData)
+        this.saveOnlineFormData.formId = this.onlineForm.onlineFormData[0].id;
+        this.saveOnlineFormData.fieldList = this.onlineForm.onlineFormData[0].fieldAll;
+        let code = this.saveOnlineFormData.formId + "?" + "tabletype=1"  //正式修改成获取，目前先只支持单表
+        console.log("submitOnlForm this.saveOnlineFormData",this.saveOnlineFormData)
+        saveOnlineFormData(this.saveOnlineFormData.dataList,code).then(res => {
+          console.log("saveOnlineFormData res=",res);
+          if(res.success) {
+            this.$message.success(res.message);
+            var params = Object.assign({
+                dataId: res.result
+            }, this.variables);
+            //variables.variables = formData;
+            console.log("variables=", this.variables);
+            // 启动流程并将表单数据加入流程变量
+            definitionStartByOnlineDataId(res.result, this.saveOnlineFormData.formId, this.taskForm.deployId, params).then(res => {
+              console.log("definitionStartByOnlineDataId res=",res);
+              this.$message.success(res.message);
+              this.onlineForm.isNew = false;
+              this.goBack();
+            })
+          }
+        })
+      },
+      commonComponent(zcf){
+       console.log("commonComponent zcf=",zcf);
+       console.log("this.saveOnlineFormData.dataList=",this.saveOnlineFormData.dataList)
+        for(var i = 0;i<this.onlineForm.onlineFormData.length;i++){
+          if(this.onlineForm.onlineFormData[i].id == zcf.cgformHeadId){
+            var flagInfo =0;
+            let fieldname = zcf.dbFieldName
+            this.saveOnlineFormData.dataList[fieldname] = zcf.commonDataInfo
+            console.log("this.saveOnlineFormData.dataList[fieldname]",this.saveOnlineFormData.dataList[fieldname])
+            for(var k = 0;k<this.saveOnlineFormData.dataList[fieldname].length;k++){
+              if(this.saveOnlineFormData.dataList[fieldname][k].id == zcf.id){
+                this.saveOnlineFormData.dataList[fieldname][k] = zcf
+                flagInfo = 1;
+              }
+              if(this.saveOnlineFormData.dataList[fieldname][k].tableTypeCode =='hanDongLinkDown' || this.saveOnlineFormData.dataList[fieldname][k].linkDowmIz =='1'){
+                //判断当前组件类型是否是linkDown相关组件
+                nextLinkDown(this.saveOnlineFormData.dataList[fieldname][k].linkDowmFieldNext,this.saveOnlineFormData.dataList[fieldname][k].commonLinkDownCodeChild)
+              }
+            }
+            if(flagInfo == 0){
+              //this.saveOnlineFormData.dataList[fieldname].push(zcf);
+              this.saveOnlineFormData.dataList[fieldname] = zcf.commonDataInfo
+            }
+            console.log("this.saveOnlineFormData.dataList2=",this.saveOnlineFormData.dataList)
+          }
+        }
+      },
+      //设置下一级的linkDown 下拉框的值
+      nextLinkDown(fieldName,childrenLinkDown){
+        console.log("nextLinkDown fieldName=",fieldName)
+        for(var i = 0;i<this.onlineForm.onlineFormData.length;i++){
+          console.log(this.onlineForm.onlineFormData[i])
+          console.log(this.onlineForm.onlineFormData[i].id)
+          console.log(zcf.cgformHeadId)
+          if(this.onlineForm.onlineFormData[i].id == zcf.cgformHeadId){
+            var flagInfo =0;
+            for(var k = 0;k<this.saveOnlineFormData.dataList[this.onlineForm.onlineFormData[i].id].length;k++){
+              if(this.saveOnlineFormData.dataList[this.onlineForm.onlineFormData[i].id][k].dbFieldName == fieldName){
+                this.saveOnlineFormData.dataList[this.onlineForm.onlineFormData[i].id][k].commonDictCode = childrenLinkDown
+              }
+            }
+          }
+        }
+      },
       /** 驳回任务 */
       handleReject() {
         this.rejectOpen = true;
@@ -995,17 +1323,24 @@
         this.returnTitle = "退回流程";
         returnList(this.taskForm).then(res => {
           this.returnTaskList = res.result;
-          this.taskForm.values = null;
+          if(this.taskForm.hasOwnProperty("values")) {
+            this.taskForm.values = null;
+          }
         })
       },
       /** 提交退回任务 */
       taskReturn() {
         this.$refs["taskForm"].validate(valid => {
           if (valid) {
-            returnTask(this.taskForm).then(res => {
+            if(this.taskForm.targetKey != '') {
+              returnTask(this.taskForm).then(res => {
               this.$message.success(res.message);
               this.goBack()
-            });
+              });
+            }
+            else {
+              this.$message.error("请选择退回目标节点！");
+            }
           }
         });
       },
@@ -1119,9 +1454,14 @@
       margin-bottom: 20px;
   }
   
-  .el-dialog__body{
+  .el-dialog__body{//设置el-dialog高度信息
           height: auto;
           overflow: hidden;
           overflow-y: auto;
+  }
+  
+  .el-loading-mask {//设置流程图上面的一层屏蔽层，否则影响其它窗口操作
+    background-color: initial;
+    z-index: 200;
   }
 </style>

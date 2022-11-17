@@ -272,6 +272,7 @@ export default {
           taskId: row.taskId,
           businessKey: row.businessKey,
           nodeType: row.nodeType,
+          category: row.category,
           finished: true
         }})
     },

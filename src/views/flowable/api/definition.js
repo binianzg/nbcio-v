@@ -37,6 +37,16 @@ export function definitionStartByDataId(dataId,serviceName,data) {
   })
 }
 
+// 部署流程实例,online数据dataid
+
+export function definitionStartByOnlineDataId(dataId,onlineId,deployId,data) {
+  return request({
+    url: '/flowable/definition/startByOnlineDataId/' + dataId + '/' + onlineId + '/' + deployId,
+    method: 'post',
+    data: data
+  })
+}
+
 // 获取流程变量
 export function getProcessVariables(taskId) {
   return request({

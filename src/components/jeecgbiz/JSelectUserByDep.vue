@@ -135,6 +135,7 @@
           this.textVals = temp2.join(',')
         }
         this.$emit("change", this.storeVals)
+        this.$emit("changes", rows)
       }
     }
   }
