@@ -14,6 +14,7 @@
     components: {JSelectMultiUser},
     filters: {
       hiddenId(val) {
+        console.log("hiddenId",val);
         return val && val.indexOf('_*_') !== -1 ? val.split('_*_')[1] : val
       }
     },
@@ -76,10 +77,13 @@
     },
     mounted() {
       this.storeVals = this.value
+      console.log("mounted this.storeVals",this.storeVals)
+      console.log("mounted this.value",this.value)
     },
     watch: {
       value(val) {
         this.storeVals = val
+        console.log("watch this.storeVals",this.storeVals)
       }
     },
     model: {
@@ -88,7 +92,7 @@
     },
     methods: {
       handleUserChange(users) {
-      console.log(users);
+      console.log("handleUserChange users=",users);
       const arr1 = users.map((item) => item.realname)
         const arr2 = users.map((item) => item.username)
         const obj = {
@@ -130,7 +134,8 @@
         this.$refs.selectModal.showModal()
       },
       selectOK(rows) {
-        console.log("当前选中用户", rows)
+        console.log("userListArry selectOK 当前选中用户", rows)
+        console.log("userListArry selectOK this.storeVals=",this.storeVals)
         if (!rows) {
           this.storeVals = ''
           this.textVals = ''

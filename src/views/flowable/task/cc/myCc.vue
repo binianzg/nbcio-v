@@ -226,6 +226,7 @@ export default {
                     deployId: row.deploymentId,
                     taskId: row.taskId,
                     businessKey: row.businessKey,
+                    category: row.category,
                     finished: false
                 }
             })

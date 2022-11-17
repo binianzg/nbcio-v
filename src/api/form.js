@@ -62,10 +62,64 @@ export function getCustomForm(formId) {
   })
 }
 
-// 查询流程online表单详细
+// 查询流程online表单
 export function getOnlineForm(formId) {
   return request({
-    url: '/flowable/onlCgformHead/queryById' + formId,
+    url: '/flowable/onlCgformHead/queryByFormId/' + formId,
+    method: 'get'
+  })
+}
+
+// 保存流程online表单数据
+/*export function saveOnlineFormData(data) {
+  return request({
+    url: '/flowable/onlCgformHead/save',
+    method: 'post',
+    data: data
+  })
+}*/
+// 保存流程online表单数据
+//这里的{code}是online配置表的ID
+export function saveOnlineFormData(data,code) {
+  return request({
+    url: '/online/cgform/api/form/' + code,
+    method: 'post',
+    data: data
+  })
+}
+
+// 查询流程online表单数据
+//这里的{code}是online配置表的ID，{id}是这个表单对应数据的ID
+export function getOnlineFormData(code,id) {
+  return request({
+    url: '/online/cgform/api/form/' + code + '/' + id,
+    method: 'get'
+  })
+}
+
+// 查询流程online表单列信息,这里主要为选择online表数据使用
+//这里的{code}是online配置表的ID
+export function getOnlineColumns(code) {
+  return request({
+    url: '/flowable/onlCgformHead/getColumns/' + code ,
+    method: 'get'
+  })
+}
+
+// 查询流程online表单具体数据,这里主要为选择online表数据使用
+//这里的{code}是online配置表的ID
+export function getOnlineData(code) {
+  return request({
+    url: '/flowable/onlCgformHead/getData/' + code + "?column=id&order=desc&pageNo=1&pageSize=10&superQueryMatchType=and",
+    method: 'get'
+  })
+}
+
+// 查询流程online表单FromItem数据,这里主要为主从表使用
+//这里的{code}是online配置表的ID
+export function getOnlineFormItem(code) {
+  return request({
+    url: '/flowable/onlCgformHead/getFormItem/' + code ,
     method: 'get'
   })
 }

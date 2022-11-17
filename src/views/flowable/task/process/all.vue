@@ -121,7 +121,7 @@
   
      
      <!-- 发起流程 -->
-     <el-dialog :title="title" :visible.sync="open" width="60%" append-to-body>
+     <a-modal @cancel="open = false" :title="title" :visible.sync="open" width="60%" append-to-body>
        <el-form :model="queryProcessParams" ref="queryProcessForm" :inline="true" v-show="showSearch" label-width="68px">
          <el-form-item label="名称" prop="name">
            <el-input
@@ -145,6 +145,7 @@
            </template>
          </el-table-column>
          <el-table-column label="流程分类" align="center" prop="category" />
+         <el-table-column label="表单名称" align="center" prop="formName" />
          <el-table-column label="操作" align="center" width="300" class-name="small-padding fixed-width">
            <template slot-scope="scope">
              <el-button
@@ -152,7 +153,7 @@
                type="text"
                icon="el-icon-edit-outline"
 
-               v-if="(scope.row.formId != null && (scope.row.category == 'oa' || scope.row.category == 'cw')) || (scope.row.formId == null && (scope.row.category == 'ddxz' || scope.row.category == 'ddcw'))"
+               v-if="(scope.row.formId != null && (scope.row.category == 'oa' || scope.row.category == 'cw' || scope.row.category == 'online')) || (scope.row.formId == null && (scope.row.category == 'ddxz' || scope.row.category == 'ddcw'))"
                @click="handleStartProcess(scope.row)"
              >发起流程</el-button>
            </template>
@@ -160,7 +161,7 @@
        </el-table>
        <el-pagination v-show="processTotal>0" :total="processTotal" :current-page.sync="queryProcessParams.pageNum"
          :page-size.sync="queryProcessParams.pageSize" @size-change="listDefinition" @current-change="listDefinition" />
-       </el-dialog>
+       </a-modal>
        <!-- 委派 转办 选择人员 -->
        <a-modal
          title="选择委派或转办人员" width="900px" :maskClosable="false"
@@ -487,6 +488,7 @@
             deployId: row.deployId,
             taskId: row.taskId,
             businessKey: row.businessKey,
+            category: row.category,
             finished: false
         }})
       },
@@ -498,10 +500,23 @@
              query: {
                deployId: row.deploymentId,
                procDefId:row.id,
+               category: row.category,
                finished: true
                }
            })
         }
+        else if(row.category == 'online'){
+          //查询对于online表单数据进行选择流程提交申请
+          this.$router.push({ path: '/flowable/model/onlinetablelist',
+            query: {
+              deployId: row.deploymentId,
+              procDefId:row.id,
+              onlineId: row.formId,
+              category: row.category,
+              finished: true
+              }
+          })
+        }  
         else if(row.category == 'ddxz'){
           //发起钉钉薪资审批
            this.$router.push({ path: '/estar/StepForm'})

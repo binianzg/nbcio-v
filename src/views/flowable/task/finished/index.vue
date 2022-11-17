@@ -370,6 +370,7 @@ export default {
           deployId: row.deployId,
           taskId: row.taskId,
           businessKey: row.businessKey,
+          category: row.category,
           finished: false
       }})
     },

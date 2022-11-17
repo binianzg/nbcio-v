@@ -97,7 +97,7 @@
       </el-dialog>
       
       <!--挂载流程定义-->
-      <el-dialog :title="flowTitle" :visible.sync="flowOpen" width="70%" append-to-body>
+      <a-modal @cancel="flowOpen = false" :title="flowTitle" :visible.sync="flowOpen" width="70%" append-to-body>
         <el-row :gutter="64">
           <el-form :model="queryParams" ref="queryForm" :inline="true" label-width="100px">
             <el-form-item label="流程名称" prop="name">
@@ -166,7 +166,7 @@
             </div>
           </el-col>
         </el-row>
-      </el-dialog>
+      </a-modal>
       
     </div>
 
@@ -280,7 +280,7 @@
           pageNum: 1,
           pageSize: 8,
           name: null,
-          category: null,
+          category: 'zdyyw',
           key: null,
           tenantId: null,
           deployTime: null,
@@ -313,9 +313,11 @@
       relationProcess(row) {
         this.flowOpen = true;
         this.customParam.id = row.id;
-        categoryList({}).then(res => {
+        /*categoryList({}).then(res => {
+          console.log("categoryList res",res)
           this.categorys = res.result || []
-        })
+        })*/
+        this.categorys = [{id:'zdyyw',name:'自定义业务'}]
         this.getList();
       },
       /** 查询流程定义列表 */

@@ -5,29 +5,15 @@
       <a-form layout="inline" @keyup.enter.native="searchQuery">
         <a-row :gutter="24">
           <a-col :xl="6" :lg="7" :md="8" :sm="24">
-            <a-form-item label="抄送标题">
-              <a-input placeholder="请输入抄送标题" v-model="queryParam.title"></a-input>
+            <a-form-item label="表名">
+              <a-input placeholder="请输入表名" v-model="queryParam.tableName"></a-input>
             </a-form-item>
           </a-col>
           <a-col :xl="6" :lg="7" :md="8" :sm="24">
-            <a-form-item label="流程名称">
-              <a-input placeholder="请输入流程名称" v-model="queryParam.flowName"></a-input>
+            <a-form-item label="表说明">
+              <a-input placeholder="请输入表说明" v-model="queryParam.tableTxt"></a-input>
             </a-form-item>
           </a-col>
-          <template v-if="toggleSearchStatus">
-            <a-col :xl="6" :lg="7" :md="8" :sm="24">
-              <a-form-item label="发起人姓名">
-                <a-input placeholder="请输入发起人姓名" v-model="queryParam.initiatorRealname"></a-input>
-              </a-form-item>
-            </a-col>
-            <a-col :xl="10" :lg="11" :md="12" :sm="24">
-              <a-form-item label="创建日期">
-                <j-date :show-time="true" date-format="YYYY-MM-DD HH:mm:ss" placeholder="请选择开始时间" class="query-group-cust" v-model="queryParam.createTime_begin"></j-date>
-                <span class="query-group-split-cust"></span>
-                <j-date :show-time="true" date-format="YYYY-MM-DD HH:mm:ss" placeholder="请选择结束时间" class="query-group-cust" v-model="queryParam.createTime_end"></j-date>
-              </a-form-item>
-            </a-col>
-          </template>
           <a-col :xl="6" :lg="7" :md="8" :sm="24">
             <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
               <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
@@ -45,8 +31,10 @@
 
     <!-- 操作按钮区域 -->
     <div class="table-operator">
-      <a-button type="primary" icon="download" @click="handleExportXls('流程抄送表')">导出</a-button>
+      <a-button @click="handleAdd" type="primary" icon="plus">新增</a-button>
+      <a-button type="primary" icon="download" @click="handleExportXls('test_onl_cgform_head')">导出</a-button>
       <a-upload name="file" :showUploadList="false" :multiple="false" :headers="tokenHeader" :action="importExcelUrl" @change="handleImportExcel">
+        <a-button type="primary" icon="import">导入</a-button>
       </a-upload>
       <!-- 高级查询区域 -->
       <j-super-query :fieldList="superFieldList" ref="superQueryModal" @handleSuperQuery="handleSuperQuery"></j-super-query>
@@ -100,13 +88,28 @@
         </template>
 
         <span slot="action" slot-scope="text, record">
-          <a @click="handleFlowRecord(record)">详情</a>
+          <a @click="handleEdit(record)">编辑</a>
 
-          
+          <a-divider type="vertical" />
+          <a-dropdown>
+            <a class="ant-dropdown-link">更多 <a-icon type="down" /></a>
+            <a-menu slot="overlay">
+              <a-menu-item>
+                <a @click="handleDetail(record)">详情</a>
+              </a-menu-item>
+              <a-menu-item>
+                <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
+                  <a>删除</a>
+                </a-popconfirm>
+              </a-menu-item>
+            </a-menu>
+          </a-dropdown>
         </span>
 
       </a-table>
     </div>
+
+    <flow-onl-cgform-head-modal ref="modalForm" @ok="modalFormOk"></flow-onl-cgform-head-modal>
   </a-card>
 </template>
 
@@ -115,16 +118,17 @@
   import '@/assets/less/TableExpand.less'
   import { mixinDevice } from '@/utils/mixin'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
-  import { putActions,putAppraisal } from '@/api/manage'
+  import FlowOnlCgformHeadModal from './modules/FlowOnlCgformHeadModal'
 
   export default {
-    name: 'FlowCcList',
+    name: 'FlowOnlCgformHeadList',
     mixins:[JeecgListMixin, mixinDevice],
     components: {
+      FlowOnlCgformHeadModal
     },
     data () {
       return {
-        description: '流程抄送表管理页面',
+        description: 'onl_cgform_head管理页面',
         // 表头
         columns: [
           {
@@ -138,49 +142,24 @@
             }
           },
           {
-            title:'抄送标题',
+            title:'表名',
             align:"center",
-            dataIndex: 'title'
+            dataIndex: 'tableName'
           },
           {
-            title:'流程名称',
+            title:'表类型: 0单表、1主表、2附表',
             align:"center",
-            dataIndex: 'flowName'
+            dataIndex: 'tableType'
           },
           {
-            title:'流程分类',
+            title:'表说明',
             align:"center",
-            dataIndex: 'category'
+            dataIndex: 'tableTxt'
           },
           {
-            title:'业务主键',
+            title:'是否是树',
             align:"center",
-            dataIndex: 'businessKey'
-          },
-          {
-            title:'用户',
-            align:"center",
-            dataIndex: 'username'
-          },
-          {
-            title:'发起人账号',
-            align:"center",
-            dataIndex: 'initiatorUsername'
-          },
-          {
-            title:'发起人姓名',
-            align:"center",
-            dataIndex: 'initiatorRealname'
-          },
-          {
-            title:'创建日期',
-            align:"center",
-            dataIndex: 'createTime'
-          },
-          {
-            title:'查看状态',
-            align:"center",
-            dataIndex: 'state'
+            dataIndex: 'isTree'
           },
           {
             title: '操作',
@@ -192,12 +171,12 @@
           }
         ],
         url: {
-          list: "/flowable/flowCc/list",
-          delete: "/flowable/flowCc/delete",
-          deleteBatch: "/flowable/flowCc/deleteBatch",
-          exportXlsUrl: "/flowable/flowCc/exportXls",
-          importExcelUrl: "flowable/flowCc/importExcel",
-          updateViewStatus: "/flowable/flowCc/updateViewStatus",
+          list: "/flowable/OnlCgformHead/list",
+          delete: "/flowable/OnlCgformHead/delete",
+          deleteBatch: "/flowable/OnlCgformHead/deleteBatch",
+          exportXlsUrl: "/flowable/OnlCgformHead/exportXls",
+          importExcelUrl: "flowable/OnlCgformHead/importExcel",
+          
         },
         dictOptions:{},
         superFieldList:[],
@@ -214,40 +193,12 @@
     methods: {
       initDictConfig(){
       },
-      /** 流程流转记录 */
-      handleFlowRecord(row){
-        console.log("handleFlowRecord row=",row);
-        putAppraisal(this.url.updateViewStatus, { id: row.id }).then(res => {
-			if (res.success) {
-			  console.log(res);
-			} else {
-			  this.$message.warning(res.message)
-			}
-        })
-        this.$router.push({ path: '/flowable/task/record/index',
-          query: {
-            procInsId: row.instanceId,
-            deployId: row.deploymentId,
-            taskId: row.taskId,
-            businessKey: row.businessKey,
-            category: row.category,
-            finished: false
-        }})
-      },
       getSuperFieldList(){
         let fieldList=[];
-        fieldList.push({type:'string',value:'title',text:'抄送标题',dictCode:''})
-        fieldList.push({type:'string',value:'flowId',text:'流程ID',dictCode:''})
-        fieldList.push({type:'string',value:'flowName',text:'流程名称',dictCode:''})
-        fieldList.push({type:'string',value:'category',text:'流程分类',dictCode:''})
-        fieldList.push({type:'string',value:'deploymentId',text:'发布ID',dictCode:''})
-        fieldList.push({type:'string',value:'instanceId',text:'流程实例ID',dictCode:''})
-        fieldList.push({type:'string',value:'taskId',text:'任务ID',dictCode:''})
-        fieldList.push({type:'string',value:'businessKey',text:'业务主键',dictCode:''})
-        fieldList.push({type:'string',value:'username',text:'用户',dictCode:''})
-        fieldList.push({type:'string',value:'initiatorUsername',text:'发起人账号',dictCode:''})
-        fieldList.push({type:'string',value:'initiatorRealname',text:'发起人姓名',dictCode:''})
-        fieldList.push({type:'datetime',value:'createTime',text:'创建日期'})
+        fieldList.push({type:'string',value:'tableName',text:'表名',dictCode:''})
+        fieldList.push({type:'int',value:'tableType',text:'表类型: 0单表、1主表、2附表',dictCode:''})
+        fieldList.push({type:'string',value:'tableTxt',text:'表说明',dictCode:''})
+        fieldList.push({type:'string',value:'isTree',text:'是否是树',dictCode:''})
         this.superFieldList = fieldList
       }
     }
