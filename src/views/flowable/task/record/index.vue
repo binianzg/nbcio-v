@@ -967,14 +967,19 @@
           getProcessVariables(taskId).then(res => {
             console.log("getProcessVariables res=",res);
             // this.variables = res.result.variables;
-            if(res.result.hasOwnProperty('variables')) {
-              this.variablesData = res.result.variables;
-              console.log("this.variablesData=",this.variablesData)
-              this.variableOpen = true;
-              this.formViewData = JSON.stringify(this.variablesData);
-              this.formVal = JSON.stringify(this.variablesData.formValue);
-              this.taskForm.values = JSON.parse(this.formVal);
-              console.log("this.taskForm.values=",this.taskForm.values);
+            if(res.success) {
+              if(res.result.hasOwnProperty('variables')) {
+                this.variablesData = res.result.variables;
+                console.log("this.variablesData=",this.variablesData)
+                this.variableOpen = true;
+                this.formViewData = JSON.stringify(this.variablesData);
+                this.formVal = JSON.stringify(this.variablesData.formValue);
+                this.taskForm.values = JSON.parse(this.formVal);
+                console.log("this.taskForm.values=",this.taskForm.values);
+              }
+            }
+            else {
+              this.$message.error(res.message);
             }
            
           });
@@ -1070,7 +1075,7 @@
               this.userDataList = res.result.userList;
               //console.log("candidateUsers nodeType,bmutiInstanceFinish=",this.taskForm.nodeType,this.taskForm.bmutiInstanceFinish) 
               if(this.userDataList.length===1) {
-                this.checkSendUser = false;
+                this.checkSendUser = true;
               }
               else if(this.userDataList.length>1) {
                  console.log("candidateUsers nodeType=",this.taskForm.nodeType) 
