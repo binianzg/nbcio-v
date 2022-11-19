@@ -62,9 +62,9 @@
         validatorRules: {
         },
         url: {
-          add: "/com.nbcio.modules.flowable/flowCategory/add",
-          edit: "/com.nbcio.modules.flowable/flowCategory/edit",
-          queryById: "/com.nbcio.modules.flowable/flowCategory/queryById"
+          add: "/flowable/flowCategory/add",
+          edit: "/flowable/flowCategory/edit",
+          queryById: "/flowable/flowCategory/queryById"
         }
       }
     },
