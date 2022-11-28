@@ -91,10 +91,9 @@
                 配置online表单
                </el-dropdown-item>
                <el-dropdown-item icon="el-icon-connection" @click.native="SubmitApplication(scope.row)" 
-                 v-if="(scope.row.formId != null && (scope.row.category == 'oa' || scope.row.category == 'cw' )) 
-                       || (scope.row.formId != null && (scope.row.category == 'zdyyw'))
-		       || (scope.row.formId != null && (scope.row.category == 'online'))
-                       || (scope.row.formId == null && (scope.row.category == 'ddxz' || scope.row.category == 'ddcw'))">
+                 v-if="(scope.row.formId != null && (scope.row.category == 'oa' || scope.row.category == 'cw' ))   
+		              || (scope.row.formId != null && (scope.row.category == 'online'))
+                  || (scope.row.formId == null && (scope.row.category == 'ddxz' || scope.row.category == 'ddcw'))">
                 发起申请
                </el-dropdown-item>
                 <el-dropdown-item icon="el-icon-video-pause" @click.native="handleUpdateSuspensionState(scope.row)"
