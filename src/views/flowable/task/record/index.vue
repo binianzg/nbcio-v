@@ -9,7 +9,7 @@
       <!--初始化流程加载自定义表单信息-->
       <el-col :span="16" :offset="4" v-if="customForm.visible">
         <div>
-            <component  ref="formTable" :disabled="customForm.disabled" v-bind:is="customForm.formComponent" :model="customForm.model"
+            <component :disabled="customForm.disabled" v-bind:is="customForm.formComponent" :model="customForm.model"
                         :customFormData="customForm.customFormData" :isNew = "customForm.isNew"></component> 
         </div>
         <div style="margin-left:10%;margin-bottom: 20px;font-size: 14px;" v-if="finished === 'true'">
@@ -103,9 +103,9 @@
            <el-upload action="#" :on-preview="handleFilePreview" :file-list="fileList" v-if="fileDisplay" />
         </div>  
         <!--流程各个节点表单加载显示formdesigner表单-->
-        <div class="test-form" v-if="taskFormViewOpen" v-for="(taskform,index) in taskFormList">
-          <form-viewer v-if="taskFormVal[index] != '{}'" ref="taskFormView" v-model="taskFormVal[index]" :buildData="taskform" />
-        </div>  
+        <div class="test-form" v-for="(taskform,index) in taskFormList" v-if="taskFormViewOpen && taskFormVal[index] != '{}'">
+          <form-viewer ref="taskFormView" v-model="taskFormVal[index]" :buildData="taskform" />
+        </div>   
         <div class="test-form" v-if="taskFormOpen && finished === 'true'">
           <form-builder ref="taskFormBuilder" v-model="taskFormVal" :buildData="taskFormData" />
         </div>
@@ -924,7 +924,7 @@
                 this.formCode = JSON.stringify(res.result.formData);
                 //console.log("flowRecord this.formCode", this.formCode); 
                 if(res.result.hasOwnProperty('routeName')) {
-                  this.customForm.disabled = res.result.isSubmit;
+                  this.customForm.disabled = true;
                   this.customForm.visible = true;
                   this.customForm.formComponent = this.getFormComponent(res.result.routeName).component;
                   this.customForm.model = res.result.formData;
@@ -1150,10 +1150,6 @@
         const isExistTaskForm = taskFormRef !== undefined;
         if (isExistTaskForm) {//流程里的设置表单
           this.taskForm.values.taskformvalues = taskFormRef.form;
-        }
-        //提交表单
-        if (!this.customForm.disabled){debugger
-          this.$refs.formTable.submitForm();
         }
         console.log("this.taskForm=",this.taskForm);
         complete(this.taskForm).then(response => {
