@@ -208,7 +208,7 @@ export default {
   methods: {
     /** 查询表单列表 */
     getFormList() {
-      listForm().then(response => this.formList = response.result.records)
+      listForm({pageSize: 500}).then(response => this.formList = response.result.records)
     },
     resetFormList() {
       this.bpmnElement = window.bpmnInstances.bpmnElement;
