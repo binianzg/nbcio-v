@@ -103,9 +103,9 @@
            <el-upload action="#" :on-preview="handleFilePreview" :file-list="fileList" v-if="fileDisplay" />
         </div>  
         <!--流程各个节点表单加载显示formdesigner表单-->
-        <div class="test-form" v-if="taskFormViewOpen" v-for="(taskform,index) in taskFormList">
-          <form-viewer v-if="taskFormVal[index] != '{}'" ref="taskFormView" v-model="taskFormVal[index]" :buildData="taskform" />
-        </div>  
+        <div class="test-form" v-for="(taskform,index) in taskFormList" v-if="taskFormViewOpen && taskFormVal[index] != '{}'">
+          <form-viewer ref="taskFormView" v-model="taskFormVal[index]" :buildData="taskform" />
+        </div>   
         <div class="test-form" v-if="taskFormOpen && finished === 'true'">
           <form-builder ref="taskFormBuilder" v-model="taskFormVal" :buildData="taskFormData" />
         </div>
