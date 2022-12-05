@@ -9,7 +9,7 @@
       <!--初始化流程加载自定义表单信息-->
       <el-col :span="16" :offset="4" v-if="customForm.visible">
         <div>
-            <component :disabled="customForm.disabled" v-bind:is="customForm.formComponent" :model="customForm.model"
+            <component ref="refCustomForm" :disabled="customForm.disabled" v-bind:is="customForm.formComponent" :model="customForm.model"
                         :customFormData="customForm.customFormData" :isNew = "customForm.isNew"></component> 
         </div>
         <div style="margin-left:10%;margin-bottom: 20px;font-size: 14px;" v-if="finished === 'true'">
@@ -24,7 +24,7 @@
       
       <!--初始化流程加载online提交表单信息 目前先不用这个了-->
       <el-col :span="16" :offset="4" v-if="onlineForm.visible">
-            <a-form ref="refOnlForm">
+            <a-form ref="refOnlForm" >
                 <a-row v-for="(itemCommon, indexInner) in onlineForm.onlineFormData" :key="indexInner"  :label="itemCommon.onlTitleName" :model="itemCommon.cgformHeadId" >
                   <a-col :span="parseInt(itemField.fieldDataTopInfo)" v-for="(itemField, index2) in itemCommon.fieldAll" :key="index2">
                       <a-form-item :label="itemField.dbFieldTxt"  :model="itemField" :key="index2">
@@ -42,11 +42,11 @@
       
       <!--流程加载online显示表单信息-->
       <el-col :span="16" :offset="4" v-if="onlineViewForm.visible">
-            <a-form ref="refOnlForm">
+            <a-form ref="refViewOnlForm">
                 <a-row v-for="(itemCommon, indexInner) in onlineViewForm.onlineFormData" v-if="indexInner==0" :key="indexInner"  :label="itemCommon.onlTitleName" :model="itemCommon.cgformHeadId" >
                   <a-col :span="parseInt(itemField.fieldDataTopInfo)" v-for="(itemField, index2) in itemCommon.fieldAll" :key="index2">
                       <a-form-item :label="itemField.dbFieldTxt"  :model="itemField" :key="index2">
-                        <component :is="itemField.tableTypeCode" :disabled="true" :value="onlineViewForm.model[itemField.dbFieldName]" :key="index2" :fcz="itemField" @commonComponent ="commonComponent" >
+                        <component :disabled="onlineViewForm.disabled" :is="itemField.tableTypeCode" :value="onlineViewForm.model[itemField.dbFieldName]" :key="index2" :fcz="itemField" @commonComponent ="commonComponent" >
                         </component>
                       </a-form-item>
                   </a-col>
@@ -96,7 +96,8 @@
           <parser :key="new Date().getTime()" :form-conf="variablesData" />
         </div>-->
           <div > <!--处理流程过程中显示formdesigner表单信息-->
-            <form-viewer ref="formViewer" v-model="formVal" :buildData="formViewData"></form-viewer>
+            <form-builder v-if = "this.startUserForm.isStartUserNode && this.startUserForm.editFormType === 'oa' && finished === 'true'" ref="refStartBuilder" v-model="formVal" :buildData="formViewData" />
+            <form-viewer v-else ref="formViewer" v-model="formVal" :buildData="formViewData" />
 		      </div>
         <div style="margin-left:10%;margin-bottom: 30px">
            <!--对上传文件进行显示处理，临时方案 add by nbacheng 2022-07-27 -->
@@ -531,6 +532,10 @@
         taskFormVal: [], //流程任务显示表单数据填充值
         taskFormList: [], // 流程任务变量数据列表
         taskFormViewOpen: false, //任务表单
+        startUserForm : {  
+          isStartUserNode: false, //第一个用户任务发起节点
+          editFormType: '', //第一发起人节点编辑的表单类型
+        },
       };
     }, 
     created() {
@@ -872,7 +877,20 @@
                 this.taskFormViewOpen = true;
                 console.log("this.taskFormList=",this.taskFormList);
                 console.log("this.taskFormVal=",this.taskFormVal);
-              }  
+              } 
+              //判断是否是开始后的第一个用户任务节点，是就放开表单编辑功能 
+              if (res.result.hasOwnProperty('isStartUserNode') && res.result.isStartUserNode) {
+                if(this.taskForm.category === 'online') {
+                  this.startUserForm.editFormType = 'online';
+                }
+                else if (this.taskForm.category === 'zdyyw') {
+                  this.startUserForm.editFormType = 'zdyyw';
+                }
+                else {
+                  this.startUserForm.editFormType = 'oa';
+                }
+                this.startUserForm.isStartUserNode = true;
+              }
               //流程过程中有online表单数据，获取online表单配置与数据
               if (res.result.hasOwnProperty('onlineConfig')) {
                 this.onlineViewForm.onlineFormData = res.result.onlineConfig;
@@ -903,8 +921,12 @@
                           console.log("this.onlineFormItem.tableForm=",this.onlineFormItem.tableForm)
                           console.log("this.onlineFormItem.dataSource=",this.onlineFormItem.dataSource)
                         }
-                        
-                        this.onlineViewForm.disabled = true;
+                        if(this.startUserForm.isStartUserNode) {
+                          this.onlineViewForm.disabled = false;
+                        }
+                        else {
+                          this.onlineViewForm.disabled = true;
+                        }  
                         this.onlineViewForm.isNew = false;
                         this.onlineViewForm.visible = true;
                       }
@@ -924,13 +946,18 @@
                 this.formCode = JSON.stringify(res.result.formData);
                 //console.log("flowRecord this.formCode", this.formCode); 
                 if(res.result.hasOwnProperty('routeName')) {
-                  this.customForm.disabled = true;
+                  if(this.startUserForm.isStartUserNode) {
+                    this.customForm.disabled = false;
+                  }
+                  else {
+                    this.customForm.disabled = true;
+                  }
                   this.customForm.visible = true;
                   this.customForm.formComponent = this.getFormComponent(res.result.routeName).component;
                   this.customForm.model = res.result.formData;
                   this.customForm.customFormData = res.result.formData;
                 }
-                
+                console.log("this.customForm=", this.customForm);
                 console.log("model=", this.customForm.model);
                 if(res.result.formData.hasOwnProperty('config')) {
                   this.formConfOpen = true;
@@ -945,6 +972,7 @@
                 //console.log("flowRecord this.taskFormData", this.taskFormData);
                 this.taskFormOpen = true;
               }  
+            
             } else {
               this.$message.error(res.message);
               return;
@@ -966,7 +994,7 @@
           // 提交流程申请时填写的表单存入了流程变量中后续任务处理时需要展示
           getProcessVariables(taskId).then(res => {
             console.log("getProcessVariables res=",res);
-            // this.variables = res.result.variables;
+             this.variables = res.result.variables;
             if(res.success) {
               if(res.result.hasOwnProperty('variables')) {
                 this.variablesData = res.result.variables;
@@ -1151,6 +1179,23 @@
         if (isExistTaskForm) {//流程里的设置表单
           this.taskForm.values.taskformvalues = taskFormRef.form;
         }
+        if (this.startUserForm.isStartUserNode && this.startUserForm.editFormType === 'oa' ) {
+          this.$refs.refStartBuilder.validate();
+          const variables=JSON.parse(this.formVal);
+          const formData = JSON.parse(this.formViewData);
+          formData.formValue = JSON.parse(this.formVal);
+          variables.variables = formData;
+          console.log("variables=", variables);
+          this.taskForm.variables = variables;
+          this.taskForm.values = variables;
+        }
+        if (this.startUserForm.isStartUserNode && this.startUserForm.editFormType === 'zdyyw' ) {
+          this.$refs.refCustomForm.submitForm();
+        }  
+        if (this.startUserForm.isStartUserNode && this.startUserForm.editFormType === 'online' ) {
+          this.$message.error("目前还不支持online表单的编辑修改功能！！！");
+          //this.$refs.refViewOnlForm.submitForm();
+        }  
         console.log("this.taskForm=",this.taskForm);
         complete(this.taskForm).then(response => {
           this.$message.success(response.message);
