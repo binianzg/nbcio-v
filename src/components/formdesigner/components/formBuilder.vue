@@ -214,4 +214,7 @@ export default {
 .form-builder >>> .el-checkbox.is-bordered+.el-checkbox.is-bordered{
   margin-left:0px;
 }
+.form-builder >>> .el-form-item{
+  margin-bottom: 15px;
+}
 </style>
