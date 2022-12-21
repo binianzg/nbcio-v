@@ -21,6 +21,14 @@
         <div slot="title" class="panel-tab__title"><i class="el-icon-s-claim"></i>任务</div>
         <element-task :id="elementId" :type="elementType" :users="users" :groups="groups" />
       </el-collapse-item>
+      <el-collapse-item name="catchEvent" v-if="elementType.indexOf('IntermediateCatchEvent') !== -1" key="catchEvent">
+        <div slot="title" class="panel-tab__title"><i class="el-icon-s-help"></i>定时捕获事件</div>
+        <catch-event :business-object="elementBusinessObject" :type="elementType" />
+      </el-collapse-item>
+      <el-collapse-item name="boundaryEvent" v-if="elementType.indexOf('boundaryEvent') !== -1" key="boundaryEvent">
+        <div slot="title" class="panel-tab__title"><i class="el-icon-s-help"></i>定时边界事件</div>
+        <boundary-event :business-object="elementBusinessObject" :type="elementType" />
+      </el-collapse-item>
       <!-- <el-collapse-item name="multiInstance" v-if="elementType.indexOf('Task') !== -1" key="multiInstance">
         <div slot="title" class="panel-tab__title"><i class="el-icon-s-help"></i>多实例</div>
         <element-multi-instance :business-object="elementBusinessObject" :type="elementType" />
@@ -55,10 +63,13 @@ import ElementListeners from "./listeners/ElementListeners";
 import ElementProperties from "./properties/ElementProperties";
 import ElementForm from "./form/ElementForm";
 import UserTaskListeners from "./listeners/UserTaskListeners";
+// add by nbacheng 2022-12-16
+import BoundaryEvent from "./boundary-events/BoundaryEvent";
+import CatchEvent from "./catch-events/CatchEvent";
 import Log from "../Log";
 /**
  * 侧边栏
- * @Author MiyueFE
+ * @Author MiyueFE  nbacheng
  * @Home https://github.com/miyuesc
  * @Date 2021年3月31日18:57:51
  */
@@ -74,7 +85,9 @@ export default {
     ElementMultiInstance,
     ElementTask,
     ElementOtherConfig,
-    ElementBaseInfo
+    ElementBaseInfo,
+    BoundaryEvent,
+    CatchEvent
   },
   componentName: "MyPropertiesPanel",
   props: {
