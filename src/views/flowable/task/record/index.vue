@@ -675,12 +675,14 @@
         const canvas = modeler.get('canvas')
         console.log("fillColor modeler=",modeler)
         modeler._definitions.rootElements[0].flowElements.forEach(n => {
-          const completeTask = this.taskList.find(m => m.key === n.id)
+          //const completeTask = this.taskList.find(m => m.key === n.id)
+          const completeTask = this.taskList.filter(m => m.key === n.id)
           const todoTask = this.taskList.find(m => !m.completed)
           const endTask = this.taskList[this.taskList.length - 1]
           if (n.$type === 'bpmn:UserTask') {
             if (completeTask) {
-              canvas.addMarker(n.id, completeTask.completed ? 'highlight' : 'highlight-todo')
+              canvas.addMarker(n.id, completeTask[completeTask.length-1].completed ? 'highlight' : 'highlight-todo')
+              //canvas.addMarker(n.id, completeTask.completed ? 'highlight' : 'highlight-todo')
               n.outgoing.forEach(nn => {
                 const targetTask = this.taskList.find(m => m.key === nn.targetRef.id)
                 if (targetTask) {
