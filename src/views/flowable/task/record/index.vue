@@ -681,8 +681,13 @@
           const endTask = this.taskList[this.taskList.length - 1]
           if (n.$type === 'bpmn:UserTask') {
             if (completeTask) {
-              canvas.addMarker(n.id, completeTask[completeTask.length-1].completed ? 'highlight' : 'highlight-todo')
-              //canvas.addMarker(n.id, completeTask.completed ? 'highlight' : 'highlight-todo')
+              if(completeTask.length >0) {
+                canvas.addMarker(n.id, completeTask[completeTask.length-1].completed ? 'highlight' : 'highlight-todo')
+              }
+              else {
+                canvas.addMarker(n.id, completeTask.completed ? 'highlight' : 'highlight-todo')
+              }
+              
               n.outgoing.forEach(nn => {
                 const targetTask = this.taskList.find(m => m.key === nn.targetRef.id)
                 if (targetTask) {
@@ -700,7 +705,12 @@
           // 排他网关
           else if (n.$type === 'bpmn:ExclusiveGateway') {
             if (completeTask) {
-              canvas.addMarker(n.id, completeTask.completed ? 'highlight' : 'highlight-todo')
+              if(completeTask.length >0) {
+                canvas.addMarker(n.id, completeTask[completeTask.length-1].completed ? 'highlight' : 'highlight-todo')
+              }
+              else {
+                canvas.addMarker(n.id, completeTask.completed ? 'highlight' : 'highlight-todo')
+              }
               n.outgoing.forEach(nn => {
                 const targetTask = this.taskList.find(m => m.key === nn.targetRef.id)
                 if (targetTask) {
@@ -716,7 +726,12 @@
           // 并行网关
           else if (n.$type === 'bpmn:ParallelGateway') {
             if (completeTask) {
-              canvas.addMarker(n.id, completeTask.completed ? 'highlight' : 'highlight-todo')
+              if(completeTask.length >0) {
+                canvas.addMarker(n.id, completeTask[completeTask.length-1].completed ? 'highlight' : 'highlight-todo')
+              }
+              else {
+                canvas.addMarker(n.id, completeTask.completed ? 'highlight' : 'highlight-todo')
+              }
               n.outgoing.forEach(nn => {
                 debugger
                 const targetTask = this.taskList.find(m => m.key === nn.targetRef.id)
