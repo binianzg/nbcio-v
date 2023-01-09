@@ -25,7 +25,7 @@
         <div slot="title" class="panel-tab__title"><i class="el-icon-s-help"></i>定时捕获事件</div>
         <catch-event :business-object="elementBusinessObject" :type="elementType" />
       </el-collapse-item>
-      <el-collapse-item name="boundaryEvent" v-if="elementType.indexOf('boundaryEvent') !== -1" key="boundaryEvent">
+      <el-collapse-item name="boundaryEvent" v-if="elementType.indexOf('BoundaryEvent') !== -1" key="boundaryEvent">
         <div slot="title" class="panel-tab__title"><i class="el-icon-s-help"></i>定时边界事件</div>
         <boundary-event :business-object="elementBusinessObject" :type="elementType" />
       </el-collapse-item>
