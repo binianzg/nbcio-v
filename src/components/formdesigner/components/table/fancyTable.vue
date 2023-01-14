@@ -35,6 +35,9 @@
         <li @click="handlerAppendRow">
           <icon code="zhuijialie" text="追加列" />
         </li>
+        <li @click="handlerClose">
+          <icon code="clode" text="关闭菜单" />
+        </li>
       </ul>
     </div>
   </div>
@@ -83,15 +86,15 @@ export default {
   },
   mounted() {
     // 添加监听取消右键菜单
-    document.addEventListener("click", this.hideRightContextMenu, true);
-    document.addEventListener("contextmenu", this.hideRightContextMenu, true);
+    //document.addEventListener("click", this.hideRightContextMenu, true);
+    //document.addEventListener("contextmenu", this.hideRightContextMenu, true);
     // this.handlerAppendCol();
     // this.handlerAppendCol();
   },
   destroyed() {
     // 移除监听
-    document.removeEventListener("click", this.hideRightContextMenu, true);
-    document.removeEventListener("contextmenu",this.hideRightContextMenu,true);
+    //document.removeEventListener("click", this.hideRightContextMenu, true);
+    //document.removeEventListener("contextmenu",this.hideRightContextMenu,true);
   },
   methods:{
     rightClick(e,rowIndex,colIndex){
@@ -117,7 +120,7 @@ export default {
         this.layoutArray[this.currentRowIndex][this.currentColIndex+col].hide=true;
         this.layoutArray[this.currentRowIndex][this.currentColIndex].col=col+1;
       }
-      
+      this.hideRightContextMenu();
     },
     //向下合并单元格
     handlerDownRow(){
@@ -132,13 +135,7 @@ export default {
         this.layoutArray[this.currentRowIndex+row][this.currentColIndex].hide=true;
         this.layoutArray[this.currentRowIndex][this.currentColIndex].row=row+1;
       }
-      // let nextCol = this.columns[this.currentRowIndex+1][this.currentColIndex].col;
-      // let nextRow = this.columns[this.currentRowIndex+1][this.currentColIndex].row;
-      // if(nextCol<2&nextRow<2){
-
-      // }else{
-      //     alert('请先拆分下方单元格！');
-      // }
+      this.hideRightContextMenu();
 
     },
     handlerResetTable(){
@@ -154,6 +151,7 @@ export default {
       }
       this.layoutArray[this.currentRowIndex][this.currentColIndex].row=1;
       this.layoutArray[this.currentRowIndex][this.currentColIndex].col=1;
+      this.hideRightContextMenu();
     },
     handlerSelectedTd(e,td){
       this.$emit('selectItem',td);
@@ -164,6 +162,7 @@ export default {
       let _trItem = jsonClone(tr);
       _trItem.map(item=>item.id=getSimpleId());
       this.layoutArray.push(_trItem);
+      this.hideRightContextMenu();
     },
     handlerAppendRow(){
       tr.push(getTdItem());
@@ -171,6 +170,10 @@ export default {
         const _td = jsonClone(getTdItem());
         item.push(_td);
       })
+      this.hideRightContextMenu();
+    },
+    handlerClose() {
+      this.hideRightContextMenu();
     }
   },
   computed:{

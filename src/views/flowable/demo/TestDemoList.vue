@@ -126,10 +126,10 @@
           <a-divider type="vertical" ></a-divider>
           <!--<a @click="relationAct(record)">关联流程</a> -->
           <act-apply-btn @success="loadData" :data-id="record.id" :serviceName="serviceName" :variables="record"></act-apply-btn>
-          <act-handle-btn @success="loadData" :data-id="record.id" :type="0" text="通过"></act-handle-btn>
+          <!--<act-handle-btn @success="loadData" :data-id="record.id" :type="0" text="通过"></act-handle-btn>
           <act-handle-btn @success="loadData" :data-id="record.id" :type="1" text="驳回"></act-handle-btn>
           <act-handle-btn @success="loadData" :data-id="record.id" :type="2" text="退回"></act-handle-btn>
-          <act-cancel-btn @success="loadData" :data-id="record.id"></act-cancel-btn>
+          <act-cancel-btn @success="loadData" :data-id="record.id"></act-cancel-btn>-->
           <act-historic-detail-btn :data-id="record.id"></act-historic-detail-btn>
           <a-divider type="vertical" />
           <a-dropdown>

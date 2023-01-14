@@ -34,7 +34,7 @@
     "dayjs": "^1.8.0",
     "diagram-js-minimap": "^2.0.4",
     "dom-align": "1.12.0",
-    "element-ui": "2.15.0",
+    "element-ui": "2.15.6",
     "enquire.js": "^2.1.6",
     "file-saver": "2.0.4",
     "form-gen-parser": "^1.0.3",
