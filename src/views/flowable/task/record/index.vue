@@ -1198,6 +1198,7 @@
         }
         if (this.startUserForm.isStartUserNode && this.startUserForm.editFormType === 'oa' ) {
           this.$refs.refStartBuilder.validate();
+          const approval = this.taskForm.values.approval;
           const variables=JSON.parse(this.formVal);
           const formData = JSON.parse(this.formViewData);
           formData.formValue = JSON.parse(this.formVal);
@@ -1205,6 +1206,9 @@
           console.log("variables=", variables);
           this.taskForm.variables = variables;
           this.taskForm.values = variables;
+          if(approval) {
+            this.taskForm.values.approval = approval;
+          }
         }
         if (this.startUserForm.isStartUserNode && this.startUserForm.editFormType === 'zdyyw' ) {
           this.$refs.refCustomForm.submitForm();

@@ -144,8 +144,8 @@ export default {
     },
     changeDataType(val) {
       // 清空 userTaskForm 所有属性值
-      //Object.keys(this.userTaskForm).forEach(key => this.userTaskForm[key] = null);
-      //this.userTaskForm.dataType = val;
+      Object.keys(this.userTaskForm).forEach(key => this.userTaskForm[key] = null);
+      this.userTaskForm.dataType = val;
       if (val === 'INITIATOR') {
         this.userTaskForm.assignee = "${INITIATOR}";
         this.userTaskForm.text = "流程发起人";
