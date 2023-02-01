@@ -82,12 +82,18 @@ export default {
     getElementLoop(businessObject) {
       if (!businessObject.loopCharacteristics) {
         this.loopCharacteristics = "Null";
-        this.loopInstanceForm = {};
+        this.loopInstanceForm = {
+          collection: "",
+          elementVariable: "",
+          completionCondition: ""};
         return;
       }
       if (businessObject.loopCharacteristics.$type === "bpmn:StandardLoopCharacteristics") {
         this.loopCharacteristics = "StandardLoop";
-        this.loopInstanceForm = {};
+        this.loopInstanceForm = {
+          collection: "",
+          elementVariable: "",
+          completionCondition: ""};
         return;
       }
       if (businessObject.loopCharacteristics.isSequential) {
