@@ -252,7 +252,18 @@ export default {
     },
     // 移除监听器字段
     removeListenerField(field, index) {
-      this.$confirm("确认移除该字段吗？", "提示", {
+	  this.$confirm({
+	    title: "提示",
+	    content: "确认移除该字段吗？",
+	    confirmButtonText: "确定",
+	    cancelButtonText: "取消",
+	    type: "warning",
+	    onOk: () => {
+	      this.fieldsListOfListener.splice(index, 1);
+	      this.listenerForm.fields.splice(index, 1);
+	    }
+	  });
+      /*this.$confirm("确认移除该字段吗？", "提示", {
         confirmButtonText: "确 认",
         cancelButtonText: "取 消"
       })
@@ -260,11 +271,23 @@ export default {
           this.fieldsListOfListener.splice(index, 1);
           this.listenerForm.fields.splice(index, 1);
         })
-        .catch(() => console.info("操作取消"));
+        .catch(() => console.info("操作取消"));*/
     },
     // 移除监听器
     removeListener(listener, index) {
-      this.$confirm("确认移除该监听器吗？", "提示", {
+	  this.$confirm({
+	    title: "提示",
+	    content: "确认移除该监听器吗？",
+	    confirmButtonText: "确定",
+	    cancelButtonText: "取消",
+	    type: "warning",
+	    onOk: () => {
+	      this.bpmnElementListeners.splice(index, 1);
+	      this.elementListenersList.splice(index, 1);
+	      updateElementExtensions(this.bpmnElement, this.otherExtensionList.concat(this.bpmnElementListeners));
+	    }
+	  });	
+      /*this.$confirm("确认移除该监听器吗？", "提示", {
         confirmButtonText: "确 认",
         cancelButtonText: "取 消"
       })
@@ -273,7 +296,7 @@ export default {
           this.elementListenersList.splice(index, 1);
           updateElementExtensions(this.bpmnElement, this.otherExtensionList.concat(this.bpmnElementListeners));
         })
-        .catch(() => console.info("操作取消"));
+        .catch(() => console.info("操作取消"));*/
     },
     // 保存监听器配置
     async saveListenerConfig() {

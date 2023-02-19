@@ -86,7 +86,24 @@ export default {
       });
     },
     removeAttributes(attr, index) {
-      this.$confirm("确认移除该属性吗？", "提示", {
+	  this.$confirm({
+	    title: "提示",
+	    content: "确认移除该属性吗？",
+	    confirmButtonText: "确定",
+	    cancelButtonText: "取消",
+	    type: "warning",
+	    onOk: () => {
+	      this.elementPropertyList.splice(index, 1);
+	      this.bpmnElementPropertyList.splice(index, 1);
+	      // 新建一个属性字段的保存列表
+	      const propertiesObject = window.bpmnInstances.moddle.create(`${this.prefix}:Properties`, {
+	        values: this.bpmnElementPropertyList
+	      });
+	      this.updateElementExtensions(propertiesObject);
+	      this.resetAttributesList();
+	    }
+	  });
+      /*this.$confirm("确认移除该属性吗？", "提示", {
         confirmButtonText: "确 认",
         cancelButtonText: "取 消"
       })
@@ -100,7 +117,7 @@ export default {
           this.updateElementExtensions(propertiesObject);
           this.resetAttributesList();
         })
-        .catch(() => console.info("操作取消"));
+        .catch(() => console.info("操作取消"));*/
     },
     saveAttribute() {
       const { name, value } = this.propertyForm;

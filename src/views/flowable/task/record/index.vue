@@ -203,6 +203,7 @@
                     </el-form>  
                     <el-tag type="warning" v-if="commentitem.type === '7'"> {{commentitem.comment}}</el-tag>  <!--撤回信息-->
                     <el-tag type="warning" v-if="commentitem.type === '6'"> {{commentitem.comment}}</el-tag>  <!--终止信息-->
+                    <el-tag type="warning" v-if="commentitem.type === '8'"> {{commentitem.comment}}</el-tag>  <!--跳过信息-->
                  </p>
               </el-card>
             </el-timeline-item>
