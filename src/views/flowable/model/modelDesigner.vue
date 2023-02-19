@@ -122,7 +122,7 @@
         :is-view="xmlView" @save="save" />
     </a-card> -->
     <!--用bpmn-process-designer 流程图 -->
-    <el-dialog :z-index="1000" :title="designerData.title" :visible.sync="designerOpen" append-to-body fullscreen>
+    <el-dialog :z-index="800" :title="designerData.title" :visible.sync="designerOpen" append-to-body fullscreen>
       <process-designer
         :key="designerOpen"
         style="border:1px solid rgba(0, 0, 0, 0.1);"

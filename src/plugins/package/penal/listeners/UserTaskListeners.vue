@@ -3,7 +3,7 @@
     <el-table :data="elementListenersList" size="mini" border>
       <el-table-column label="序号" width="50px" type="index" />
       <el-table-column label="事件类型" min-width="80px" show-overflow-tooltip :formatter="row => listenerEventTypeObject[row.event]" />
-      <el-table-column label="事件id" min-width="80px" prop="id" show-overflow-tooltip />
+      <!--<el-table-column label="事件id" min-width="80px" prop="id" show-overflow-tooltip /> -->
       <el-table-column label="监听器类型" min-width="80px" show-overflow-tooltip :formatter="row => listenerTypeObject[row.listenerType]" />
       <el-table-column label="操作" width="90px">
         <template slot-scope="{ row, $index }">
@@ -25,9 +25,9 @@
             <el-option v-for="i in Object.keys(listenerEventTypeObject)" :key="i" :label="listenerEventTypeObject[i]" :value="i" />
           </el-select>
         </el-form-item>
-        <el-form-item label="监听器ID" prop="id" :rules="{ required: true, trigger: ['blur', 'change'] }">
+        <!--<el-form-item label="监听器ID" prop="id" :rules="{ required: true, trigger: ['blur', 'change'] }">
           <el-input v-model="listenerForm.id" clearable />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="监听器类型" prop="listenerType" :rules="{ required: true, trigger: ['blur', 'change'] }">
           <el-select v-model="listenerForm.listenerType">
             <el-option v-for="i in Object.keys(listenerTypeObject)" :key="i" :label="listenerTypeObject[i]" :value="i" />
@@ -252,7 +252,19 @@ export default {
     },
     // 移除监听器
     removeListener(listener, index) {
-      this.$confirm("确认移除该监听器吗？", "提示", {
+      this.$confirm({
+        title: "提示",
+        content: "确认移除该监听器吗？",
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+        onOk: () => {
+          this.bpmnElementListeners.splice(index, 1);
+          this.elementListenersList.splice(index, 1);
+          updateElementExtensions(this.bpmnElement, this.otherExtensionList.concat(this.bpmnElementListeners));
+        }
+      });
+      /*this.$confirm("确认移除该监听器吗？", "提示", {
         confirmButtonText: "确 认",
         cancelButtonText: "取 消"
       })
@@ -261,7 +273,7 @@ export default {
           this.elementListenersList.splice(index, 1);
           updateElementExtensions(this.bpmnElement, this.otherExtensionList.concat(this.bpmnElementListeners));
         })
-        .catch(() => console.info("操作取消"));
+        .catch(() => console.info("操作取消"));*/
     },
     // 保存监听器
     async saveListenerConfig() {
@@ -307,7 +319,18 @@ export default {
     },
     // 移除监听器字段
     removeListenerField(field, index) {
-      this.$confirm("确认移除该字段吗？", "提示", {
+      this.$confirm({
+        title: "提示",
+        content: "确认移除该字段吗？",
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+        onOk: () => {
+          this.fieldsListOfListener.splice(index, 1);
+          this.listenerForm.fields.splice(index, 1);
+        }
+      });
+      /*this.$confirm("确认移除该字段吗？", "提示", {
         confirmButtonText: "确 认",
         cancelButtonText: "取 消"
       })
@@ -315,7 +338,7 @@ export default {
           this.fieldsListOfListener.splice(index, 1);
           this.listenerForm.fields.splice(index, 1);
         })
-        .catch(() => console.info("操作取消"));
+        .catch(() => console.info("操作取消"));*/
     }
   }
 };

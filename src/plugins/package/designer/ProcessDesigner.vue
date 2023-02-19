@@ -495,11 +495,21 @@ export default {
         this.$message.warning("请按住 Ctrl 键选择多个元素对齐");
         return;
       }
-      this.$confirm("自动对齐可能造成图形变形，是否继续？", "警告", {
+	  this.$confirm({
+	    title: "警告",
+	    content: "自动对齐可能造成图形变形，是否继续？",
+	    confirmButtonText: "确定",
+	    cancelButtonText: "取消",
+	    type: "warning",
+	    onOk: () => {
+	      Align.trigger(SelectedElements, align);
+	    }
+	  });
+      /*this.$confirm("自动对齐可能造成图形变形，是否继续？", "警告", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
-      }).then(() => Align.trigger(SelectedElements, align));
+      }).then(() => Align.trigger(SelectedElements, align));*/
     },
     /*-----------------------------    方法结束     ---------------------------------*/
     previewProcessXML() {
