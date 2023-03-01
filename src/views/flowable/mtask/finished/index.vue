@@ -1,5 +1,4 @@
 <template>
-  
   <a-card :bordered="false">
     <!-- 查询区域 -->
     <div class="table-page-search-wrapper">
@@ -87,37 +86,37 @@
         </template>
   
         <span slot="action" slot-scope="text, record">
-          <a @click="handleProcess(record)">处理</a>
+          <a-dropdown>
+            <a class="ant-dropdown-link">更多 <a-icon type="down" /></a>
+            <a-menu slot="overlay">
+              <a-menu-item>
+                <a @click="handleFlowRecord(record)">流转记录</a>
+              </a-menu-item>
+              <a-menu-item>
+                <a @click="handleRevoke(record)"> 撤回</a>
+              </a-menu-item>
+            </a-menu>
+          </a-dropdown>
         </span>
   
       </a-table>
   
     </div>
   </a-card>
-  
 </template>
 
 <script>
-import '@/assets/less/TableExpand.less'
-import { mixinDevice } from '@/utils/mixin'
-import { JeecgListMixin } from '@/mixins/JeecgListMixin'  
-import {
-  todoList,
-  todoListNew,
-  complete,
-  returnList,
-  returnTask,
-  rejectTask,
-  getDeployment,
-  delDeployment,
-  exportDeployment
-} from "@/views/flowable/api/todo";
-import moment from 'moment';
-
+  import '@/assets/less/TableExpand.less'
+  import { mixinDevice } from '@/utils/mixin'
+  import { JeecgListMixin } from '@/mixins/JeecgListMixin'  
+  import { finishedList, finishedListNew, getDeployment, delDeployment, addDeployment, 
+           updateDeployment, exportDeployment, revokeProcess } from "@/views/flowable/api/finished";
+  import moment from 'moment';
 export default {
-  name: "todoList",
+  name: "finishedIndex",
   mixins:[JeecgListMixin, mixinDevice],
-  components: {},
+  components: {
+  },
   data() {
     return {
       // 表头
@@ -175,6 +174,16 @@ export default {
           dataIndex: 'createTime'
         },
         {
+          title:'审批时间',
+          align:"center",
+          dataIndex: 'finishTime'
+        },
+        {
+          title:'耗时',
+          align:"center",
+          dataIndex: 'duration'
+        },
+        {
           title: '操作',
           dataIndex: 'action',
           align:"center",
@@ -183,24 +192,6 @@ export default {
           scopedSlots: { customRender: 'action' }
         }
       ],
-      // 遮罩层
-      loading: true,
-      // 选中数组
-      ids: [],
-      // 非单个禁用
-      single: true,
-      // 非多个禁用
-      multiple: true,
-      // 显示搜索条件
-      showSearch: true,
-      // 总条数
-      total: 0,
-      // 流程待办任务表格数据
-      todoList: [],
-      // 弹出层标题
-      title: "",
-      // 是否显示弹出层
-      open: false,
       // 查询参数
       queryParams: {
         pageNo: 1,
@@ -218,9 +209,9 @@ export default {
         createTime: null
       },
       url: {
-        list: "/flowable/task/todoListNew",
+        list: "/flowable/task/finishedListNew",
         deleteBatch: "/flowable/task/deleteBatch",
-        exportXlsUrl: "/flowable/task/todoExportXls",
+        exportXlsUrl: "/flowable/task/exportXls",
       },
       dataSource: [], //表格数据源
       /* 表格分页参数 */
@@ -235,10 +226,44 @@ export default {
         showSizeChanger: true,
         total: 0
       },
+      // 遮罩层
+      loading: true,
+      // 选中数组
+      ids: [],
+      // 非单个禁用
+      single: true,
+      // 非多个禁用
+      multiple: true,
+      // 显示搜索条件
+      showSearch: true,
+      // 总条数
+      total: 0,
+      // 已办任务列表数据
+      finishedList: [],
+      // 弹出层标题
+      title: "",
+      // 是否显示弹出层
+      open: false,
+      src: "",
+      // 查询参数
+      queryParams: {
+        pageNo: 1,
+        pageSize: 10,
+        name: null,
+        category: null,
+        key: null,
+        tenantId: null,
+        deployTime: null,
+        derivedFrom: null,
+        derivedFromRoot: null,
+        parentDeploymentId: null,
+        engineVersion: null
+      },
       // 表单参数
       form: {},
       // 表单校验
-      rules: {}
+      rules: {
+      }
     };
   },
   created() {
@@ -249,8 +274,7 @@ export default {
     /** 查询流程定义列表 */
     getList() {
       this.loading = true;
-      console.log("this.queryParams=",this.queryParams);
-      todoListNew(this.queryParams).then(response => {
+      finishedListNew(this.queryParams).then(response => {
         if(response.success) {
            this.dataSource = response.result.records;
            this.total = response.result.total;
@@ -262,19 +286,6 @@ export default {
            this.loading = false;
         }
       });
-    },
-    // 跳转到处理页面
-    handleProcess(row){
-      this.$router.push({ path: '/flowable/task/record/index',
-        query: {
-          procInsId: row.procInsId,
-          deployId: row.deployId,
-          taskId: row.taskId,
-          businessKey: row.businessKey,
-          nodeType: row.nodeType,
-          category: row.category,
-          finished: true
-        }})
     },
     // 取消按钮
     cancel() {
@@ -297,56 +308,21 @@ export default {
       };
       this.resetForm("form");
     },
-    /** 搜索按钮操作 */
-    handleQuery() {
-      this.queryParams.pageNo = 1;
-      if(this.queryParams.createTime != null) {
-        this.queryParams.createTime = moment(this.queryParams.createTime).format('YYYY-MM-DD 00:00:00');
-        console.log("createtime=",this.queryParams.createTime)
+    setIcon(val){
+      if (val){
+        return "el-icon-check";
+      }else {
+        return "el-icon-time";
       }
-      this.getList();
+
     },
-    /** 重置按钮操作 */
-    resetQuery() {
-      this.resetForm("queryForm");
-      this.handleQuery();
-    },
-    // 多选框选中数据
-    handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.id)
-      this.single = selection.length !== 1
-      this.multiple = !selection.length
-    },
-    /** 新增按钮操作 */
-    handleAdd() {
-      this.reset();
-      this.open = true;
-      this.title = "添加流程定义";
-    },
-    /** 修改按钮操作 */
-    handleUpdate(row) {
-      this.reset();
-      const id = row.id || this.ids
-      getDeployment(id).then(response => {
-        this.form = response.result;
-        this.open = true;
-        this.title = "修改流程定义";
-      });
-    },
-    /** 删除按钮操作 */
-    handleDelete(row) {
-      const ids = row.id || this.ids;
-      const dataid = row.businessKey; 
-      this.$confirm('是否确认删除流程定义编号为"' + ids + '"的数据项?', "警告", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      }).then(function () {
-        return delDeployment(ids,dataid);
-      }).then(() => {
-        this.getList();
-        this.$message.success("删除成功");
-      })
+    setColor(val){
+      if (val){
+        return "#2bc418";
+      }else {
+        return "#b3bdbb";
+      }
+
     },
     initDictConfig(){
     },
@@ -360,7 +336,90 @@ export default {
       fieldList.push({type:'string',value: 'businessKey',text:'业务主键'})
       fieldList.push({type:'string',value:'startUserName',text:'流程发起人'})
       fieldList.push({type:'datetime',value:'createTime',text:'接收时间'})
+      fieldList.push({type:'datetime',value:'finishTime',text:'审批时间'})
+      fieldList.push({type:'string',value:'duration',text:'耗时'})
       this.superFieldList = fieldList
+    },
+    /** 搜索按钮操作 */
+    handleQuery() {
+      this.queryParams.pageNum = 1;
+      this.getList();
+    },
+    /** 重置按钮操作 */
+    resetQuery() {
+      this.resetForm("queryForm");
+      this.handleQuery();
+    },
+    // 多选框选中数据
+    handleSelectionChange(selection) {
+      this.ids = selection.map(item => item.id)
+      this.single = selection.length!==1
+      this.multiple = !selection.length
+    },
+    /** 新增按钮操作 */
+    handleAdd() {
+      this.reset();
+      this.open = true;
+      this.title = "添加流程定义";
+    },
+    /** 流程流转记录 */
+    handleFlowRecord(row){
+      this.$router.push({ path: '/flowable/mtask/record/index',
+        query: {
+          procInsId: row.procInsId,
+          deployId: row.deployId,
+          taskId: row.taskId,
+          businessKey: row.businessKey,
+          category: row.category,
+          finished: false
+      }})
+    },
+    /** 撤回任务 */
+    handleRevoke(row){
+      const params = {
+        instanceId: row.procInsId,
+        dataId: row.businessKey
+      }
+      revokeProcess(params).then( res => {
+        this.$message.success(res.message);
+        this.getList();
+      });
+    },
+  
+    /** 提交按钮 */
+    submitForm() {
+      this.$refs["form"].validate(valid => {
+        if (valid) {
+          if (this.form.id != null) {
+            updateDeployment(this.form).then(response => {
+              this.$message.success("修改成功");
+              this.open = false;
+              this.getList();
+            });
+          } else {
+            addDeployment(this.form).then(response => {
+              this.$message.success("新增成功");
+              this.open = false;
+              this.getList();
+            });
+          }
+        }
+      });
+    },
+    /** 删除按钮操作 */
+    handleDelete(row) {
+      const ids = row.id || this.ids;
+      const dataid = row.businessKey; 
+      this.$confirm('是否确认删除流程定义编号为"' + ids + '"的数据项?', "警告", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(function() {
+        return delDeployment(ids,dataid);
+      }).then(() => {
+        this.getList();
+        this.$message.success("删除成功");
+      })
     },
     /** 导出按钮操作 */
     handleExport() {
@@ -369,16 +428,13 @@ export default {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
-      }).then(function () {
+      }).then(function() {
         return exportDeployment(queryParams);
       }).then(response => {
-        this.download(response.msg);
+        this.download(response.message);
       })
     }
   }
 };
 </script>
-<style scoped>
-  @import '~@assets/less/common.less';
-</style>
 

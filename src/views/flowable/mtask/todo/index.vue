@@ -220,7 +220,7 @@ export default {
       url: {
         list: "/flowable/task/todoListNew",
         deleteBatch: "/flowable/task/deleteBatch",
-        exportXlsUrl: "/flowable/task/todoExportXls",
+        exportXlsUrl: "/flowable/task/exportXls",
       },
       dataSource: [], //表格数据源
       /* 表格分页参数 */
@@ -265,7 +265,7 @@ export default {
     },
     // 跳转到处理页面
     handleProcess(row){
-      this.$router.push({ path: '/flowable/task/record/index',
+      this.$router.push({ path: '/flowable/mtask/record/index',
         query: {
           procInsId: row.procInsId,
           deployId: row.deployId,

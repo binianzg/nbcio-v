@@ -190,7 +190,7 @@
       if(this.customFormData != null) {
         console.log("this.customFormData=",this.customFormData);
         this.model = this.customFormData;
-        this.editAfter();  //现在字表内容需要
+        this.editAfter();  //现在子表内容需要
       }
     },
     methods: {

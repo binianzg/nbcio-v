@@ -9,7 +9,8 @@ import { generateIndexRouter, isOAuth2AppEnv } from '@/utils/util'
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
-const whiteList = ['/user/login', '/user/register', '/user/register-result','/user/alteration'] // no redirect whitelist
+//加了一个手机端用的/flowable/mtask/record/index跳转
+const whiteList = ['/user/login', '/user/register', '/user/register-result','/user/alteration','/flowable/mtask/record/index'] // no redirect whitelist
 whiteList.push(OAUTH2_LOGIN_PAGE_PATH)
 
 router.beforeEach((to, from, next) => {

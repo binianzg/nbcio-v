@@ -7,7 +7,7 @@
       </div>
 
       <!--初始化流程加载自定义表单信息-->
-      <el-col :span="16" :offset="4" v-if="customForm.visible">
+      <el-col :span="24" :offset="2" v-if="customForm.visible">
         <div>
             <component ref="refCustomForm" :disabled="customForm.disabled" v-bind:is="customForm.formComponent" :model="customForm.model"
                         :customFormData="customForm.customFormData" :isNew = "customForm.isNew"></component> 
@@ -23,7 +23,7 @@
       </el-col>
       
       <!--初始化流程加载online提交表单信息 目前先不用这个了-->
-      <el-col :span="16" :offset="4" v-if="onlineForm.visible">
+      <el-col :span="24" :offset="2" v-if="onlineForm.visible">
             <a-form ref="refOnlForm" >
                 <a-row v-for="(itemCommon, indexInner) in onlineForm.onlineFormData" :key="indexInner"  :label="itemCommon.onlTitleName" :model="itemCommon.cgformHeadId" >
                   <a-col :span="parseInt(itemField.fieldDataTopInfo)" v-for="(itemField, index2) in itemCommon.fieldAll" :key="index2">
@@ -41,7 +41,7 @@
       </el-col>
       
       <!--流程加载online显示表单信息-->
-      <el-col :span="16" :offset="4" v-if="onlineViewForm.visible">
+      <el-col :span="24" :offset="2" v-if="onlineViewForm.visible">
             <a-form ref="refViewOnlForm">
                 <a-row v-for="(itemCommon, indexInner) in onlineViewForm.onlineFormData" v-if="indexInner==0" :key="indexInner"  :label="itemCommon.onlTitleName" :model="itemCommon.cgformHeadId" >
                   <a-col :span="parseInt(itemField.fieldDataTopInfo)" v-for="(itemField, index2) in itemCommon.fieldAll" :key="index2">
@@ -91,7 +91,7 @@
       </el-col>
 
       <!--流程处理表单设计器模块,从flowable表里获取表单数据-->
-      <el-col :span="16" :offset="4" v-if="variableOpen">
+      <el-col :span="24" :offset="2" v-if="variableOpen">
         <!--<div > <!--处理流程过程中显示formgenerator表单信息
           <parser :key="new Date().getTime()" :form-conf="variablesData" />
         </div>-->
@@ -151,7 +151,7 @@
       <div slot="header" class="clearfix">
         <span class="el-icon-notebook-1">审批记录</span>
       </div>
-      <el-col :span="16" :offset="4">
+      <el-col :span="24" :offset="0">
         <div class="block">
           <el-timeline>
             <el-timeline-item v-for="(item,index ) in flowRecordList" :key="index" :icon="setIcon(item.finishTime)"
@@ -218,12 +218,13 @@
       <!--<flow :xmlData="xmlData" :taskData="taskList"></flow>-->
       <!-- 流程图 -->
       <bpmn-modeler v-if="xmlShow" ref="refNode" :xml="xmlData" :taskData="taskList" :users="users" :groups="groups"
-        :categorys="categorys" :is-view="xmlView" />
+      :categorys="categorys" :is-view="xmlView" />
+      
     </el-card>
 
     <!--审批正常流程-->
-    <a-modal :z-index="100" :title="completeTitle" @cancel="completeOpen = false" :visible.sync="completeOpen" :width="checkSendUser? '60%':'40%'" append-to-body>
-      <el-form ref="taskForm" :model="taskForm" label-width="160px">
+    <a-modal :z-index="100" :title="completeTitle" @cancel="completeOpen = false" :visible.sync="completeOpen" :width="checkSendUser? '95%':'95%'" append-to-body>
+      <el-form ref="taskForm" :model="taskForm">
         <el-form-item v-if="checkSendUser" prop="targetKey">
           <el-row :gutter="20">
             <el-col :span="12" :xs="24">
@@ -260,7 +261,7 @@
     </a-modal>
 
     <!--退回流程-->
-    <el-dialog :z-index="100" :title="returnTitle" :visible.sync="returnOpen" width="40%" append-to-body>
+    <el-dialog :z-index="100" :title="returnTitle" :visible.sync="returnOpen" width="95%" append-to-body>
       <el-form ref="taskForm" :model="taskForm" label-width="80px">
         <el-form-item label="退回节点" prop="targetKey">
           <el-radio-group v-model="taskForm.targetKey">
@@ -269,7 +270,7 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="退回意见" prop="comment" :rules="[{ required: true, message: '请输入意见', trigger: 'blur' }]">
-          <el-input style="width: 50%" type="textarea" v-model="taskForm.comment" placeholder="请输入意见" />
+          <el-input style="width: 85%" type="textarea" v-model="taskForm.comment" placeholder="请输入意见" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -279,10 +280,10 @@
     </el-dialog>
 
     <!--驳回流程-->
-    <el-dialog :z-index="100" :title="rejectTitle" :visible.sync="rejectOpen" width="40%" append-to-body>
+    <el-dialog :z-index="100" :title="rejectTitle" :visible.sync="rejectOpen" width="95%" append-to-body>
       <el-form ref="taskForm" :model="taskForm" label-width="80px">
         <el-form-item label="驳回意见" prop="comment" :rules="[{ required: true, message: '请输入意见', trigger: 'blur' }]">
-          <el-input style="width: 50%" type="textarea" v-model="taskForm.comment" placeholder="请输入意见" />
+          <el-input style="width: 85%" type="textarea" v-model="taskForm.comment" placeholder="请输入意见" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -327,9 +328,10 @@
     flowableMixin
   } from '@/views/flowable/mixins/flowableMixin'
 
+  import {mLoginName} from "@/api/login";
   import { getCustomForm, getOnlineForm, saveOnlineFormData, getOnlineFormData, getOnlineFormItem  } from "@/api/form";
   import Vue from 'vue'
-  import { ACCESS_TOKEN } from "@/store/mutation-types"
+  import { ACCESS_TOKEN, USER_NAME, USER_INFO } from "@/store/mutation-types"
   //for formdesigner
   import formBuilder from '@/components/formdesigner/components/formBuilder'
   import formViewer from '@/components/formdesigner/components/formViewer'
@@ -358,6 +360,9 @@
   import hanDongSelTree from "@comp/formdesigner/hanDongYuZhou/hanDongSelTree";
   import hanDongCatTree from "@comp/formdesigner/hanDongYuZhou/hanDongCatTree";
   import hanDongLinkDown from "@comp/formdesigner/hanDongYuZhou/hanDongLinkDown";
+  //add by nbacheng 2023-02-23 微信与uni插件
+  import wx from 'weixin-js-sdk'
+  import * as uni  from "@dcloudio/uni-webview-js"
   
   export default {
     name: "Record",
@@ -443,6 +448,9 @@
             type: '',
             fileurl: ''
           }, 
+          username: "",
+          types: 0,      //业务类型
+          platform: "",  //移动端平台
           procInsId: "", // 流程实例编号
           instanceId: "", // 流程实例编号
           deployId: "", // 流程定义编号
@@ -540,6 +548,23 @@
       };
     }, 
     created() {
+      this.$message.config({top: `200px`,});
+      this.types = this.$route.query && this.$route.query.types;
+      this.platform = this.$route.query && this.$route.query.platform;
+      this.username = this.$route.query && this.$route.query.username;
+      console.log("created username",this.username)
+      /*mLoginName({
+      				username: this.username
+      			}).then((res) => {
+      				console.log(res.result, 2323);
+      				Vue.ls.set(ACCESS_TOKEN, res.result.token, 7 * 24 * 60 * 60 * 1000);
+      				Vue.ls.set(
+      					USER_NAME,
+      					res.result.userInfo.username,
+      					7 * 24 * 60 * 60 * 1000
+      				);
+      				Vue.ls.set(USER_INFO, res.result.userInfo, 7 * 24 * 60 * 60 * 1000);
+      */      
       this.taskForm.deployId = this.$route.query && this.$route.query.deployId;
       this.taskForm.taskId = this.$route.query && this.$route.query.taskId;
       this.taskForm.procInsId = this.$route.query && this.$route.query.procInsId;
@@ -574,7 +599,7 @@
       this.getFlowRecordList(this.taskForm.procInsId, this.taskForm.deployId, this.taskForm.businessKey, this.taskForm.taskId, this.taskForm.category);
       this.finished = this.$route.query && this.$route.query.finished
       console.log("this.finished",this.finished)
-
+      //});
     },
     mounted() {
       //表单数据回填，模拟异步请求场景
@@ -998,7 +1023,10 @@
 
           }).catch(res => {
             this.$message.error("出现异常");
-            this.goBack();
+            //考虑到手机端
+            setTimeout(() => {
+              this.goBack();
+            },1000);
           })
         } 
 
@@ -1222,7 +1250,10 @@
         console.log("this.taskForm=",this.taskForm);
         complete(this.taskForm).then(response => {
           this.$message.success(response.message);
-          this.goBack();
+          //考虑到手机端
+          setTimeout(() => {
+            this.goBack();
+          },500);
         });
       },
       /** 委派任务 */
@@ -1237,7 +1268,60 @@
       goBack() {
         // 关闭当前标签页并返回上个页面
         //this.$store.dispatch("tagsView/delView", this.$route);
-        this.$router.go(-1)
+        	// 关闭当前标签页并返回上个页面
+          console.log("goBack types=",this.types);
+          console.log("goBack platform=",this.platform);
+            if(this.platform === "weixin") {
+              setTimeout(() => {
+        					if (this.types == 999) {
+        						console.log(23232);
+        						/*wx.miniProgram.navigateTo({
+        							url: "/pages/toDoProcess/toDoProcess"
+        						});*/
+                    wx.miniProgram.navigateBack();
+        					} else if (this.types == 888) {
+        						/*wx.miniProgram.navigateTo({ 
+        							url: "/pages/toDoProcess/newProcess"
+        						});*/
+                    wx.miniProgram.navigateBack();
+        					} else {
+        						wx.miniProgram.navigateBack();
+                    //window.close();
+        					}
+        				}, 500);
+            }
+            else if (this.platform === "app") {
+              setTimeout(() => {
+              		if (this.types == 999) {
+              			console.log(23232);
+                  //  uni.redirectTo({  
+              		//		url: "/pages/toDoProcess/toDoProcess"
+              		//	});
+                    uni.navigateBack({
+                                      delta: 1
+                                    });
+              		} else if (this.types == 888) {
+                    //uni.redirectTo({  
+              			//	url: "/pages/toDoProcess/newProcess"
+              			//});
+                    uni.navigateBack({
+                                      delta: 1
+                                    });
+              		} else {
+                    uni.navigateBack({
+                                      delta: 1
+                                    });
+              			//window.close();
+              		}
+              	}, 500);
+            }
+            else if (this.platform === "h5") {
+              this.$router.go(-1);
+            }
+            else {
+              this.$router.go(-1);
+            }
+            //this.$router.go(-1)
       },
       /** 接收子组件传的值 */
       getData(data) {
@@ -1299,7 +1383,10 @@
             // 启动流程并将表单数据加入流程变量
             definitionStartByDefId(this.taskForm.procDefId, JSON.stringify(variables)).then(res => {
               this.$message.success(res.message);
-              this.goBack();
+              //考虑到手机端
+              setTimeout(() => {
+                this.goBack();
+              },1000);
             })
           }
         }
@@ -1325,7 +1412,10 @@
               console.log("definitionStartByOnlineDataId res=",res);
               this.$message.success(res.message);
               this.onlineForm.isNew = false;
-              this.goBack();
+              //考虑到手机端
+              setTimeout(() => {
+                this.goBack();
+              },1000);
             })
           }
         })
@@ -1385,7 +1475,10 @@
           if (valid) {
             rejectTask(this.taskForm).then(res => {
               this.$message.success(res.message);
-              this.goBack();
+              //考虑到手机端
+              setTimeout(() => {
+                this.goBack();
+              },500);
             });
           }
         });
@@ -1408,7 +1501,10 @@
             if(this.taskForm.targetKey != '') {
               returnTask(this.taskForm).then(res => {
               this.$message.success(res.message);
-              this.goBack()
+              //考虑到手机端
+              setTimeout(() => {
+                this.goBack();
+              },500);
               });
             }
             else {
@@ -1430,7 +1526,10 @@
           if (valid) {
             delegate(this.taskForm).then(response => {
               this.$message.success(response.message);
-              this.goBack();
+              //考虑到手机端
+              setTimeout(() => {
+                this.goBack();
+              },500);
             });
           }
         });
@@ -1445,11 +1544,20 @@
     }
   };
 </script>
+
 <!-- <style lang="scss" scoped> -->
 <style lang="less">
+  .ant-input[disabled] {
+  	color: black !important;
+  }
+  
+  .input-table .tbody .td input:disabled {
+  	color: black !important;
+  }
+  
   .test-form {
     margin: 15px auto;
-    width: 800px;
+    width: 100%;
     padding: 15px;
   }
 
@@ -1462,10 +1570,18 @@
   .clearfix:after {
     clear: both
   }
-
+  
+  .el-input-number--medium {
+  		width: 100% !important;
+  		line-height: 34px;
+  	}
+  
   .box-card {
-    width: 100%;
-    margin-bottom: 20px;
+  	width: 100% !important;
+  	margin-bottom: 20px;
+    margin-left: 2px;
+  	overflow-y: hidden !important;
+    overflow-x:auto;
   }
 
   .el-tag+.el-tag {
@@ -1536,5 +1652,8 @@
   .el-loading-mask {//设置流程图上面的一层屏蔽层，否则影响其它窗口操作
     background-color: initial;
     z-index: 200;
+    position:relative;  //支持相对
+    overflow:auto;   //支持滚动
   }
+  
 </style>

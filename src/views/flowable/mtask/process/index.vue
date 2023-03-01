@@ -67,9 +67,6 @@
             <a-tag color="blue" v-if="record.finishTime == null" >进行中</a-tag>
             <a-tag color="green" v-if="record.finishTime != null">已完成</a-tag>
         </template>
-        <template slot="startUserName" slot-scope="text, record, index">
-           <label>{{record.startUserName}} <el-tag type="info" size="mini">{{record.startDeptName}}</el-tag></label>
-        </template>
         <template slot="assigneeName" slot-scope="text, record, index">
            <label v-if="record.assigneeName">{{record.assigneeName}} <el-tag type="info" size="mini">{{record.deptName}}</el-tag></label>
            <label v-if="record.candidate">{{record.candidate}}</label>
@@ -100,12 +97,6 @@
             <a-menu slot="overlay">
               <a-menu-item>
                 <a @click="handleFlowRecord(record)">详情</a>
-              </a-menu-item>
-              <a-menu-item>
-                <a @click="SelectUser(record,'1')">委派</a>
-              </a-menu-item>
-              <a-menu-item>
-                <a @click="SelectUser(record,'2')">转办</a>
               </a-menu-item>
               <a-menu-item>
                 <a @click="handleStop(record)">取消申请</a>
@@ -162,52 +153,6 @@
        <el-pagination v-show="processTotal>0" :total="processTotal" :current-page.sync="queryProcessParams.pageNum"
          :page-size.sync="queryProcessParams.pageSize" @size-change="listDefinition" @current-change="listDefinition" />
        </a-modal>
-       <!-- 委派 转办 选择人员 -->
-       <a-modal
-         title="选择委派或转办人员" width="900px" :maskClosable="false"
-         :confirmLoading="confirmLoading"
-         :visible="delegateassign"
-         :footer="null"
-         @cancel="closeNode"
-       >   
-         <a-form :form="selUserForm" v-if="delegateassign">
-           <a-form-item :label-col="labelCol" :wrapper-col="wrapperCol"  label="请选择委派或转办人员" v-show="true">
-             <a-checkbox-group @change="spryType" v-model="spryTypes" >
-                 <!-- 1用户 5 部门负责人 4发起人的部门负责人-->
-             
-               <a-checkbox value="1"> 直接选择人员 </a-checkbox>
-               <a-checkbox value="5"> 部门负责人 </a-checkbox>
-               <a-checkbox value="4">
-                 发起人的部门负责人
-                 <a-tooltip placement="topLeft" title="自动获取发起人所在部门的负责人，即其上级领导。（如果其本身就是部门负责人，则指向发起人自己。）">
-                   <a-icon type="exclamation-circle" />
-                 </a-tooltip>
-               </a-checkbox>
-         
-             </a-checkbox-group>
-           </a-form-item>
-           <!--            1用户  4发起人的部门负责人-->
-          
-           <a-form-item :label-col="labelCol" :wrapper-col="wrapperCol" label="选择人员" v-if="spryTypes.indexOf('1')>-1" >
-             <!--  通过部门选择用户控件 -->
-             <j-select-user-by-dep v-model="spry.userIds" :multi="false"></j-select-user-by-dep>
-           </a-form-item>
-           
-           <a-form-item :label-col="labelCol" :wrapper-col="wrapperCol" label="选择部门负责人" v-if="spryTypes.indexOf('5')>-1" >
-             <j-select-depart v-model="spry.departmentManageIds" :multi="false"></j-select-depart>
-           </a-form-item>
-           <!--btn-->
-           <a-form-item :wrapper-col="{ span: 12, offset: 5 }">
-             <a-button @click="sprySubmit" type="primary" html-type="submit" :disabled="userNode.type==0||userNode.type==2||confirmLoading">
-               提交
-             </a-button>
-         
-             <a-button @click="closeNode" style="margin-left: 10px">
-               关闭
-             </a-button>
-           </a-form-item>
-         </a-form>
-       </a-modal>  
     </div>
   </a-card>
 </template>
@@ -225,15 +170,8 @@
     exportDeployment,
     flowRecord
   } from "@/views/flowable/api/finished";
-  import { allProcessList,stopProcess } from "@/views/flowable/api/process";
-  import { delegateTask,assignTask } from "@/views/flowable/api/todo";  
+  import { myProcessNewList,stopProcess } from "@/views/flowable/api/process";
   import {listDefinition} from "@/views/flowable/api/definition";
-  import JTreeSelect from '@/components/jeecg/JTreeSelect'
-  import JTreeDict from '@/components/jeecg/JTreeDict'
-  import {initDictOptions, filterDictText} from '@/components/dict/JDictSelectUtil'
-  import JSelectUserByDep from '@/components/jeecgbiz/JSelectUserByDep'
-  import JSelectRole from '@/components/jeecgbiz/JSelectRole'
-  import JSelectDepart from '@/components/jeecgbiz/JSelectDepart'
   import moment from 'moment';
 
   export default {
@@ -299,12 +237,6 @@
             dataIndex: 'duration'
           },
           {
-            title:'流程发起人',
-            align:"center",
-            dataIndex: 'startUserName',
-            scopedSlots: { customRender: 'startUserName' }
-          },
-          {
             title:'当前节点',
             align:"center",
             dataIndex: 'taskName'
@@ -325,9 +257,9 @@
           }
         ],
         url: {
-          list: "/flowable/task/allProcess",
+          list: "/flowable/task/myProcessNew",
           deleteBatch: "/flowable/task/deleteBatch",
-          exportXlsUrl: "/flowable/task/allExportXls",
+          exportXlsUrl: "/flowable/task/exportXls",
         },
         dataSource: [], //表格数据源
         /* 表格分页参数 */
@@ -359,36 +291,6 @@
         processLoading: true,
         // 显示搜索条件
         showSearch: true,
-        
-        //委派与转办选择用户界面
-        delegateassign: false,
-        confirmLoading:false,
-        current:0,
-        selUserForm: this.$form.createForm(this),
-        userNode:{},
-        spryTypes:[],
-        spry:{
-          //选中的用户
-          userIds:'',
-          departmentManageIds:'',
-          chooseSponsor:false,
-          chooseDepHeader:false,
-        },       
-        //传入处理委派或转办参数
-        assignee: '',
-        taskId: '',
-        dataId: '',
-        type: '',
-        // 表头
-        labelCol: {
-          xs: { span: 4 },
-          sm: { span: 4 },
-        },
-        wrapperCol: {
-          xs: { span: 20 },
-          sm: { span: 20 },
-        },
-        
         // 查询参数
         queryParams: {
           pageNum: 1,
@@ -438,7 +340,7 @@
       /** 查询任务流程列表 */
       getList() {
         this.loading = true;
-        allProcessList(this.queryParams).then(response => {
+        myProcessNewList(this.queryParams).then(response => {
           if(response.success) {
             this.dataSource = response.result.records;
             this.total = response.result.total;
@@ -531,80 +433,6 @@
           
         }
       },
-      
-      spryType(types){
-        /*  1用户 4发起人的部门负责人 5部门负责人*/
-        // this.spryTypes = types;
-        if (this.spryTypes.indexOf('1')==-1) this.spry.userIds = '';
-        if (this.spryTypes.indexOf('5')==-1) this.spry.departmentManageIds = '';
-        //是否选中发起人的部门领导
-        this.spry.chooseDepHeader = this.spryTypes.indexOf('4')>-1 ;
-      
-        console.log("this.spry",this.spry)
-      },
-      sprySubmit() {
-        var _this = this;
-       if (this.spryTypes.length==0){
-         _this.$message.error("必须选择委托或转办人员！");
-         return;
-       }
-       if (this.spry.userIds == ''){
-         _this.$message.error("必须选择委托或转办人员！");
-         return;
-       }
-        this.delegateassign = false;      
-        this.assignee = this.spry.userIds;
-        console.log("this.assign=",this.assign);
-        if(this.type == "1") { //委派
-          _this.handleDelegate();
-        }
-        else if(this.type == "2") { //转办
-          _this.handleAssign();
-        }
-        else {
-          _this.$message.error("不认识的类型，未知的错误！");
-        }
-      },
-      
-      closeNode() {
-        this.delegateassign = false,
-        this.current=0,
-        this.spryTypes=[],
-        this.spry={}
-      },
-      //弹出选择委派人员界面
-      SelectUser(row,type){
-        this.taskId = row.taskId;
-        this.dataId = row.businessKey
-        this.type = type;
-        this.delegateassign = true ;
-      },
-      
-      //委派流程
-      handleDelegate(){
-        const params = {
-          taskId: this.taskId,
-          assignee: this.assignee,
-          dataId: this.dataId,
-        }
-        delegateTask(params).then( res => {
-          this.$message.success(res.message);
-          this.getList();
-        });
-      },
-      
-      //转办流程
-      handleAssign(){
-        const params = {
-          taskId: this.taskId,
-          assignee: this.assignee,
-          dataId: this.dataId,
-        }
-        assignTask(params).then( res => {
-          this.$message.success(res.message);
-          this.getList();
-        });
-      },  
       /**  取消流程申请 */
       handleStop(row){
         const params = {
@@ -638,9 +466,6 @@
                 }
         }) ;
       },
-      popupCallback(value,row){
-        this.model = Object.assign(this.model, row);
-      },
       initDictConfig(){
       },
       getSuperFieldList(){
@@ -653,7 +478,6 @@
         fieldList.push({type:'datetime',value:'createTime',text:'提交时间'})
         fieldList.push({type:'string',value:'finishTime',text:'流程状态'})
         fieldList.push({type:'string',value:'duration',text:'耗时'})
-        fieldList.push({type:'string',value:'startUserName',text:'流程发起人'})
         fieldList.push({type:'string',value:'taskName',text:'当前节点'})
         fieldList.push({type:'string',value:'assigneeName',text:'办理'})
         this.superFieldList = fieldList
