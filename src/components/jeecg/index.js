@@ -5,6 +5,7 @@ import JMarkdownEditor from './JMarkdownEditor'
 import JCodeEditor from './JCodeEditor.vue'
 import JEditor from './JEditor.vue'
 import JEditableTable from './JEditableTable.vue'
+import NbcioEditableTable from './NbcioEditableTable.vue'
 import JAreaLinkage from './JAreaLinkage.vue'
 import JSuperQuery from './JSuperQuery.vue'
 import JUpload from './JUpload.vue'
@@ -54,6 +55,7 @@ export default {
     Vue.component('JCron', JCron)
     Vue.component('JDate', JDate)
     Vue.component('JEditableTable', JEditableTable)
+    Vue.component('NbcioEditableTable', NbcioEditableTable)
     Vue.component('JEditor', JEditor)
     Vue.component('JEllipsis', JEllipsis)
     Vue.component('JFormContainer', JFormContainer)

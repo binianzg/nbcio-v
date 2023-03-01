@@ -325,6 +325,12 @@ export const constantRouterMap = [
       },
     ]
   },
+  {
+     path: '/flowable/mtask/record/index',//手机端使用
+     hidden: true,
+     component: () => import(/* webpackChunkName: "fail" */ '@views/flowable/mtask/record/index')
+   },
+
   {// add by nbacheng 2022-08-10
     path: "/im/index",
     name: "impage",

@@ -327,7 +327,7 @@
         url: {
           list: "/flowable/task/allProcess",
           deleteBatch: "/flowable/task/deleteBatch",
-          exportXlsUrl: "/flowable/task/allExportXls",
+          exportXlsUrl: "/flowable/task/exportXls",
         },
         dataSource: [], //表格数据源
         /* 表格分页参数 */

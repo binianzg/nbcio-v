@@ -211,7 +211,7 @@ export default {
       url: {
         list: "/flowable/task/finishedListNew",
         deleteBatch: "/flowable/task/deleteBatch",
-        exportXlsUrl: "/flowable/task/exportXls",
+        exportXlsUrl: "/flowable/task/finishedExportXls",
       },
       dataSource: [], //表格数据源
       /* 表格分页参数 */

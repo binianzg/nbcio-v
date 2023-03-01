@@ -20,6 +20,15 @@ export function login(parameter) {
   })
 }
 
+//手机app登录端看流程时用
+export function mLoginName(parameter) {
+  return axios({
+    url: '/sys/mLoginName',
+    method: 'post',
+    data: parameter
+  })
+}
+
 export function phoneLogin(parameter) {
   return axios({
     url: '/sys/phoneLogin',

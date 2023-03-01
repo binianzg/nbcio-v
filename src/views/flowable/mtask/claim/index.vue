@@ -29,7 +29,7 @@
   
     <!-- 操作按钮区域 -->
     <div class="table-operator">
-      <a-button type="primary" icon="download" @click="handleExportXls('待办任务')">导出</a-button>
+      <a-button type="primary" icon="download" @click="handleExportXls('待签任务')">导出</a-button>
      
       <a-dropdown v-if="selectedRowKeys.length > 0">
         <a-menu slot="overlay">
@@ -87,7 +87,7 @@
         </template>
   
         <span slot="action" slot-scope="text, record">
-          <a @click="handleProcess(record)">处理</a>
+          <a @click="handleClaim(record)">签收</a>
         </span>
   
       </a-table>
@@ -102,12 +102,8 @@ import '@/assets/less/TableExpand.less'
 import { mixinDevice } from '@/utils/mixin'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'  
 import {
-  todoList,
-  todoListNew,
-  complete,
-  returnList,
-  returnTask,
-  rejectTask,
+  claimList,
+  claimTask,
   getDeployment,
   delDeployment,
   exportDeployment
@@ -115,7 +111,7 @@ import {
 import moment from 'moment';
 
 export default {
-  name: "todoList",
+  name: "claimList",
   mixins:[JeecgListMixin, mixinDevice],
   components: {},
   data() {
@@ -195,7 +191,7 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 流程待办任务表格数据
+      // 流程待签任务表格数据
       todoList: [],
       // 弹出层标题
       title: "",
@@ -218,9 +214,9 @@ export default {
         createTime: null
       },
       url: {
-        list: "/flowable/task/todoListNew",
+        list: "/flowable/task/claimList",
         deleteBatch: "/flowable/task/deleteBatch",
-        exportXlsUrl: "/flowable/task/todoExportXls",
+        exportXlsUrl: "/flowable/task/exportXls",
       },
       dataSource: [], //表格数据源
       /* 表格分页参数 */
@@ -250,7 +246,7 @@ export default {
     getList() {
       this.loading = true;
       console.log("this.queryParams=",this.queryParams);
-      todoListNew(this.queryParams).then(response => {
+      claimList(this.queryParams).then(response => {
         if(response.success) {
            this.dataSource = response.result.records;
            this.total = response.result.total;
@@ -264,17 +260,13 @@ export default {
       });
     },
     // 跳转到处理页面
-    handleProcess(row){
-      this.$router.push({ path: '/flowable/task/record/index',
-        query: {
-          procInsId: row.procInsId,
-          deployId: row.deployId,
-          taskId: row.taskId,
-          businessKey: row.businessKey,
-          nodeType: row.nodeType,
-          category: row.category,
-          finished: true
-        }})
+    handleClaim(row){
+      claimTask(row).then(response => {
+        this.$message.success(response.message);
+        this.$router.push({
+          path: '/flowable/task/todo/index'
+        })
+      })
     },
     // 取消按钮
     cancel() {
