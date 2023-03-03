@@ -553,7 +553,7 @@
       this.platform = this.$route.query && this.$route.query.platform;
       this.username = this.$route.query && this.$route.query.username;
       console.log("created username",this.username)
-      /*mLoginName({
+      mLoginName({
       				username: this.username
       			}).then((res) => {
       				console.log(res.result, 2323);
@@ -564,7 +564,7 @@
       					7 * 24 * 60 * 60 * 1000
       				);
       				Vue.ls.set(USER_INFO, res.result.userInfo, 7 * 24 * 60 * 60 * 1000);
-      */      
+            
       this.taskForm.deployId = this.$route.query && this.$route.query.deployId;
       this.taskForm.taskId = this.$route.query && this.$route.query.taskId;
       this.taskForm.procInsId = this.$route.query && this.$route.query.procInsId;
@@ -599,7 +599,7 @@
       this.getFlowRecordList(this.taskForm.procInsId, this.taskForm.deployId, this.taskForm.businessKey, this.taskForm.taskId, this.taskForm.category);
       this.finished = this.$route.query && this.$route.query.finished
       console.log("this.finished",this.finished)
-      //});
+      });
     },
     mounted() {
       //表单数据回填，模拟异步请求场景
