@@ -101,11 +101,11 @@
               <a-menu-item>
                 <a @click="handleFlowRecord(record)">详情</a>
               </a-menu-item>
-              <a-menu-item>
-                <a @click="SelectUser(record,'1')">委派</a>
+              <a-menu-item v-if="record.finishTime === null">
+                <a  @click="SelectUser(record,'1')">委派</a>
               </a-menu-item>
-              <a-menu-item>
-                <a @click="SelectUser(record,'2')">转办</a>
+              <a-menu-item v-if="record.finishTime === null">
+                <a  @click="SelectUser(record,'2')">转办</a>
               </a-menu-item>
               <a-menu-item>
                 <a @click="handleStop(record)">取消申请</a>

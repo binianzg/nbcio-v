@@ -65,7 +65,9 @@ const layouts = {
                       >
                         {
                           item.list.map((obj,objIndex)=>{
-                            return renderChildren.call(this,h,obj,element)
+                            return (<el-row class='test-item'>
+                             {renderChildren.call(this, h, obj, element)}
+                        </el-row>)
                           })
                         }
                       </draggable>

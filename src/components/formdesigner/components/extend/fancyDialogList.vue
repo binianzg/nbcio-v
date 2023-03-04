@@ -50,6 +50,7 @@
 
 <script>
 const splitKey = ";";
+import { fancyDialogList } from "@/api/form";
 export default {
     name:"fancyDialogList",
     props:{
@@ -104,9 +105,11 @@ export default {
     },
     mounted(){
         this.$nextTick(() => {
-            this.$axios.get(this.action).then(res => {
+            //this.$axios.get(this.action).then(res => {
+              fancyDialogList(this.action).then(res => {
+                console.log("fancyDialogList res=",res)
                 this.gridData = [];
-                this.gridData = this.gridData.concat(res.data.list);
+                this.gridData = this.gridData.concat(res.list);
                 if(this.value !=='' && this.dialogValue ===''){
                     if(this.multi){
                         const ids = this.value.split(splitKey);

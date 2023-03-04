@@ -9,6 +9,14 @@ export function listForm(query) {
   })
 }
 
+// 查询formdesigner列表数据
+export function fancyDialogList(fromurl) {
+  return request({
+    url: fromurl,
+    method: 'get'
+  })
+}
+
 // 查询自定义流程表单列表
 export function listCustomForm(query) {
   return request({
