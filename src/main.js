@@ -63,6 +63,7 @@ if (process.env.VUE_APP_MODE === "web") {
 import utils from '@/utils/utils'
 //for formdesigner  add by nbchang 2022-09-03
 import formDesigner from '@/components/formdesigner/components/index'
+import '@/components/formdesigner/assets/iconfont/iconfont.js'
 //for highlightjs add by nbchang 2022-09-20
 //import highlightPlugin from "@highlightjs/vue-plugin";
 //import 'highlight.js/styles/dark.css'; // 引入内置样式

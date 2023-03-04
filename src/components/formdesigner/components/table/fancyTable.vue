@@ -18,7 +18,7 @@
         </tbody>
       </table>
     </div>
-    <div v-show="showContextMunu" class="right-menu" :style="{ top:  + positionY+'px',left:  + positionX+'px', }">
+    <div v-show="showContextMenu" class="right-menu" :style="{ top:  + positionY+'px',left:  + positionX+'px', }">
       <ul style="list-style-type: none">
         <li @click="handlerRightCol" v-if="showRightColMenu">
           <icon code="zuoyouhebing" text="向右合并单元格" />
@@ -32,8 +32,14 @@
         <li @click="handlerAppendCol">
           <icon code="zhuijiahang" text="追加行" />
         </li>
+        <li @click="handlerDeleteCol">
+          <icon code="shanchuhang" text="删除行" />
+        </li>
         <li @click="handlerAppendRow">
           <icon code="zhuijialie" text="追加列" />
+        </li>
+	<li @click="handlerDeleteRow">
+          <icon code="shanchulie" text="删除列" />
         </li>
         <li @click="handlerClose">
           <icon code="clode" text="关闭菜单" />
@@ -78,16 +84,17 @@ export default {
     return{
       positionX:0,
       positionY:0,
-      showContextMunu:false,
-      currentRowIndex:0,
-      currentColIndex:0,
+      showContextMenu:false,
+      currentRowIndex:0,  //行
+      currentColIndex:0,  //列
       //columns: this.trs
     }
   },
   mounted() {
     // 添加监听取消右键菜单
     //document.addEventListener("click", this.hideRightContextMenu, true);
-    //document.addEventListener("contextmenu", this.hideRightContextMenu, true);
+   // document.addEventListener("contextmenu", this.hideRightContextMenu, true);
+    //this.tr = getTrItem();
     // this.handlerAppendCol();
     // this.handlerAppendCol();
   },
@@ -100,12 +107,14 @@ export default {
     rightClick(e,rowIndex,colIndex){
       this.positionX = e.clientX;
       this.positionY = e.clientY;
-      this.showContextMunu = true;
+      this.showContextMenu = true;
       this.currentRowIndex = rowIndex;
       this.currentColIndex = colIndex;
+      console.log(this.currentRowIndex);
+      console.log(this.currentColIndex);
     },
     hideRightContextMenu(){
-      this.showContextMunu = false;
+      this.showContextMenu = false;
     },
     //向右合并单元格
     handlerRightCol(){
@@ -172,13 +181,25 @@ export default {
       })
       this.hideRightContextMenu();
     },
+     //删除列
+    handlerDeleteRow(){
+      this.layoutArray.forEach(item=>{
+        item.splice(this.currentColIndex,1);
+      })
+      this.hideRightContextMenu();
+    },
+    //删除行
+    handlerDeleteCol(){
+      this.layoutArray.splice(this.currentRowIndex,1);
+      this.hideRightContextMenu();
+    },
     handlerClose() {
       this.hideRightContextMenu();
     }
   },
   computed:{
     showRightColMenu(){
-      if(this.showContextMunu){
+      if(this.showContextMenu){
         const col = this.layoutArray[this.currentRowIndex][this.currentColIndex].col;
         const td = this.layoutArray[this.currentRowIndex][this.currentColIndex+col];
         return (td&&td.row<2&&td.col<2&&!td.hide);
@@ -187,7 +208,7 @@ export default {
       }
     },
     showDownRowMenu(){
-      if(this.showContextMunu){
+      if(this.showContextMenu){
         const row = this.layoutArray[this.currentRowIndex][this.currentColIndex].row;
         let td = undefined;
         if(typeof this.layoutArray[this.currentRowIndex+row] !== 'undefined'){
@@ -199,7 +220,7 @@ export default {
       }
     },
     showResetTableMenu(){
-      if(this.showContextMunu){
+      if(this.showContextMenu){
         const td = this.layoutArray[this.currentRowIndex][this.currentColIndex];
         return !(td.row<2&&td.col<2&&!td.hide);
       }else{
