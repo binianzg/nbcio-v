@@ -107,7 +107,7 @@
               <a-menu-item v-if="record.finishTime === null">
                 <a  @click="SelectUser(record,'2')">转办</a>
               </a-menu-item>
-              <a-menu-item>
+              <a-menu-item v-if="record.finishTime === null">
                 <a @click="handleStop(record)">取消申请</a>
               </a-menu-item>
               <a-menu-item>
