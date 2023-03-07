@@ -12,7 +12,7 @@ import JVxeSubPopover from './JVxeSubPopover'
 import JVxeDetailsModal from './JVxeDetailsModal'
 import JVxePagination from './JVxePagination'
 import { cloneObject, getVmParentByName, pushIfNotExist, randomString, simpleDebounce } from '@/utils/util'
-import { UtilTools } from 'vxe-table/packages/tools/src/utils'
+//import { UtilTools } from 'vxe-table/packages/tools/src/utils'
 import { getNoAuthCols } from '@/utils/authFilter'
 
 export default {
@@ -1124,7 +1124,7 @@ export default {
       let rest = []
       const nowData = afterFullData
       if (treeConfig) {
-        throw new Error(UtilTools.getLog('vxe.error.noTree', ['remove']))
+        //throw new Error(UtilTools.getLog('vxe.error.noTree', ['remove']))
       }
       if (!rows) {
         rows = tableFullData
