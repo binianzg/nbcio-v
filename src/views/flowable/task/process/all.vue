@@ -379,6 +379,7 @@
         taskId: '',
         dataId: '',
         type: '',
+        category: '',
         // 表头
         labelCol: {
           xs: { span: 4 },
@@ -575,8 +576,9 @@
       //弹出选择委派人员界面
       SelectUser(row,type){
         this.taskId = row.taskId;
-        this.dataId = row.businessKey
+        this.dataId = row.businessKey;
         this.type = type;
+        this.category = row.category;
         this.delegateassign = true ;
       },
       
@@ -586,6 +588,7 @@
           taskId: this.taskId,
           assignee: this.assignee,
           dataId: this.dataId,
+          category: this.category,
         }
         delegateTask(params).then( res => {
           this.$message.success(res.message);
@@ -599,6 +602,7 @@
           taskId: this.taskId,
           assignee: this.assignee,
           dataId: this.dataId,
+          category: this.category,
         }
         assignTask(params).then( res => {
           this.$message.success(res.message);
