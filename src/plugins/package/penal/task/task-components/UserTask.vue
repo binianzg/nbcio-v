@@ -20,7 +20,7 @@
     </el-row>
     <el-row>
       <div v-if="defaultTaskForm.dataType === 'USERS'">
-        <el-select v-model="userTaskForm.candidateUsers" multiple collapse-tags @change="updateElementTask('candidateUsers')">
+        <el-select v-model="userTaskForm.candidateUsers" filterable multiple collapse-tags @change="updateElementTask('candidateUsers')">
           <el-option v-for="uk in users" :key="uk.id" :label="uk.name" :value="uk.id" />
         </el-select>
       </div>   
@@ -144,21 +144,56 @@ export default {
     },
     changeDataType(val) {
       // 清空 userTaskForm 所有属性值
-      Object.keys(this.userTaskForm).forEach(key => this.userTaskForm[key] = null);
+      //Object.keys(this.userTaskForm).forEach(key => this.userTaskForm[key] = null);
       this.userTaskForm.dataType = val;
       if (val === 'INITIATOR') {
         this.userTaskForm.assignee = "${INITIATOR}";
         this.userTaskForm.text = "流程发起人";
         const taskAttr = Object.create(null);
+        taskAttr['candidateUsers'] = null;
+        taskAttr['candidateGroups'] = null;
+        this.userTaskForm['candidateUsers'] = null;
+        this.userTaskForm['candidateGroups'] = null;
         taskAttr['assignee'] = this.userTaskForm['assignee'] || null;
+        window.bpmnInstances.modeling.updateProperties(this.bpmnElement, taskAttr);
+      }
+      if (val === 'ASSIGNEE' && this.userTaskForm['assignee'] === '${INITIATOR}') {
+        this.userTaskForm['assignee'] = null;
+        const taskAttr = Object.create(null);
+        taskAttr['assignee'] = null;
         window.bpmnInstances.modeling.updateProperties(this.bpmnElement, taskAttr);
       }
     },  
     updateElementTask(key) {
       const taskAttr = Object.create(null);
-      if (key === "candidateUsers" || key === "candidateGroups") {
+      if (key === "candidateUsers") {
         taskAttr[key] = this.userTaskForm[key] && this.userTaskForm[key].length ? this.userTaskForm[key].join() : null;
-      } else {
+        if(taskAttr[key] !=null) {
+          taskAttr['candidateGroups'] = null;
+          taskAttr['assignee'] = null;
+          this.userTaskForm['candidateGroups'] = null;
+          this.userTaskForm['assignee'] = null;
+        }  
+      } 
+      else if (key === "candidateGroups") {
+        taskAttr[key] = this.userTaskForm[key] && this.userTaskForm[key].length ? this.userTaskForm[key].join() : null;
+        if(taskAttr[key] !=null) {
+          taskAttr['candidateUsers'] = null;
+          taskAttr['assignee'] = null;
+          this.userTaskForm['candidateUsers'] = null;
+          this.userTaskForm['assignee'] = null;
+        }  
+      } 
+      else if (key === "assignee") {
+        taskAttr[key] = this.userTaskForm[key] && this.userTaskForm[key].length ? this.userTaskForm[key] : null;
+        if(taskAttr[key] !=null) {
+          taskAttr['candidateUsers'] = null;
+          taskAttr['candidateGroups'] = null;
+          this.userTaskForm['candidateUsers'] = null;
+          this.userTaskForm['candidateGroups'] = null;
+        }
+      } 
+      else {
         taskAttr[key] = this.userTaskForm[key] || null;
       }
       window.bpmnInstances.modeling.updateProperties(this.bpmnElement, taskAttr);
