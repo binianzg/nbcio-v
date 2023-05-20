@@ -20,14 +20,14 @@
     </el-row>
     <el-row>
       <div v-if="defaultTaskForm.dataType === 'USERS'">
-        <el-select v-model="userTaskForm.candidateUsers" filterable multiple collapse-tags @change="updateElementTask('candidateUsers')">
+        <el-select v-model="userTaskForm.candidateUsers" filterable allow-create multiple collapse-tags @change="updateElementTask('candidateUsers')">
           <el-option v-for="uk in users" :key="uk.id" :label="uk.name" :value="uk.id" />
         </el-select>
       </div>   
     </el-row>
     <el-row>
       <div v-if="defaultTaskForm.dataType === 'ROLES'">
-        <el-select v-model="userTaskForm.candidateGroups" multiple collapse-tags @change="updateElementTask('candidateGroups')">
+        <el-select v-model="userTaskForm.candidateGroups" filterable allow-create multiple collapse-tags @change="updateElementTask('candidateGroups')">
           <el-option v-for="gk in groups" :key="gk.id" :label="gk.name" :value="gk.id" />
         </el-select>
       </div>  
