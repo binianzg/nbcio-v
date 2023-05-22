@@ -218,7 +218,7 @@
       <!--<flow :xmlData="xmlData" :taskData="taskList"></flow>-->
       <!-- 流程图 -->
       <bpmn-modeler v-if="xmlShow" ref="refNode" :xml="xmlData" :taskData="taskList" :users="users" :groups="groups"
-        :categorys="categorys" :is-view="xmlView" />
+        class="bpmn-modeler" :categorys="categorys" :is-view="false" />
     </el-card>
 
     <!--审批正常流程-->
@@ -1446,7 +1446,7 @@
   };
 </script>
 <!-- <style lang="scss" scoped> -->
-<style lang="less">
+<style lang="less" scoped>
   .test-form {
     margin: 15px auto;
     width: 800px;
@@ -1537,4 +1537,92 @@
     background-color: initial;
     z-index: 200;
   }
+  
+  .bpmn-modeler {
+      ::v-deep {
+        .el-aside,.djs-palette{
+          display: none;
+        }
+        .el-header{
+          // border-bottom: none !important;
+          padding: 0;
+          &>div{
+            justify-content: right !important;
+            &>div:first-child{
+              &>.el-button:nth-child(2),&>.el-button:nth-child(6),&>.el-button:nth-child(7){
+                display: none;
+              }
+              &>div{
+                display: none !important;
+              }
+            }
+            &>div:last-child{
+              display: none;
+            }
+          }
+        }
+        .djs-group * {
+          pointer-events: none;
+          user-select: none;
+          -webkit-user-drag: none;
+          -khtml-user-drag: none;
+          -moz-user-select: none;
+          -ms-user-select: none;
+          user-drag: none;
+        }
+        .djs-group *:not(input[type="text"]) {
+          pointer-events: none;
+        }
+        .highlight.djs-shape .djs-visual > :nth-child(1) {
+          fill: green !important;
+          stroke: green !important;
+          fill-opacity: 0.2 !important;
+        }
+  
+        .highlight.djs-shape .djs-visual > :nth-child(2) {
+          fill: green !important;
+        }
+  
+        .highlight.djs-shape .djs-visual > path {
+          fill: green !important;
+          fill-opacity: 0.2 !important;
+          stroke: green !important;
+        }
+  
+        .highlight.djs-connection > .djs-visual > path {
+          stroke: green !important;
+        }
+  
+        // .djs-connection > .djs-visual > path {
+        //   stroke: orange !important;
+        //   stroke-dasharray: 4px !important;
+        //   fill-opacity: 0.2 !important;
+        // }
+        // .djs-shape .djs-visual > :nth-child(1) {
+        //   fill: orange !important;
+        //   stroke: orange !important;
+        //   stroke-dasharray: 4px !important;
+        //   fill-opacity: 0.2 !important;
+        // }
+        .highlight-todo.djs-connection > .djs-visual > path {
+          stroke: orange !important;
+          stroke-dasharray: 4px !important;
+          fill-opacity: 0.2 !important;
+        }
+  
+        .highlight-todo.djs-shape .djs-visual > :nth-child(1) {
+          fill: orange !important;
+          stroke: orange !important;
+          stroke-dasharray: 4px !important;
+          fill-opacity: 0.2 !important;
+        }
+  
+        .overlays-div {
+          font-size: 10px;
+          color: red;
+          width: 100px;
+          top: -20px !important;
+        }
+      }
+    }
 </style>
