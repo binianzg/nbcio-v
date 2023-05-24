@@ -133,7 +133,7 @@
           <a-divider v-if="record.status != 2" type="vertical" />
           <a v-if="record.status != 2" @click="handleApprove(record)">审核</a>
           <a-divider v-if="record.status != 2" type="vertical" />
-          <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
+          <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record)">
             <a v-if="record.status != 2">删除</a>
           </a-popconfirm>
         </span>
