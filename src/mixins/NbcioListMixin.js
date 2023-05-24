@@ -200,18 +200,17 @@ export const NbcioListMixin = {
         });
       }
     },
-    handleDelete: function (id) {
+    handleDelete: function (record) {
       if(!this.url.delete){
         this.$message.error("请设置url.delete属性!")
         return
       }
-      console.log("handleDelete selectionRows",this.selectionRows)
-      if(this.selectionRows[id].status === 2) {
+      if(record.status === 2) {
         this.$message.warning("单据已经审核，不能删除！")
         return
       }
       var that = this;
-      deleteAction(that.url.delete, {id: id}).then((res) => {
+      deleteAction(that.url.delete, {id: record.id}).then((res) => {
         if (res.success) {
           //重新计算分页问题
           that.reCalculatePage(1)
@@ -245,6 +244,18 @@ export const NbcioListMixin = {
     },
     handleAdd: function () {
       this.$refs.modalForm.add();
+      this.$refs.modalForm.approve=false;
+      this.$refs.modalForm.title = "新增";
+      this.$refs.modalForm.disableSubmit = false;
+    },
+    handleAddSQL: function () {//大屏用
+      this.$refs.modalForm.add("sql");
+      this.$refs.modalForm.approve=false;
+      this.$refs.modalForm.title = "新增";
+      this.$refs.modalForm.disableSubmit = false;
+    },
+    handleAddHTTP: function () {//大屏用
+      this.$refs.modalForm.add("http");
       this.$refs.modalForm.approve=false;
       this.$refs.modalForm.title = "新增";
       this.$refs.modalForm.disableSubmit = false;
