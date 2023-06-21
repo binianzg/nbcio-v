@@ -109,6 +109,15 @@ export function getNextFlowNode(data) {
   })
 }
 
+// 下一个节点 是否是通用同意拒绝排它网关，这个要做特殊处理
+export function nextApprovedEG(taskId) {
+  return request({
+    url: '/flowable/task/nextApprovedEG',
+    method: 'post',
+    params: taskId
+  })
+}
+
 // 查询流程定义详细
 export function getDeployment(id) {
   return request({

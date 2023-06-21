@@ -255,7 +255,8 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="completeOpen = false">取 消</el-button>
-        <el-button type="primary" @click="taskComplete">确 定</el-button>
+        <el-button type="primary" @click="taskComplete(true)">同 意</el-button>
+        <el-button type="primary" :disabled="!bapproved" @click="taskComplete(false)">拒 绝</el-button>
       </span>
     </a-modal>
 
@@ -312,7 +313,8 @@
     returnTask,
     getNextFlowNode,
     delegateTask,
-    assignTask
+    assignTask,
+    nextApprovedEG,
   } from "@/views/flowable/api/todo";
   import {
     queryMyDepartTreeList
@@ -537,6 +539,7 @@
           isStartUserNode: false, //第一个用户任务发起节点
           editFormType: '', //第一发起人节点编辑的表单类型
         },
+        bapproved: false,  //获取下个节点是否通用同意拒绝网关，以便显示拒绝按钮
       };
     }, 
     created() {
@@ -566,6 +569,7 @@
       // 流程任务重获取变量表单
       if (this.taskForm.taskId) {
         this.processVariables(this.taskForm.taskId)
+        this.getNextApprovedEG(this.taskForm.taskId)
         this.getNextFlowNode(this.taskForm.taskId)
         console.log("userDataList=", this.userDataList)
         //this.taskForm.deployId = null
@@ -1159,6 +1163,18 @@
           }
         })
       },
+      //获取下一个通用拒绝同意排它网关
+      getNextApprovedEG(taskId) {
+        nextApprovedEG({taskId: taskId}).then(res => {
+          if(res.success) {
+            const data = res.result;
+            console.log("getNextApprovedEG",data)
+            this.bapproved = data;
+          }
+         
+          
+        });  
+      },      
       /** 审批任务选择 */
       handleComplete() {
         const taskFormRef = this.$refs.taskFormBuilder;
@@ -1178,7 +1194,7 @@
         })  
       },
       /** 审批任务 */
-      taskComplete() {
+      taskComplete(approved) {
         if (!this.taskForm.values && this.checkSendUser) {
             this.$message.error("请选择流程接收人员");
             return;
@@ -1219,7 +1235,8 @@
           this.$message.error("目前还不支持online表单的编辑修改功能！！！");
           //this.$refs.refViewOnlForm.submitForm();
         }  
-        console.log("this.taskForm=",this.taskForm);
+        this.taskForm.approved = approved; //对特殊通用同意拒绝排它网关的处理
+        console.log("this.taskForm=",this.taskForm);        
         complete(this.taskForm).then(response => {
           this.$message.success(response.message);
           this.goBack();

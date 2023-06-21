@@ -27,7 +27,8 @@
         </el-form-item>
       </el-form>
 
-      <el-table v-loading="loading" fit :data="definitionList" border>
+      <el-table v-loading="loading" fit :data="definitionList" 
+      :default-sort = "{prop: 'deploymentTime', order: 'descending'}" border>
         <el-table-column label="流程定义id" align="center" prop="id" />
         <el-table-column label="流程标识Key" align="center" prop="key" />
         <el-table-column label="流程分类" align="center">
@@ -67,7 +68,7 @@
             <el-tag type="warning" v-if="scope.row.suspensionState === 2">挂起</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="部署时间" align="center" prop="deploymentTime" width="180" />
+        <el-table-column label="部署时间" sortable align="center" prop="deploymentTime" width="180" />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template slot-scope="scope">
             <el-dropdown>
