@@ -69,12 +69,11 @@
           <a @click="handleEdit(record)">编辑</a>
 
           <a-divider type="vertical" />
+          <a @click="relationProcess(record)">关联流程</a>
+          <a-divider type="vertical" />
           <a-dropdown>
             <a class="ant-dropdown-link">更多 <a-icon type="down" /></a>
             <a-menu slot="overlay">
-              <a-menu-item>
-                <a @click="relationProcess(record)">关联流程</a>
-              </a-menu-item>
               <a-menu-item>
                 <a @click="handleDetail(record)">详情</a>
               </a-menu-item>
