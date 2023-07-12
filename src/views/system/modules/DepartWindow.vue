@@ -180,7 +180,7 @@
     padding-top:10px;
     padding-bottom:10px;
   }
-  /deep/ .ant-modal{
+  ::v-deep .ant-modal{
     height: 700px;
   }
 </style>

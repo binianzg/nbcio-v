@@ -37,7 +37,7 @@
   //显示序号
   showIndex:false,
   //请求地址
-  action:'http://localhost:8080/jeecg-boot/sys/user/list',
+  action:'http://localhost:8080/nbcio-boot/sys/user/list',
   //字段配置
   colConf:'[{"index":0,"label":"姓名","property":"name","width":"250","show":true},{"index":1,"label":"日期","property":"date","width":"150","show":true},{"index":2,"label":"地址","property":"address","width":"","show":true}]',
   // //值

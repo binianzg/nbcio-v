@@ -152,7 +152,7 @@
 </script>
 
 <style scoped>
-  /deep/ .jvxe-select-input .ant-input {
+  ::v-deep .jvxe-select-input .ant-input {
     border: none !important;
   }
 </style>

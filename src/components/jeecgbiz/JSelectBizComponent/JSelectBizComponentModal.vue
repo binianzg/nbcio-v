@@ -362,23 +362,23 @@
     display: flex;
     margin-right: 0;
 
-    /deep/ .ant-form-item-control-wrapper {
+    ::v-deep .ant-form-item-control-wrapper {
       flex: 1 1;
       display: inline-block;
     }
   }
 
   .j-inline-form {
-    /deep/ .ant-form-item {
+    ::v-deep .ant-form-item {
       margin-bottom: 12px;
     }
 
-    /deep/ .ant-form-item-label {
+    ::v-deep .ant-form-item-label {
       line-height: 32px;
       width: auto;
     }
 
-    /deep/ .ant-form-item-control {
+    ::v-deep .ant-form-item-control {
       height: 32px;
       line-height: 32px;
     }

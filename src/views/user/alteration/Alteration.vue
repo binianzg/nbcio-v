@@ -61,7 +61,7 @@
     max-width: 750px;
     margin: 16px auto;
   }
-  /deep/ .password-retrieval-form{
+  ::v-deep .password-retrieval-form{
     max-width: 500px;
     margin: 40px auto 0;
     .ant-form-explain{

@@ -217,7 +217,7 @@
 </script>
 <style lang="less" scoped>
 //update--begin--autor:wangshuai-----date:20191204------for：系统管理 数据字典禁用和正常区别开，添加背景颜色 teambition JT-22------
-/deep/ .data-rule-invalid{
+::v-deep .data-rule-invalid{
   background: #f4f4f4;
   color: #bababa;
 }

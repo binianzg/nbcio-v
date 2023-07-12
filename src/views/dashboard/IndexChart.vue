@@ -18,43 +18,43 @@
         </chart-card> 
       </a-col>
       <a-col :sm="24" :md="12" :xl="6" :style="{ marginBottom: '24px' }">
-        <chart-card :loading="loading" title="总销售额" total="￥126,560">
+        <chart-card :loading="loading" title="任务总数" :total="tasktotal.dataSource[0].total">
           <a-tooltip title="指标说明" slot="action">
             <a-icon type="info-circle-o" />
           </a-tooltip>
-          <div>
+          <!--<div>
             <trend flag="up" style="margin-right: 16px;">
-              <span slot="term">周同比</span>
+              <span slot="term">月同比</span>
               12%
             </trend>
             <trend flag="down">
               <span slot="term">日同比</span>
               11%
             </trend>
-          </div>
-          <template slot="footer">日均销售额<span>￥ 234.56</span></template>
+          </div>-->
+          <template slot="footer">任务总数<span></span></template> 
         </chart-card>
       </a-col>
       <a-col :sm="24" :md="12" :xl="6" :style="{ marginBottom: '24px' }">
-        <chart-card :loading="loading" title="订单量" :total="8846 | NumberFormat">
+        <chart-card :loading="loading" title="流程总数" :total="flowtotal.dataSource[0].total">
           <a-tooltip title="指标说明" slot="action">
             <a-icon type="info-circle-o" />
           </a-tooltip>
           <div>
             <mini-area />
           </div>
-          <template slot="footer">日订单量<span> {{ '1234' | NumberFormat }}</span></template>
+          <template slot="footer">流程总数<span> {{  }}</span></template>
         </chart-card>
       </a-col>
       <a-col :sm="24" :md="12" :xl="6" :style="{ marginBottom: '24px' }">
-        <chart-card :loading="loading" title="支付笔数" :total="6560 | NumberFormat">
+        <chart-card :loading="loading" title="总访问量" :total="loginfo.totalVisitCount">
           <a-tooltip title="指标说明" slot="action">
             <a-icon type="info-circle-o" />
           </a-tooltip>
           <div>
             <mini-bar :height="40" />
           </div>
-          <template slot="footer">转化率 <span>60%</span></template>
+          <template slot="footer">总访问量 <span></span></template>
         </chart-card>
       </a-col>
       <!-- <a-col :sm="24" :md="12" :xl="6" :style="{ marginBottom: '24px' }">
@@ -82,7 +82,7 @@
     <a-card :loading="loading" :bordered="false" :body-style="{padding: '0'}">
       <div class="salesCard">
         <a-tabs default-active-key="1" size="large" :tab-bar-style="{marginBottom: '24px', paddingLeft: '16px'}">
-          <div class="extra-wrapper" slot="tabBarExtraContent">
+          <!--<div class="extra-wrapper" slot="tabBarExtraContent">
             <div class="extra-item">
               <a>今日</a>
               <a>本周</a>
@@ -90,25 +90,25 @@
               <a>本年</a>
             </div>
             <a-range-picker :style="{width: '256px'}" />
-          </div>
-          <a-tab-pane loading="true" tab="销售额" key="1">
+          </div>-->
+          <a-tab-pane loading="true" tab="任务数" key="1">
             <a-row>
-              <a-col :xl="16" :lg="12" :md="12" :sm="24" :xs="24">
-                <bar title="销售额排行" :dataSource="barData"/>
+              <a-col :xl="24" :lg="12" :md="12" :sm="24" :xs="24">
+                <bar title="任务数排行" :dataSource="taskmonth.dataSource"/>
               </a-col>
-              <a-col :xl="8" :lg="12" :md="12" :sm="24" :xs="24">
+              <!--<a-col :xl="8" :lg="12" :md="12" :sm="24" :xs="24">
                 <rank-list title="门店销售排行榜" :list="rankList"/>
-              </a-col>
+              </a-col>-->
             </a-row>
           </a-tab-pane>
-          <a-tab-pane tab="销售趋势" key="2">
+          <a-tab-pane tab="流程数" key="2">
             <a-row>
-              <a-col :xl="16" :lg="12" :md="12" :sm="24" :xs="24">
-                <bar title="销售额趋势" :dataSource="barData"/>
+              <a-col :xl="24" :lg="12" :md="12" :sm="24" :xs="24">
+                <bar title="流程数排行" :dataSource="flowmonth.dataSource"/>
               </a-col>
-              <a-col :xl="8" :lg="12" :md="12" :sm="24" :xs="24">
+              <!--<a-col :xl="8" :lg="12" :md="12" :sm="24" :xs="24">
                 <rank-list title="门店销售排行榜" :list="rankList"/>
-              </a-col>
+              </a-col>-->
             </a-row>
           </a-tab-pane>
         </a-tabs>
@@ -197,6 +197,26 @@
     },
     data() {
       return {
+        tasktotal: {
+          url: '/online/cgreport/api/getColumnsAndData/1661243615517978626',
+          loading: false,
+          dataSource: [],
+        },
+        flowtotal: {
+          url: '/online/cgreport/api/getColumnsAndData/1661247259512520705',
+          loading: false,
+          dataSource: [],
+        },
+        taskmonth: {
+          url: '/online/cgreport/api/getColumnsAndData/1661271436906840066',
+          loading: false,
+          dataSource: [],
+        },
+        flowmonth: {
+          url: '/online/cgreport/api/getColumnsAndData/1661271700409794562',
+          loading: false,
+          dataSource: [],
+        },
         loading: true,
         center: null,
         rankList,
@@ -211,9 +231,20 @@
       setTimeout(() => {
         this.loading = !this.loading
       }, 1000)
+      this.loadData(this.tasktotal);
+      this.loadData(this.flowtotal);
+      this.loadData(this.taskmonth);
+      this.loadData(this.flowmonth);
       this.initLogInfo();
     },
     methods: {
+      loadData(data) {
+        data.loading = true;
+        this.$http.get(data.url)
+          .then(res => data.dataSource =  res.result.data.records)
+          .finally(() => data.loading = false);
+        console.log("loadData data=",data);  
+      },
       initLogInfo () {
         getLoginfo(null).then((res)=>{
           if(res.success){

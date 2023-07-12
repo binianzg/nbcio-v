@@ -307,7 +307,7 @@ export default {
 <style scoped lang="less">
   .j-easy-cron {
 
-    /deep/ .content {
+    ::v-deep .content {
       .ant-checkbox-wrapper + .ant-checkbox-wrapper {
         margin-left: 0;
       }

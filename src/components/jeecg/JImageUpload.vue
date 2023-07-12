@@ -232,8 +232,8 @@
   * https://github.com/zhangdaiscott/jeecg-boot/issues/1779
   */
 
-  /deep/ .imgupload .iconp{padding:20px;}
+  ::v-deep .imgupload .iconp{padding:20px;}
   /* update--end--autor:lvdandan-----date:20201016------for：j-image-upload图片组件单张图片详情回显空白*/
 
-  /deep/ .image-upload-single-over .ant-upload-select{display: none}
+  ::v-deep .image-upload-single-over .ant-upload-select{display: none}
 </style>

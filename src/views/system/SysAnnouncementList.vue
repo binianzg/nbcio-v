@@ -316,7 +316,7 @@
     }
   }
 
-  .detail-modal /deep/ .ant-modal {
+  .detail-modal ::v-deep .ant-modal {
     top: 30px;
 
     .ant-modal-body {
@@ -325,7 +325,7 @@
     }
   }
 
-  .detail-modal.fullscreen /deep/ .ant-modal {
+  .detail-modal.fullscreen ::v-deep .ant-modal {
     top: 0;
   }
 

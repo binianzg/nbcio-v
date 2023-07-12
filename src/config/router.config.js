@@ -330,7 +330,83 @@ export const constantRouterMap = [
      hidden: true,
      component: () => import(/* webpackChunkName: "fail" */ '@views/flowable/mtask/record/index')
    },
-
+   {// add by nbacheng 2023-03-25
+     path: "/bigscreen/designer",
+     name: "bsdesigner",
+     component: () => import(/* bsdesigner */'@/views/estar/bigscreen/bigscreenDesigner/designer/index')
+  }, 
+  {
+     path: "/bigscreen/viewer",
+     name: "bsviewer",
+     component: () => import(/* bsviewer */'@/views/estar/bigscreen/bigscreenDesigner/viewer/index')
+  }, 
+  // 大屏
+  {
+    path: '/screenDesigner',
+    component: () => import('@/views/estar/bigscreen/screenDesigner/index'),
+    name: 'screenDesigner',
+  },
+  {
+    path: '/screen/preview',
+    component: () => import('@/views/estar/bigscreen/screenDesigner/preview'),
+    hidden: true,
+    meta: {
+      requireAuth: true
+    }
+  },
+  {
+      path: '/bs/**',
+      component: () => import('@/views/estar/bigscreen/bigScreenReport/bs'),
+      hidden: true
+  },// add by nbacheng 2023-03-25
+  { //个人网盘 add by nbacheng 2023-04-12
+    path: "/netdisk/File",
+    name: "netdiskfile",
+    component: () => import(/* netdiskfile */'@/views/estar/netdisk/File.vue'),
+  },
+  {
+  	path: '/share/:shareBatchNum',
+  	name: 'Share',
+  	component: () => import(/* webpackChunkName: "share" */ '@/views/estar/netdisk/Share.vue'),
+  	meta: {
+  		title: '分享',
+  		content: {
+  			description: '查看他人分享'
+  		}
+  	},
+  	props: true
+  },
+  { //项目任务看板 add by nbacheng 2023-06-29
+    path: "/estar/teamwork/space/task/:id",
+    name: "taskspace",
+    component: () => import(/* taskspace */'@/views/estar/teamwork/space/task.vue'),
+    meta: {model: 122, info: {show_slider: false, is_inner: true}},
+    children: [
+        {
+            //任务详情
+            name: 'taskdetail',
+            path: 'detail/:taskId',
+            component: resolve => require(['@/views/estar/teamwork/space/taskdetail'], resolve),
+            meta: {model: 'Project', info: {show_slider: false}},
+        },
+    ]
+  },
+  { 
+    path: "/estar/teamwork/space/overview/:id",
+    name: "taskoverview",
+    component: () => import(/* taskoverview */'@/views/estar/teamwork/space/overview.vue')
+  },  
+  {
+    path: "/estar/teamwork/space/files/:id",
+    name: "taskfiles",
+    component: () => import(/* taskfiles */'@/views/estar/teamwork/space/files.vue')
+  },  
+  {
+    path: "/estar/teamwork/space/features/:id",
+    name: "taskfeatures",
+    component: () => import(/* taskfeatures */'@/views/estar/teamwork/space/features.vue')
+  },  
+  //项目任务看板 add by nbacheng 2023-06-29
   {// add by nbacheng 2022-08-10
     path: "/im/index",
     name: "impage",
