@@ -243,7 +243,7 @@ export default {
 <style scoped lang="less">
 
   .j-markdown-editor {
-    /deep/ .tui-editor-defaultUI {
+    ::v-deep .tui-editor-defaultUI {
       .te-mode-switch,
       .tui-scrollsync
       {

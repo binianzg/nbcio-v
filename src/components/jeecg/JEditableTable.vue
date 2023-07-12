@@ -3510,9 +3510,9 @@
 
         .j-check-failed.j-td-span,
         input.j-check-failed,
-        .j-check-failed /deep/ input,
-        .ant-select.j-check-failed /deep/ .ant-select-selection,
-        .ant-upload.j-check-failed /deep/ .ant-btn {
+        .j-check-failed ::v-deep input,
+        .ant-select.j-check-failed ::v-deep .ant-select-selection,
+        .ant-upload.j-check-failed ::v-deep .ant-btn {
           border-color: red;
           box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.2);
         }

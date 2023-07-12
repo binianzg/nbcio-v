@@ -160,7 +160,7 @@
       width: 100%;
     }
 
-    /deep/ .ant-select-search__field {
+    ::v-deep .ant-select-search__field {
       display: none !important;
     }
   }

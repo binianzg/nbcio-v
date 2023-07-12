@@ -47,6 +47,12 @@ export default {
       if(e.target.href && e.target.href.indexOf('/im/index')>0) {
         window.open(e.target.href,'_blank')
       }
+      if(e.target.href && e.target.href.indexOf('/bigscreen/bigscreenDesigner/designer/index')>0) {
+        window.open(e.target.href,'_blank')
+      }
+      if(e.target.href && e.target.href.indexOf('/netdisk/File')>0) {
+        window.open(e.target.href,'_blank')
+      }
       //add by nbacheng 2022-08-12 
       if (this.visible === true && ['menuitemicon', 'menuitem'].indexOf(e.target.getAttribute('role')) < 0) {
         this.$emit('update:visible', false)

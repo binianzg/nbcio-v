@@ -2,7 +2,7 @@
   <div class="panel-tab__content">
     <el-form size="mini" label-width="80px" @submit.native.prevent>
     <el-form-item label="表单" prop="formKey">
-        <el-select v-model="formKey" placeholder="请选择表单" @change="updateElementFormKey" clearable>
+        <el-select v-model="formKey" placeholder="请选择表单" @change="updateElementFormKey" filterable clearable>
           <el-option v-for="item in formList" :key="item.id" :label="item.formName" :value="`${item.id}`" />
         </el-select>
     </el-form-item>

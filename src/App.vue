@@ -34,7 +34,15 @@
         }
 
       })
-    }
+    },
+    mounted() {// netdisk add by nbacheng 
+    	const that = this
+    	window.addEventListener('resize', function () {
+    		return (() => {
+    			that.$store.commit('changeScreenWidth', document.body.clientWidth)
+    		})()
+    	})
+    }  
   }
 </script>
 <style>

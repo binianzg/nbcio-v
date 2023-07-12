@@ -288,19 +288,19 @@
 <style lang="less" scoped>
   .sub-tabs {
     &.un-expand {
-      /deep/ .ant-tabs-content {
+      ::v-deep .ant-tabs-content {
         height: 0 !important;
       }
 
-      /deep/ .ant-tabs-bar {
+      ::v-deep .ant-tabs-bar {
         border-color: transparent !important;
       }
 
-      /deep/ .ant-tabs-ink-bar {
+      ::v-deep .ant-tabs-ink-bar {
         background-color: transparent !important;
       }
 
-      /deep/ .ant-tabs-tab {
+      ::v-deep .ant-tabs-tab {
         display: none !important;
       }
     }

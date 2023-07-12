@@ -80,13 +80,65 @@ import "bpmn-js/dist/assets/diagram-js.css";
 import "bpmn-js/dist/assets/bpmn-font/css/bpmn.css";
 import "bpmn-js/dist/assets/bpmn-font/css/bpmn-codes.css";
 
+// 大屏引入 add by nbacheng2023-03-22
+import zhLocale from 'element-ui/lib/locale/lang/zh-CN'
+import 'normalize.css/normalize.css'// A modern alternative to CSS resets
+
+import echarts from 'echarts';
+// 全局定义echarts
+import ECharts from 'vue-echarts'
+import 'echarts/lib/chart/bar'
+import 'echarts/lib/component/tooltip'
+
+Vue.component('bs-chart', ECharts)  //不能用v-chart,否则有问题
+
+import Avue from '@smallwei/avue';
+import '@smallwei/avue/lib/index.css';
+Vue.use(Avue);
+// 大屏引入 add by nbacheng2023-03-22
+
+// 网盘引入全局函数
+import globalFunction from '@/libs/globalFunction/index.js'
+// 网盘引入文件操作相关插件
+import fileOperationPlugins from '@/plugins/netdisk/fileOperationPlugins.js'
+/**
+ * vue-simple-uploader 中文官方文档 https://github.com/simple-uploader/vue-uploader/blob/master/README_zh-CN.md
+ * simple-uploader.js 中文官方文档 https://github.com/simple-uploader/Uploader/blob/develop/README_zh-CN.md
+ */
+import uploader from 'vue-simple-uploader'
+// collapse 展开折叠
+import CollapseTransition from 'element-ui/lib/transitions/collapse-transition'
+
+// add by nbacheng 2023-07-03 for teamwork
+import VueClipboards from 'vue-clipboards';
+Vue.use(VueClipboards);
+import vuescroll from 'vuescroll';
+import 'vuescroll/dist/vuescroll.css';
+Vue.use(vuescroll);
+Vue.prototype.$vuescrollConfig = {
+    vuescroll: {
+        mode: 'native'
+    },
+    scrollPanel: {
+        scrollingX: true,
+    },
+    bar: {
+        delayTime: 500,
+        onlyShowBarOnScroll: false,
+        background: "#cecece",
+        keepShow: false
+    }
+};
+// add by nbacheng 2023-07-03
+Vue.use(uploader)
+// 网盘引入
+
 //For IM add by nbacheng 2022-08-17
-Vue.use(ElementUI);
+Vue.use(ElementUI, { zhLocale });
 Vue.use(ViewUI);
 //for formdesigner  add by nbchang 2022-09-03
 Vue.use(formDesigner);
 //Vue.use(highlightPlugin);//for highlightjs add by nbchang 2022-09-20
-
 
 //表单验证
 import { rules } from '@/utils/rules'
@@ -97,6 +149,13 @@ Vue.prototype.formatDateTime = formatDateTime;
 Vue.prototype.dateStr = dateStr;
 //For erp add by nbacheng 2022-08-25
 Vue.prototype.$utils = utils
+//For netdisk add by nbacheng 2023-04-07
+for (let key in globalFunction) {
+	Vue.prototype[`$${key}`] = globalFunction[key]
+}
+for (let key in fileOperationPlugins) {
+	Vue.prototype[`$${key}`] = fileOperationPlugins[key]
+}
 
 Vue.use(Storage, config.storageOptions)
 Vue.use(Antd)

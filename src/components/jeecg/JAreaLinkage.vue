@@ -150,11 +150,11 @@
 <style lang="less" scoped>
   .j-area-linkage {
     height:40px;
-    /deep/ .area-cascader-wrap .area-select {
+    ::v-deep .area-cascader-wrap .area-select {
       width: 100%;
     }
 
-    /deep/ .area-select .area-selected-trigger {
+    ::v-deep .area-select .area-selected-trigger {
       line-height: 1.15;
     }
   }

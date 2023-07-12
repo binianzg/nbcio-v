@@ -7,6 +7,8 @@ import enhance from './modules/enhance'
 import online from './modules/online'
 import permission from './modules/permission'
 import im from './modules/im'
+import netdisk from './modules/netdisk'
+import tw from './modules/tw'
 import getters from './getters'
 
 Vue.use(Vuex)
@@ -19,6 +21,8 @@ export default new Vuex.Store({
     enhance,
     online,
     im,
+    netdisk,
+    tw,
   },
   state: {
 

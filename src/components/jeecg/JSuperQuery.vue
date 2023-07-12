@@ -606,30 +606,30 @@
   .j-super-query-modal {
 
     .j-super-query-history-card {
-      /deep/ .ant-card-body,
-      /deep/ .ant-card-head-title {
+      ::v-deep .ant-card-body,
+      ::v-deep .ant-card-head-title {
         padding: 0;
       }
 
-      /deep/ .ant-card-head {
+      ::v-deep .ant-card-head {
         padding: 4px 8px;
         min-height: initial;
       }
     }
 
     .j-super-query-history-empty {
-      /deep/ .ant-empty-image {
+      ::v-deep .ant-empty-image {
         height: 80px;
         line-height: 80px;
         margin-bottom: 0;
       }
 
-      /deep/ img {
+      ::v-deep img {
         width: 80px;
         height: 65px;
       }
 
-      /deep/ .ant-empty-description {
+      ::v-deep .ant-empty-description {
         color: #afafaf;
         margin: 8px 0;
       }
@@ -670,11 +670,11 @@
 
       }
 
-      /deep/ .ant-tree-switcher {
+      ::v-deep .ant-tree-switcher {
         display: none;
       }
 
-      /deep/ .ant-tree-node-content-wrapper {
+      ::v-deep .ant-tree-node-content-wrapper {
         width: 100%;
       }
     }

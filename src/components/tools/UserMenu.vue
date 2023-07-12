@@ -270,7 +270,7 @@
     width: 180px;
     color: inherit;
 
-    /deep/ .ant-select-selection {
+    ::v-deep .ant-select-selection {
       background-color: inherit;
       border: 0;
       border-bottom: 1px solid white;
