@@ -12,7 +12,7 @@
       	size="mini"
       	type="primary"
       	icon="el-icon-display"
-        @click="dialogFormVisible = true"
+        @click="dialogFormVisible = false"
       >	显示上传菜单
       </el-button>
 			<el-dropdown class="upload-drop" trigger="hover">
@@ -215,18 +215,7 @@
 
 		<!-- 多选文件下载，页面隐藏 -->
 		<a target="_blank" :href="batchDownloadLink" ref="batchDownloadRef"></a>
-	  <!-- 正式发布这部分去掉 -->
-    <el-dialog title="输入显示密码" :visible.sync="dialogFormVisible" width="30%">
-	    <el-form :model="displayForm">
-	      <el-form-item label="密码" :label-width="formLabelWidth">
-	        <el-input v-model="displayForm.password" show-password autocomplete="off"></el-input>
-	      </el-form-item>
-	    </el-form>
-	    <div slot="footer" class="dialog-footer">
-	      <el-button @click="dialogFormVisible = false">取 消</el-button>
-	      <el-button type="primary" @click="inputDisplayPassword()">确 定</el-button>
-	    </div>
-	  </el-dialog>
+	  
   </div>
 </template>
 
@@ -263,7 +252,7 @@ export default {
       displayForm: {password: '',}, //显示上传菜单输入form,正式发布要去掉nbacheng
       formLabelWidth: '80px', //显示上传菜单输入form,正式发布要去掉nbacheng
       dialogFormVisible: false, //显示上传菜单输入form,正式发布要去掉nbacheng
-      isDisplayUploadMenu: false,   //是否显示上传菜单,正式发布要去掉nbacheng
+      isDisplayUploadMenu: true,   //是否显示上传菜单,正式发布要去掉nbacheng
 			operatePopoverVisible: false, //  收纳栏是否显示
 			fileGroupLable: 0, //  文件展示模式
 			dirImg: require('@/assets/nd/images/file/dir.png'),
@@ -342,17 +331,6 @@ export default {
 		this.fileGroupLable = this.fileModel
 	},
 	methods: {
-    //输入密码是否显示上传菜单，正式发布要去掉nbacheng
-    inputDisplayPassword() {
-      if (this.displayForm.password === 'nbcio@690311') {
-        this.isDisplayUploadMenu = true
-        this.dialogFormVisible = false
-      }
-      else {
-        this.isDisplayUploadMenu = false
-        this.dialogFormVisible = false
-      }
-    },
 		/**
 		 * 新建文件夹按钮点击事件
 		 * @description 调用新建文件夹服务，并在弹窗确认回调事件中刷新文件列表
