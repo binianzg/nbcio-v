@@ -252,13 +252,16 @@
     changeStatus
   } from "@/api/teamwork/version";
   import versionDetail from "../components/versionDetail"
-  import projectSelect from '../components/projectSelect'
+  import projectSelect from "../components/projectSelect"
+  import WrapperContent from "../components/WrapperContent"
+  import '@/assets/tw/css/theme.less';
 
   export default {
     name: "project-space-features",
     components: {
       versionDetail,
-      projectSelect
+      projectSelect,
+      WrapperContent
     },
     mixins: [pagination],
     data() {
@@ -314,7 +317,7 @@
       },
       getProject() {
         this.loading = true;
-        getProject(this.id).then((res) => {
+        getProject({id:this.id}).then((res) => {
           this.loading = false;
           this.project = res.result;
         });
@@ -552,7 +555,7 @@
 
   .project-space-features {
     .project-navigation {
-      top: 65px;
+      top: 0px;
       z-index: 4;
     }
 

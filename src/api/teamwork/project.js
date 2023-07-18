@@ -87,7 +87,7 @@ export function getLogBySelfProject(data) {
   return request({
     url: '/tw/twProject/getLogBySelfProject',
     method: 'post',
-    data: data
+    params: data
   })
 }
 
@@ -96,7 +96,7 @@ export function projectStats(data) {
   return request({
     url: '/tw/twProject/projectStats',
     method: 'post',
-    data: data
+    params: data
   })
 }
 
@@ -105,16 +105,16 @@ export function getProjectReport(data) {
   return request({
     url: '/tw/twProject/getProjectReport',
     method: 'post',
-    data: data
+    params: data
   })
 }
 
 // 项目信息列表
 export function infoList(data) {
   return request({
-    url: '/tw/twProject/infoList',
+    url: '/tw/twProjectInfo/infoList',
     method: 'post',
-    data: data
+    params: data
   })
 }
 
@@ -137,8 +137,8 @@ export function infoDoData(data) {
 // 删除项目信息
 export function infoDelete(data) {
   return request({
-    url: '/tw/twProject/infoDelete',
+    url: '/tw/twProjectInfo/infoDelete',
     method: 'post',
-    data: data
+    params: data
   })
 }

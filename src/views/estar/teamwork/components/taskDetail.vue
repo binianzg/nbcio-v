@@ -862,11 +862,11 @@
   import {
     createComment,
     del,
-    taskEdit as edit,
+    taskEdit,
     taskLog,
     taskRead,
     recovery,
-    taskRecycle as recycle,
+    taskRecycle,
     star,
     taskDone
   } from "@/api/teamwork/task";
@@ -1279,7 +1279,7 @@
               okType: 'danger',
               cancelText: `再想想`,
               onOk() {
-                recycle(that.id).then((res) => {
+                taskRecycle(that.id).then((res) => {
                   const result = checkResponse(res);
                   if (!result) {
                     return false;
@@ -1411,9 +1411,8 @@
       },
       taskDone(taskId, done, index, type = 'self') {
         done ? done = 1 : done = 0;
-        taskDone(taskId, done).then((res) => {
-          const result = checkResponse(res);
-          if (!result) {
+        taskDone({taskId: taskId, done: done}).then((res) => {
+          if (!res.success) {
             return false;
           }
           this.getTaskLog();
@@ -1483,7 +1482,7 @@
       },
       editTask(data) {
         data.taskId = this.id;
-        edit(data).then((res) => {
+        taskEdit(data).then((res) => {
           const result = checkResponse(res);
           if (!result) {
             return false;
