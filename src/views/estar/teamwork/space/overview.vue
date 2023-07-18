@@ -211,10 +211,10 @@
   import moment from "moment";
   import VeLine from 'v-charts/lib/line.common'
   import {
-    getProjectReport,
+    getProjectReport as projectReport,
     projectStats,
     doData,
-    prejectset as getProject
+    prejectset
   } from "@/api/teamwork/project";
   import {
     infoDoData as doInfo,
@@ -239,6 +239,7 @@
   import pagination from "../mixins/pagination";
   import projectSelect from '../components/projectSelect'
   import WrapperContent from '../components/WrapperContent'
+  import '@/assets/tw/css/theme.less';
 
   export default {
     name: "project-space-overview",
@@ -428,41 +429,42 @@
       },
       getProject() {
         this.loading = true;
-        getProject(this.id).then((res) => {
+        prejectset({id:this.id}).then((res) => {
           this.loading = false;
           this.project = res.result;
-          if (this.project.begin_time) {
-            this.projectDate = [moment(this.project.begin_time), moment(this.project.end_time)];
+          if (this.project.beginTime) {
+            this.projectDate = [moment(this.project.beginTime), moment(this.project.endTime)];
           }
         });
       },
       getProjectReport() {
-        let app = this;
-        _getProjectReport({
+        let that = this;
+        projectReport({
           projectId: this.id
         }).then(res => {
+          console.log("getProjectReport res",res);
           let rows = [];
           res.result.date.forEach((v) => {
             rows.push({
               '日期': v
             })
           });
-          app.burnoutMap.loading = false;
-          app.burnoutMap.chartData.rows = rows;
-          app.burnoutMap.series[0].data = res.result.undoneTask;
-          app.burnoutMap.series[1].data = res.result.baseLineList;
+          that.burnoutMap.loading = false;
+          that.burnoutMap.chartData.rows = rows;
+          that.burnoutMap.series[0].data = res.result.undoneTask;
+          that.burnoutMap.series[1].data = res.result.baseLineList;
 
         });
       },
       getProjectLog(reset = true) {
-        let app = this;
+        let that = this;
         if (reset) {
-          app.pagination.page = 1;
-          app.pagination.pageSize = 20;
-          app.showLoadingMore = false;
+          that.pagination.page = 1;
+          that.pagination.pageSize = 20;
+          that.showLoadingMore = false;
         }
-        this.requestData.projectId = this.id;
-        getLogBySelfProject(this.requestData).then(res => {
+        getLogBySelfProject({projectId: that.id}).then(res => {
+          console.log("getLogBySelfProject res",res);
           let list = [];
           res.result.list.forEach((item) => {
             list.push(item);
@@ -476,27 +478,30 @@
             // }
           });
           if (reset) {
-            app.activities = [];
+            that.activities = [];
           }
-          app.activities = app.activities.concat(list);
-          app.pagination.total = res.result.total;
-          app.showLoadingMore = app.pagination.total > app.activities.length;
-          app.loading = false;
-          app.loadingMore = false;
+          that.activities = that.activities.concat(list);
+          that.pagination.total = res.result.total;
+          that.showLoadingMore = that.pagination.total > that.activities.length;
+          that.loading = false;
+          that.loadingMore = false;
         })
       },
       getProjectInfoList() {
-        let app = this;
+        let that = this;
         getInfoList({
-          projectId: app.id
+          projectId: that.id
         }).then(res => {
-          app.projectInfoList = res.result;
+          console.log("getInfoList res",res);
+          that.projectInfoList = res.result;
         });
       },
       getProjectStats() {
-        _projectStats({
+        let that = this;
+        projectStats({
           projectId: this.id
         }).then(res => {
+          console.log("projectStats res",res);
           const taskStats = res.result;
           const total = taskStats['total'];
           this.projectStats.forEach((v, k) => {
@@ -516,6 +521,7 @@
         dateTotalForProject({
           projectId: this.id
         }).then(res => {
+          console.log("dateTotalForProject res",res);
           let list = [];
           res.result.forEach((v) => {
             list.push({
@@ -527,23 +533,23 @@
         })
       },
       createInfo() {
-        let app = this;
-        app.infoModal.newData = {
+        let that = this;
+        that.infoModal.newData = {
           id: ''
         };
         setTimeout(function() {
-          app.infoModal.form && app.infoModal.form.resetFields();
+          that.infoModal.form && that.infoModal.form.resetFields();
         }, 0);
-        app.infoModal.modalStatus = true;
-        app.infoModal.modalTitle = '添加字段';
+        that.infoModal.modalStatus = true;
+        that.infoModal.modalTitle = '添加字段';
       },
       editInfo(info) {
-        let app = this;
-        app.infoModal.newData = info;
-        app.infoModal.modalStatus = true;
+        let that = this;
+        that.infoModal.newData = info;
+        that.infoModal.modalStatus = true;
         setTimeout(function() {
-          app.infoModal.modalTitle = '编辑字段';
-          app.infoModal.form.setFieldsValue({
+          that.infoModal.modalTitle = '编辑字段';
+          that.infoModal.form.setFieldsValue({
             name: info.name,
             value: info.value,
             description: info.description,
@@ -551,8 +557,8 @@
         }, 0);
       },
       delInfo(info, index) {
-        let app = this;
-        app.$confirm({
+        let that = this;
+        that.$confirm({
           title: '确定删除当前字段吗？',
           okText: '删除',
           okType: 'danger',
@@ -561,46 +567,46 @@
             delProjectInfo({
               infoId: info.id
             }).then(() => {
-              app.projectInfoList.splice(index, 1);
-              // app.init();
+              that.projectInfoList.splice(index, 1);
+              // that.init();
             });
             return Promise.resolve();
           }
         });
       },
       handleSubmit() {
-        let app = this;
-        app.infoModal.form.validateFields(
+        let that = this;
+        that.infoModal.form.validateFields(
           (err) => {
             if (!err) {
-              app.handleOk();
+              that.handleOk();
             }
           })
       },
       handleOk() {
-        let app = this;
-        app.infoModal.loading = true;
-        let obj = app.infoModal.form.getFieldsValue();
-        if (app.infoModal.newData.id) {
+        let that = this;
+        that.infoModal.loading = true;
+        let obj = that.infoModal.form.getFieldsValue();
+        if (that.infoModal.newData.id) {
           //编辑
-          obj.infoId = app.infoModal.newData.id;
+          obj.infoId = that.infoModal.newData.id;
         } else {
           //新增
-          Object.assign(obj, app.infoModal.newData);
+          Object.assign(obj, that.infoModal.newData);
         }
-        obj.projectId = app.id;
+        obj.projectId = that.projectId;
         console.log(obj);
         doInfo(obj).then(res => {
-          app.infoModal.loading = false;
+          that.infoModal.loading = false;
           if (!checkResponse(res)) {
             return;
           }
-          app.infoModal.form.resetFields();
-          app.infoModal.newData = {
+          that.infoModal.form.resetFields();
+          that.infoModal.newData = {
             id: 0
           };
-          app.infoModal.modalStatus = false;
-          app.getProjectInfoList();
+          that.infoModal.modalStatus = false;
+          that.getProjectInfoList();
         });
       },
       collectProject() {
@@ -638,7 +644,7 @@
 
   .project-space-overview {
     .project-navigation {
-      top: 65px;
+      top: 0px;
       z-index: 4;
     }
 

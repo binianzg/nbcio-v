@@ -108,7 +108,7 @@
     methods: {
       getMembers() {
         let app = this;
-        _listForInvite({
+        listForInvite({
           projectId: app.projectId
         }).then(res => {
           app.list = res.result;

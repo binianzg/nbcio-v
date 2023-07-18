@@ -108,7 +108,8 @@ import fileOperationPlugins from '@/plugins/netdisk/fileOperationPlugins.js'
 import uploader from 'vue-simple-uploader'
 // collapse 展开折叠
 import CollapseTransition from 'element-ui/lib/transitions/collapse-transition'
-
+Vue.use(uploader)
+// 网盘引入
 // add by nbacheng 2023-07-03 for teamwork
 import VueClipboards from 'vue-clipboards';
 Vue.use(VueClipboards);
@@ -130,8 +131,6 @@ Vue.prototype.$vuescrollConfig = {
     }
 };
 // add by nbacheng 2023-07-03
-Vue.use(uploader)
-// 网盘引入
 
 //For IM add by nbacheng 2022-08-17
 Vue.use(ElementUI, { zhLocale });

@@ -105,11 +105,11 @@
         }
       },
       getProject() {
-        console.log("getProject id", this.id);
+        console.log("projectSelect getProject id", this.id);
         getProject({
           id: this.id
         }).then((res) => {
-          console.log("getProject res", res);
+          console.log("projectSelect getProject res", res);
           this.currentProject = res.result;
         });
       },

@@ -171,7 +171,7 @@
   } from "@/assets/tw/js/notice";
   import projectSelect from '../components/projectSelect'
   import WrapperContent from '../components/WrapperContent'
-
+  import '@/assets/tw/css/theme.less';
 
   export default {
     name: "project-space-files",
@@ -357,7 +357,7 @@
 <style lang="less">
   .project-space-files {
     .project-navigation {
-      top: 65px;
+      top: 0px;
       z-index: 4;
     }
 
