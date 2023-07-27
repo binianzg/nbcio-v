@@ -18,7 +18,25 @@ export function fileList(data) {
   })
 }
 
+// 删除任务文件
+export function del(data) {
+  return request({
+    url: '/tw/twFile/delete',
+    method: 'post',
+    params: data
+  })
+}
+
 // 恢复任务文件
+export function recovery(data) {
+  return request({
+    url: '/tw/twFile/recovery',
+    method: 'post',
+    params: data
+  })
+}
+
+// 任务文件移入回收站
 export function recycle(data) {
   return request({
     url: '/tw/twFile/recycle',

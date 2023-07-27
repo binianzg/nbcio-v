@@ -5,7 +5,7 @@ export function listIndex(data) {
   return request({
     url: '/tw/twProjectVersion/listIndex',
     method: 'post',
-    data: data
+    params: data
   })
 }
 
@@ -14,7 +14,7 @@ export function edit(data) {
   return request({
     url: '/tw/twProjectVersion/edit',
     method: 'post',
-    data: data
+    params: data
   })
 }
 
@@ -23,7 +23,7 @@ export function save(data) {
   return request({
     url: '/tw/twProjectVersion/save',
     method: 'post',
-    data: data
+    params: data
   })
 }
 
@@ -32,7 +32,7 @@ export function del(data) {
   return request({
     url: '/tw/twProjectVersion/delete',
     method: 'post',
-    data: data
+    params: data
   })
 }
 
@@ -41,7 +41,7 @@ export function changeStatus(data) {
   return request({
     url: '/tw/twProjectVersion/changeStatus',
     method: 'post',
-    data: data
+    params: data
   })
 }
 
@@ -50,7 +50,7 @@ export function getVersionTask(data) {
   return request({
     url: '/tw/twProjectVersion/getVersionTask',
     method: 'post',
-    data: data
+    params: data
   })
 }
 
@@ -59,7 +59,7 @@ export function getVersionLog(data) {
   return request({
     url: '/tw/twProjectVersion/getVersionLog',
     method: 'post',
-    data: data
+    params: data
   })
 }
 
@@ -68,7 +68,7 @@ export function getVersionInfo(data) {
   return request({
     url: '/tw/twProjectVersion/getVersionInfo',
     method: 'post',
-    data: data
+    params: data
   })
 }
 
@@ -77,7 +77,7 @@ export function removeVersionTask(data) {
   return request({
     url: '/tw/twProjectVersion/removeVersionTask',
     method: 'post',
-    data: data
+    params: data
   })
 }
 
@@ -86,6 +86,6 @@ export function addVersionTask(data) {
   return request({
     url: '/tw/twProjectVersion/addVersionTask',
     method: 'post',
-    data: data
+    params: data
   })
 }

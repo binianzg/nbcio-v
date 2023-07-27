@@ -368,3 +368,12 @@ export function sourceDel (data) {
     params: data
   })
 }
+
+// 根据projectId获取甘特图任务阶段列表
+export function getTasksGanttByProjectId(data) {
+  return request({
+    url: '/tw/twTask/taskGantt',
+    method: 'post',
+    params: data
+  })
+}

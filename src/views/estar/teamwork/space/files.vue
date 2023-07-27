@@ -32,6 +32,9 @@
           <li class=""><a class="app" data-app="build" @click="$router.push('/estar/teamwork/space/features/' + id)">
               版本</a>
           </li>
+          <li class=""><a class="app" data-app="build" @click="$router.push('/estar/teamwork/space/gantt/' + id)">
+              甘特图</a>
+          </li>
         </ul>
       </section>
     </div>
