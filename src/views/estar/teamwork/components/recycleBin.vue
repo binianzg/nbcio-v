@@ -65,7 +65,7 @@
     recovery,
     del
   } from "@/api/teamwork/task";
-  //import {list as getFiles, recovery as recoveryFile, del as delFile} from "../../api/file";
+  import {fileList, recovery as recoveryFile, del as delFile} from "@/api/teamwork/file";
   import pagination from "../mixins/pagination";
   import {
     relativelyTaskTime
@@ -106,7 +106,7 @@
     },
     methods: {
       init(reset = true) {
-        let app = this;
+        let that = this;
         if (reset) {
           this.list = [];
           this.pagination.page = 1;
@@ -115,34 +115,34 @@
         }
         this.requestData.deleted = 1;
         this.requestData.projectId = this.id;
-        app.loading = true;
+        that.loading = true;
         switch (this.tabKey) {
           case '1':
-            app.getTasks();
+            that.getTasks();
             break;
           case '2':
-            app.getFiles();
+            that.getFiles();
             break;
         }
       },
       getTasks() {
-        let app = this;
-        list(app.requestData).then(res => {
-          app.list = app.list.concat(res.result.list);
-          app.pagination.total = res.result.total;
-          app.showLoadingMore = app.pagination.total > app.list.length;
-          app.loading = false;
-          app.loadingMore = false
+        let that = this;
+        listByMember(that.requestData).then(res => {
+          that.list = that.list.concat(res.result.list);
+          that.pagination.total = res.result.total;
+          that.showLoadingMore = that.pagination.total > that.list.length;
+          that.loading = false;
+          that.loadingMore = false
         });
       },
       getFiles() {
-        let app = this;
-        getFiles(app.requestData).then(res => {
-          app.list = app.list.concat(res.result.list);
-          app.pagination.total = res.result.total;
-          app.showLoadingMore = app.pagination.total > app.list.length;
-          app.loading = false;
-          app.loadingMore = false
+        let that = this;
+        fileList(that.requestData).then(res => {
+          that.list = that.list.concat(res.result.list);
+          that.pagination.total = res.result.total;
+          that.showLoadingMore = that.pagination.total > that.list.length;
+          that.loading = false;
+          that.loadingMore = false
         });
       },
       onLoadMore() {
@@ -154,7 +154,7 @@
         return relativelyTaskTime(time);
       },
       recoveryTask(item, index) {
-        let app = this;
+        let that = this;
         switch (this.tabKey) {
           case '1':
             this.$confirm({
@@ -165,11 +165,11 @@
               cancelText: '再想想',
               onOk() {
                 recovery(item.id).then((res) => {
-                  if (!checkResponse(res)) {
+                  if (!res.success) {
                     return;
                   }
-                  app.list.splice(index, 1);
-                  app.$emit('update', item);
+                  that.list.splice(index, 1);
+                  that.$emit('update', item);
                 });
                 return Promise.resolve();
               }
@@ -184,11 +184,11 @@
               cancelText: '再想想',
               onOk() {
                 recoveryFile(item.id).then((res) => {
-                  if (!checkResponse(res)) {
+                  if (!res.success) {
                     return;
                   }
-                  app.list.splice(index, 1);
-                  app.$emit('update', item);
+                  that.list.splice(index, 1);
+                  that.$emit('update', item);
                 });
                 return Promise.resolve();
               }
@@ -197,7 +197,7 @@
         }
       },
       deleteItem(item, index) {
-        let app = this;
+        let that = this;
         switch (this.tabKey) {
           case '1':
             this.$confirm({
@@ -208,11 +208,11 @@
               cancelText: '再想想',
               onOk() {
                 del(item.id).then((res) => {
-                  if (!checkResponse(res)) {
+                  if (!res.success) {
                     return;
                   }
-                  app.list.splice(index, 1);
-                  app.$emit('update', item);
+                  that.list.splice(index, 1);
+                  that.$emit('update', item);
                 });
                 return Promise.resolve();
               }
@@ -226,12 +226,12 @@
               okType: 'danger',
               cancelText: '再想想',
               onOk() {
-                delFile(item.id).then((res) => {
-                  if (!checkResponse(res)) {
+                delFile({id: item.id}).then((res) => {
+                  if (!res.success) {
                     return;
                   }
-                  app.list.splice(index, 1);
-                  app.$emit('update', item);
+                  that.list.splice(index, 1);
+                  that.$emit('update', item);
                 });
                 return Promise.resolve();
               }

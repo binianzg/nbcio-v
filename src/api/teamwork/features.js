@@ -5,7 +5,7 @@ export function listIndex(data) {
   return request({
     url: '/tw/twProjectFeatures/listIndex',
     method: 'post',
-    data: data
+    params: data
   })
 }
 
@@ -14,7 +14,7 @@ export function edit(data) {
   return request({
     url: '/tw/twProjectFeatures/edit',
     method: 'post',
-    data: data
+    params: data
   })
 }
 
@@ -23,7 +23,7 @@ export function save(data) {
   return request({
     url: '/tw/twProjectFeatures/save',
     method: 'post',
-    data: data
+    params: data
   })
 }
 
@@ -32,6 +32,6 @@ export function del(data) {
   return request({
     url: '/tw/twProjectFeatures/delete',
     method: 'post',
-    data: data
+    params: data
   })
 }

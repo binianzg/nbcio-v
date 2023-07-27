@@ -107,15 +107,16 @@
     },
     methods: {
       getMembers() {
-        let app = this;
+        let that = this;
         listForInvite({
-          projectId: app.projectId
+          projectId: that.projectId
         }).then(res => {
-          app.list = res.result;
+          console.log("listForInvite res",res);
+          that.list = res.result;
         });
       },
       invite(item) {
-        inviteMember(item.memberId, this.projectId).then((res) => {
+        inviteMember({memberId: item.memberId, projectId: this.projectId}).then((res) => {
           const success = checkResponse(res);
           if (success) {
             item.joined = true;

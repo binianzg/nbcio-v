@@ -32,6 +32,9 @@
           <li class="actives"><a class="app" data-app="build" @click="$router.push('/estar/teamwork/space/features/' + id)">
               版本</a>
           </li>
+          <li class=""><a class="app" data-app="build" @click="$router.push('/estar/teamwork/space/gantt/' + id)">
+              甘特图</a>
+          </li>
         </ul>
       </section>
     </div>
@@ -334,11 +337,13 @@
         })
       },
       getProjectVersionList() {
-        let app = this;
-        app.loading = true;
+        let that = this;
+        that.loading = true;
+        console.log("getProjectVersionList projectFeaturesId",this.currentProjectFeatures.id);
         getProjectVersionList({
           projectFeaturesId: this.currentProjectFeatures.id
         }).then(res => {
+          console.log("getProjectVersionList res",res);
           let versionTotal = 0;
           let normal = [];
           let published = [];
@@ -350,32 +355,32 @@
               normal.push(v);
             }
           });
-          app.versionTotal = versionTotal;
-          app.versionList.normal = normal;
-          app.versionList.published = published;
-          app.loading = false;
+          that.versionTotal = versionTotal;
+          that.versionList.normal = normal;
+          that.versionList.published = published;
+          that.loading = false;
         })
       },
       createFeatures() {
-        let app = this;
-        app.projectFeatures.modalStatus = true;
-        app.projectFeatures.info = null;
-        app.projectFeatures.modalTitle = '创建版本库';
+        let that = this;
+        that.projectFeatures.modalStatus = true;
+        that.projectFeatures.info = null;
+        that.projectFeatures.modalTitle = '创建版本库';
       },
       editFeatures(features) {
-        let app = this;
-        app.projectFeatures.modalStatus = true;
-        app.projectFeatures.modalTitle = '编辑版本库';
-        app.projectFeatures.info = features;
+        let that = this;
+        that.projectFeatures.modalStatus = true;
+        that.projectFeatures.modalTitle = '编辑版本库';
+        that.projectFeatures.info = features;
         this.$nextTick(function() {
-          app.form.setFieldsValue({
+          that.form.setFieldsValue({
             name: features.name,
             description: features.description,
           });
         })
       },
       deleteFeatures(features) {
-        let app = this;
+        let that = this;
         this.$confirm({
           title: '删除版本库',
           content: `若将『${features['name']}』 删除，所有与版本库相关的信息将会被彻底删除，删除后不可恢复。`,
@@ -390,23 +395,23 @@
               if (!result) {
                 return false;
               }
-              if (app.currentProjectFeatures.id == features.id) {
-                app.currentProjectFeatures = null;
+              if (that.currentProjectFeatures.id == features.id) {
+                that.currentProjectFeatures = null;
               }
-              app.init();
+              that.init();
             });
             return Promise.resolve();
           }
         });
       },
       createVersion() {
-        let app = this;
-        app.projectVersion.modalStatus = true;
-        app.projectVersion.info = null;
-        app.projectVersion.modalTitle = '创建版本';
+        let that = this;
+        that.projectVersion.modalStatus = true;
+        that.projectVersion.info = null;
+        that.projectVersion.modalTitle = '创建版本';
       },
       changeVersionStatus(e, versionType, version, index) {
-        let app = this;
+        let that = this;
         if (e.key == version.id) {
           return false;
         }
@@ -418,11 +423,11 @@
             okText: '确认发布',
             okType: 'primary',
             onOk() {
-              app.publishVersion.info = version;
-              app.publishVersion.status = e.key;
-              app.publishVersion.modalStatus = true;
-              app.$nextTick(function() {
-                app.publishVersionForm.setFieldsValue({
+              that.publishVersion.info = version;
+              that.publishVersion.status = e.key;
+              that.publishVersion.modalStatus = true;
+              that.$nextTick(function() {
+                that.publishVersionForm.setFieldsValue({
                   publishTime: moment(),
                 });
               });
@@ -449,85 +454,86 @@
         this.getProjectVersionList();
       },
       handleSubmitPublishVersion() {
-        let app = this;
-        app.publishVersionForm.validateFields(
+        let that = this;
+        that.publishVersionForm.validateFields(
           (err) => {
             if (!err) {
-              let obj = app.publishVersionForm.getFieldsValue();
+              let obj = that.publishVersionForm.getFieldsValue();
               obj.publishTime = moment(obj.publishTime).format('YYYY-MM-DD HH:mm');
               changeStatus({
                 versionId: this.publishVersion.info.id,
                 status: this.publishVersion.status,
                 publishTime: obj.publishTime,
               }).then(res => {
-                app.publishVersion.modalStatus = false;
-                app.getProjectVersionList();
+                that.publishVersion.modalStatus = false;
+                that.getProjectVersionList();
               });
             }
           })
       },
       handleSubmit() {
-        let app = this;
-        app.form.validateFields(
+        let that = this;
+        that.form.validateFields(
           (err) => {
             if (!err) {
-              app.handleOk();
+              that.handleOk();
             }
           })
       },
       handleOk() {
-        let app = this;
-        app.projectFeatures.confirmLoading = true;
-        let obj = app.form.getFieldsValue();
+        let that = this;
+        that.projectFeatures.confirmLoading = true;
+        let obj = that.form.getFieldsValue();
+        console.log("handleOk obj",obj);
         obj.projectId = this.id;
-        if (app.projectFeatures.info) {
-          obj.featuresId = app.projectFeatures.info.id;
+        if (that.projectFeatures.info) {
+          obj.featuresId = that.projectFeatures.info.id;
           edit(obj).then(res => {
-            app.projectFeatures.confirmLoading = false;
-            if (!checkResponse(res)) {
+            that.projectFeatures.confirmLoading = false;
+            if (!res.success) {
               return;
             }
-            app.form.resetFields();
+            that.form.resetFields();
             this.getProjectFeaturesList();
-            app.projectFeatures.modalStatus = false;
+            that.projectFeatures.modalStatus = false;
           });
         } else {
           save(obj).then(res => {
-            app.projectFeatures.confirmLoading = false;
+            that.projectFeatures.confirmLoading = false;
             if (!checkResponse(res)) {
               return;
             }
-            app.form.resetFields();
-            app.projectFeatures.modalStatus = false;
-            app.init();
+            that.form.resetFields();
+            that.projectFeatures.modalStatus = false;
+            that.init();
           });
         }
 
       },
       handleSubmitProjectVersion() {
-        let app = this;
-        app.projectVersionForm.validateFields(
+        let that = this;
+        that.projectVersionForm.validateFields(
           (err) => {
             if (!err) {
-              app.handleOkProjectVersion();
+              that.handleOkProjectVersion();
             }
           })
       },
       handleOkProjectVersion() {
-        let app = this;
-        app.projectVersion.confirmLoading = true;
-        let obj = app.projectVersionForm.getFieldsValue();
+        let that = this;
+        that.projectVersion.confirmLoading = true;
+        let obj = that.projectVersionForm.getFieldsValue();
         obj.featuresId = this.currentProjectFeatures.id;
         obj.startTime = moment(obj.startTime).format('YYYY-MM-DD HH:mm');
         obj.planPublishTime = moment(obj.planPublishTime).format('YYYY-MM-DD HH:mm');
         saveProjectVersion(obj).then(res => {
-          app.projectVersion.confirmLoading = false;
+          that.projectVersion.confirmLoading = false;
           if (!checkResponse(res)) {
             return;
           }
-          app.projectVersionForm.resetFields();
-          app.projectVersion.modalStatus = false;
-          app.getProjectVersionList();
+          that.projectVersionForm.resetFields();
+          that.projectVersion.modalStatus = false;
+          that.getProjectVersionList();
         });
       },
       changeProjectFeatures(e) {

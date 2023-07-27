@@ -1549,7 +1549,12 @@
             }
           });
         }
-        createComment(this.id, this.comment, JSON.stringify(this.mentionsList)).then(() => {
+        let params = {
+          taskId: this.id,
+          comment: this.comment,
+          mentions: JSON.stringify(this.mentionsList)
+        }
+        createComment(params).then(() => {
           this.comment = '';
           this.mentionsList = [];
           this.getTaskLog();

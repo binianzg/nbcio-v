@@ -32,6 +32,9 @@
           <li class=""><a class="app" data-app="build" @click="$router.push('/estar/teamwork/space/features/' + id)">
               版本</a>
           </li>
+          <li class=""><a class="app" data-app="build" @click="$router.push('/estar/teamwork/space/gantt/' + id)">
+              甘特图</a>
+          </li>
         </ul> 
       </section>
       <div class="project-nav-footer">
@@ -497,9 +500,9 @@
     batchAssignTask
   } from "@/api/teamwork/task";
   import {
-    taskStagesSave as createState,
-    taskStagesEdit as editStage,
-    taskStagesDel as delStage
+    taskStagesSave,
+    taskStagesEdit,
+    taskStagesDel
   } from "@/api/teamwork/task";
   import {
     checkResponse,
@@ -982,7 +985,7 @@
               okType: 'danger',
               cancelText: `再想想`,
               onOk() {
-                delStage(stageId);
+                taskStagesDel(stageId);
                 that.taskStages.splice(stageIndex, 1);
                 return Promise.resolve();
               }
@@ -995,7 +998,7 @@
           this.$message.warning('请输入列表名称', 2);
           return false;
         }
-        createState({
+        taskStagesSave({
           name: this.stageName,
           projectId: this.id
         }).then(res => {
@@ -1016,7 +1019,7 @@
           this.$message.warning('请输入列表名称', 2);
           return false;
         }
-        editStage({
+        taskStagesEdit({
           name: stage.name,
           stageId: this.stageModal.stageId
         }).then((res) => {

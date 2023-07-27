@@ -405,7 +405,12 @@ export const constantRouterMap = [
     path: "/estar/teamwork/space/features/:id",
     name: "taskfeatures",
     component: () => import(/* taskfeatures */'@/views/estar/teamwork/space/features.vue')
-  },  
+  }, 
+   {
+     path: "/estar/teamwork/space/gantt/:id",
+     name: "gantt",
+     component: () => import(/* gantt */'@/views/estar/teamwork/space/gantt.vue')
+   },  
   //项目任务看板 add by nbacheng 2023-06-29
   {// add by nbacheng 2022-08-10
     path: "/im/index",
