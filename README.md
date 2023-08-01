@@ -148,7 +148,12 @@ Docker 镜像使用
 # 6.访问前台项目
   http://localhost:9888
 ``` 
+## 捐赠 
 
+如果觉得还不错，请作者喝杯咖啡吧！
+
+![](https://oscimg.oschina.net/oscnet/up-58088c35672c874bd5a95c2327300d44dca.png)
+ 
   系统效果
    ----
    ![](https://oscimg.oschina.net/oscnet/up-ce7d9e52f39df3c7c9c08fae2233b843c86.png)
@@ -184,8 +189,3 @@ Docker 镜像使用
    ![](https://oscimg.oschina.net/oscnet/up-6af11135ef1e923ef9f75af716886bc1b51.png)
    
    ![](https://oscimg.oschina.net/oscnet/up-cc49627b43df4c9abe7baf68272523c70e1.png)
-## 捐赠 
-
-如果觉得还不错，请作者喝杯咖啡吧！
-
-![](https://oscimg.oschina.net/oscnet/up-58088c35672c874bd5a95c2327300d44dca.png)
