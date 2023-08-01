@@ -111,6 +111,9 @@
                   </a-radio-group>
                 </template>
               </a-form-model-item>
+              <a-form-model-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="部门负责人">
+                <j-select-multi-user v-model="model.directorUserIds" valueKey="id"></j-select-multi-user>
+              </a-form-model-item>
               <a-form-model-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="排序">
                 <a-input-number v-model="model.departOrder" />
               </a-form-model-item>
@@ -249,6 +252,7 @@
           importExcelUrl: "sys/sysDepart/importExcel",
         },
         orgCategoryDisabled:false,
+        oldDirectorUserIds:""
       }
     },
     computed: {
@@ -276,6 +280,7 @@
               that.getAllKeys(temp);
               // console.log(temp.id)
             }
+            console.log("queryTreeList=",that.departTree);
             this.loading = false
           }
         })
@@ -392,12 +397,19 @@
         let record = e.node.dataRef
         console.log('onSelect-record', record)
         this.currSelected = Object.assign({}, record)
+        console.log('currSelected', this.currSelected)
         this.model = this.currSelected
         this.selectedKeys = [record.key]
         this.model.parentId = record.parentId
         this.setValuesToForm(record)
         this.$refs.departAuth.show(record.id);
-
+        this.oldDirectorUserIds = record.directorUserIds
+        
+        //update-beign-author:taoyan date:20220316 for: VUEN-329【bug】为什么不是失去焦点的时候，触发手机号校验
+        this.$nextTick(()=>{
+          this.$refs.form.validateField('mobile')
+        })
+        //update-end-author:taoyan date:20220316 for: VUEN-329【bug】为什么不是失去焦点的时候，触发手机号校验
       },
       // 触发onSelect事件时,为部门树右侧的form表单赋值
       setValuesToForm(record) {
@@ -433,7 +445,9 @@
               this.$message.warning('请点击选择要修改部门!')
               return
             }
-
+            //update-begin---author:wangshuai ---date:20200308  for：[JTC-119]在部门管理菜单下设置部门负责人
+            this.currSelected.oldDirectorUserIds = this.oldDirectorUserIds
+            //update-end---author:wangshuai ---date:20200308  for：[JTC-119]在部门管理菜单下设置部门负责人
             httpAction(this.url.edit, this.currSelected, 'put').then((res) => {
               if (res.success) {
                 this.$message.success('保存成功!')
