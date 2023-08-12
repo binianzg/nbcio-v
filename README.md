@@ -19,7 +19,7 @@ nbcio-boot 的前端UI框架，采用前后端分离方案，提供强大代码�
 ## 联系作者
 - 欢迎bug反馈，需求建议，技术交流等
 
-- 个人网页:  https://blog.csdn.net/qq_40032778
+- 个人网页:  https://nbacheng.blog.csdn.net/
 
 - QQ交流群 ：655054809
 
