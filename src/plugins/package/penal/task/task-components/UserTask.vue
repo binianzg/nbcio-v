@@ -5,10 +5,11 @@
       <el-radio-group v-model="defaultTaskForm.dataType" @change="changeDataType">
         <div v-if="bDisplayUser">
           <el-radio label="ASSIGNEE">指定用户</el-radio>
+          <el-radio label="INITIATOR">发起人</el-radio>
 	      </div>
+        <el-radio label="MANAGER">部门经理</el-radio>
         <el-radio label="USERS">候选用户</el-radio>
         <el-radio label="ROLES">候选角色</el-radio>
-        <el-radio label="INITIATOR">发起人</el-radio>
       </el-radio-group>
     </el-row>
     <el-row>
@@ -32,7 +33,7 @@
         </el-select>
       </div>  
     </el-row>
-    <el-row v-if="defaultTaskForm.dataType === 'USERS' || defaultTaskForm.dataType === 'ROLES'">
+    <el-row v-if="defaultTaskForm.dataType === 'USERS' || defaultTaskForm.dataType === 'ROLES' || defaultTaskForm.dataType === 'MANAGER'">
       <h4><b>多实例</b></h4>
       <div>
         <element-multi-instance :business-object="bpmnElement.businessObject" @multiInsEvent="multiIns"/>
@@ -97,6 +98,10 @@ export default {
                this.bpmnElement.businessObject.candidateUsers != null) {
             this.defaultTaskForm.dataType = "USERS";
           }
+          if (this.containsKey(this.bpmnElement.businessObject, 'candidateUsers') &&
+               this.bpmnElement.businessObject.candidateUsers === '${DepManagerHandler.getUsers(execution)}') {
+            this.defaultTaskForm.dataType = "MANAGER";
+          }
           if (this.containsKey(this.bpmnElement.businessObject, 'candidateGroups') &&
                this.bpmnElement.businessObject.candidateGroups != null) {
             this.defaultTaskForm.dataType = "ROLES";
@@ -118,6 +123,10 @@ export default {
           if (this.containsKey(this.bpmnElement.businessObject, 'assignee') &&
                this.bpmnElement.businessObject.assignee === '${INITIATOR}') {
             this.defaultTaskForm.dataType = "INITIATOR";
+          }
+          if (this.containsKey(this.bpmnElement.businessObject, 'candidateUsers') &&
+               this.bpmnElement.businessObject.candidateUsers === '${DepManagerHandler.getUsers(execution)}') {
+            this.defaultTaskForm.dataType = "MANAGER";
           }
         }
         this.$nextTick(() => this.resetTaskForm());
@@ -157,12 +166,30 @@ export default {
         taskAttr['assignee'] = this.userTaskForm['assignee'] || null;
         window.bpmnInstances.modeling.updateProperties(this.bpmnElement, taskAttr);
       }
-      if (val === 'ASSIGNEE' && this.userTaskForm['assignee'] === '${INITIATOR}') {
+      if (val === 'MANAGER') {
+        this.userTaskForm.candidateUsers = "${DepManagerHandler.getUsers(execution)}";
+        this.userTaskForm.text = "部门经理";
+        const taskAttr = Object.create(null);
+        taskAttr['assignee'] = null;
+        taskAttr['candidateGroups'] = null;
+        this.userTaskForm['assignee'] = null;
+        this.userTaskForm['candidateGroups'] = null;
+        taskAttr['candidateUsers'] = this.userTaskForm['candidateUsers'] || null;
+        window.bpmnInstances.modeling.updateProperties(this.bpmnElement, taskAttr);
+      }
+      /*if (val === 'ASSIGNEE' && this.userTaskForm['assignee'] === '${INITIATOR}') {
         this.userTaskForm['assignee'] = null;
         const taskAttr = Object.create(null);
         taskAttr['assignee'] = null;
         window.bpmnInstances.modeling.updateProperties(this.bpmnElement, taskAttr);
       }
+      if (val === 'MANAGER' && this.userTaskForm['candidateUsers'] === '${DepManagerHandler.getUsers(execution)}') {
+        this.userTaskForm['candidateUsers'] = null;
+        const taskAttr = Object.create(null);
+        taskAttr['candidateUsers'] = null;
+        window.bpmnInstances.modeling.updateProperties(this.bpmnElement, taskAttr);
+      }*/
+      
     },  
     updateElementTask(key) {
       const taskAttr = Object.create(null);
