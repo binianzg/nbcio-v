@@ -216,6 +216,11 @@
             dataIndex: 'businessService'
           },
           {
+            title:'流程名称',
+            align:"center",
+            dataIndex: 'flowName'
+          },
+          {
             title:'关联流程发布主键',
             align:"center",
             dataIndex: 'deployId'
@@ -357,6 +362,7 @@
        const params = {
          id: this.customParam.id,
          deployId: row.deploymentId,
+         flowName: row.name,
        }
         console.log("submitCustom params=",params);
         updateCustom(params).then(res => {
@@ -396,6 +402,7 @@
         let fieldList=[];
         fieldList.push({type:'string',value:'businessName',text:'业务表单名称'})
         fieldList.push({type:'string',value:'businessService',text:'业务服务名称'})
+        fieldList.push({type:'string',value:'flowName',text:'流程名称'})
         fieldList.push({type:'string',value:'deployId',text:'关联流程发布主键'})
         fieldList.push({type:'string',value:'routeName',text:'前端路由地址'})
         fieldList.push({type:'string',value:'component',text:'组件注入方法'})

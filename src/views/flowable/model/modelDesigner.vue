@@ -83,10 +83,10 @@
                  v-if="scope.row.formId == null && (scope.row.category == 'oa' || scope.row.category == 'cw')">
                 配置表单
                </el-dropdown-item>
-	       <el-dropdown-item icon="el-icon-connection" @click.native="handleAddCustomForm(scope.row)"
+	             <!--<el-dropdown-item icon="el-icon-connection" @click.native="handleAddCustomForm(scope.row)"
                  v-if="scope.row.formId == null && (scope.row.category == 'zdyyw')">
                 配置自定义业务表单
-               </el-dropdown-item>
+               </el-dropdown-item> -->
                <el-dropdown-item icon="el-icon-connection" @click.native="handleAddOnlineForm(scope.row)"
                  v-if="scope.row.formId == null && (scope.row.category == 'online')">
                 配置online表单
@@ -613,7 +613,7 @@
       getList() {
         this.loading = true;
         listDefinition(this.queryParams).then(response => {
-          console.log("getList response=",response)
+          console.log("getList response=",response);
           this.definitionList = response.result.records;
           this.total = response.result.total;
           this.loading = false;
