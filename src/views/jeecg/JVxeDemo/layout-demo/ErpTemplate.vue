@@ -4,7 +4,7 @@
     <j-vxe-table
       toolbar
       :toolbarConfig="toolbarConfig"
-
+      keep-source
       row-number
       row-selection
       row-selection-type="radio"
@@ -28,6 +28,7 @@
           toolbar
           row-number
           row-selection
+          keep-source
           height="auto"
           :maxHeight="350"
           :loading="table2.loading"
