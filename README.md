@@ -168,6 +168,8 @@ Docker 镜像使用
    
    ![](https://oscimg.oschina.net/oscnet/up-e9182f6d379a37f8a03f347beeeca4cc7ca.png)
    
+   ![](https://oscimg.oschina.net/oscnet/up-d575a8dd5bdf6747bcb3b6cb9b82c677810.png)
+   
    ![](https://oscimg.oschina.net/oscnet/up-639599563b744e92ee9533f5e040d37c6ce.png)
    
    ![](https://oscimg.oschina.net/oscnet/up-1cca12b07f43edf134df5df66c9781972aa.png)
