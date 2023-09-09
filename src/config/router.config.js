@@ -330,7 +330,7 @@ export const constantRouterMap = [
      hidden: true,
      component: () => import(/* webpackChunkName: "fail" */ '@views/flowable/mtask/record/index')
    },
-   {// add by nbacheng 2023-03-25
+   {// 大屏 add by nbacheng 2023-03-25
      path: "/bigscreen/designer",
      name: "bsdesigner",
      component: () => import(/* bsdesigner */'@/views/estar/bigscreen/bigscreenDesigner/designer/index')
@@ -340,11 +340,25 @@ export const constantRouterMap = [
      name: "bsviewer",
      component: () => import(/* bsviewer */'@/views/estar/bigscreen/bigscreenDesigner/viewer/index')
   }, 
-  // 大屏
+  {
+     path: "/excelreport/designer",
+     name: "bsexceldesigner",
+     component: () => import(/* bsexceldesigner */'@/views/estar/bigscreen/excelreport/designer/index')
+  }, 
+  {
+     path: "/excelreport/viewer",
+     name: "bsexcelviewer",
+     component: () => import(/* bsexcelviewer */'@/views/estar/bigscreen/excelreport/viewer/index')
+  }, 
   {
     path: '/screenDesigner',
     component: () => import('@/views/estar/bigscreen/screenDesigner/index'),
     name: 'screenDesigner',
+  },
+  {
+    path: '/excelDesigner',
+    component: () => import('@/views/estar/bigscreen/excelreport/designer/index'),
+    name: 'excelDesigner',
   },
   {
     path: '/screen/preview',

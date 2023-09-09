@@ -90,9 +90,9 @@
   </el-dialog>
 </template>
 <script>
-import { reportShareAdd } from "@/api/bigscreen/reportShare";
+import { excelShareAdd } from "@/api/bigscreen/reportShare";
 export default {
-  components: {  },
+  components: { },
   props: {
     visib: {
       required: true,
@@ -173,7 +173,7 @@ export default {
       this.dialogForm.reportType = this.reportType;
       this.dialogForm.reportCode = this.reportCode;
       this.dialogForm.shareUrl = window.location.href;
-      const { code, data } = await reportShareAdd(this.dialogForm);
+      const { code, data } = await excelShareAdd(this.dialogForm);
       if (code != "200") return;
       this.shareLinkFlag1 = false;
       this.$message({
@@ -187,10 +187,10 @@ export default {
     copyShare() {
       let content = "";
       if (this.dialogForm.sharePassword == "") {
-        content = "BS-Report分享链接：" + this.reportShareUrl;
+        content = "AJ-Report分享链接：" + this.reportShareUrl;
       } else {
         content =
-          "BS-Report分享链接：" +
+          "AJ-Report分享链接：" +
           this.reportShareUrl +
           "  分享码：" +
           this.dialogForm.sharePassword;
