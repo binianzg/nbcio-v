@@ -36,6 +36,10 @@ nbcio-boot 的前端UI框架，采用前后端分离方案，提供强大代码�
 - yarn
 - eslint
 - @vue/cli 3.2.1
+- fullcalendar 
+- v-charts
+- echarts
+- luckysheet
 - [vue-cropper](https://github.com/xyxiao001/vue-cropper) - 头像裁剪组件
 - [@antv/g2](https://antv.alipay.com/zh-cn/index.html) - Alipay AntV 数据可视化图表
 - [Viser-vue](https://viserjs.github.io/docs.html#/viser/guide/installation)  - antv/g2 封装实现

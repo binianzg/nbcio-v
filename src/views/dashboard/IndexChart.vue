@@ -18,25 +18,15 @@
         </chart-card> 
       </a-col>
       <a-col :sm="24" :md="12" :xl="6" :style="{ marginBottom: '24px' }">
-        <chart-card :loading="loading" title="任务总数" :total="tasktotal.dataSource[0].total">
+        <chart-card :loading="loading" title="任务总数" :total="tasksum">
           <a-tooltip title="指标说明" slot="action">
             <a-icon type="info-circle-o" />
           </a-tooltip>
-          <!--<div>
-            <trend flag="up" style="margin-right: 16px;">
-              <span slot="term">月同比</span>
-              12%
-            </trend>
-            <trend flag="down">
-              <span slot="term">日同比</span>
-              11%
-            </trend>
-          </div>-->
           <template slot="footer">任务总数<span></span></template> 
-        </chart-card>
+        </chart-card> 
       </a-col>
       <a-col :sm="24" :md="12" :xl="6" :style="{ marginBottom: '24px' }">
-        <chart-card :loading="loading" title="流程总数" :total="flowtotal.dataSource[0].total">
+        <chart-card :loading="loading" title="流程总数" :total="flowsum">
           <a-tooltip title="指标说明" slot="action">
             <a-icon type="info-circle-o" />
           </a-tooltip>
@@ -57,48 +47,16 @@
           <template slot="footer">总访问量 <span></span></template>
         </chart-card>
       </a-col>
-      <!-- <a-col :sm="24" :md="12" :xl="6" :style="{ marginBottom: '24px' }">
-        <chart-card :loading="loading" title="运营活动效果" total="78%">
-          <a-tooltip title="指标说明" slot="action">
-            <a-icon type="info-circle-o" />
-          </a-tooltip>
-          <div>
-            <mini-progress color="rgb(19, 194, 194)" :target="80" :percentage="78" :height="8" />
-          </div>
-          <template slot="footer">
-            <trend flag="down" style="margin-right: 16px;">
-              <span slot="term">同周比</span>
-              12%
-            </trend>
-            <trend flag="up">
-              <span slot="term">日环比</span>
-              80%
-            </trend>
-          </template>
-        </chart-card> 
-      </a-col> -->
     </a-row>
 
     <a-card :loading="loading" :bordered="false" :body-style="{padding: '0'}">
       <div class="salesCard">
         <a-tabs default-active-key="1" size="large" :tab-bar-style="{marginBottom: '24px', paddingLeft: '16px'}">
-          <!--<div class="extra-wrapper" slot="tabBarExtraContent">
-            <div class="extra-item">
-              <a>今日</a>
-              <a>本周</a>
-              <a>本月</a>
-              <a>本年</a>
-            </div>
-            <a-range-picker :style="{width: '256px'}" />
-          </div>-->
           <a-tab-pane loading="true" tab="任务数" key="1">
             <a-row>
               <a-col :xl="24" :lg="12" :md="12" :sm="24" :xs="24">
                 <bar title="任务数排行" :dataSource="taskmonth.dataSource"/>
               </a-col>
-              <!--<a-col :xl="8" :lg="12" :md="12" :sm="24" :xs="24">
-                <rank-list title="门店销售排行榜" :list="rankList"/>
-              </a-col>-->
             </a-row>
           </a-tab-pane>
           <a-tab-pane tab="流程数" key="2">
@@ -106,9 +64,6 @@
               <a-col :xl="24" :lg="12" :md="12" :sm="24" :xs="24">
                 <bar title="流程数排行" :dataSource="flowmonth.dataSource"/>
               </a-col>
-              <!--<a-col :xl="8" :lg="12" :md="12" :sm="24" :xs="24">
-                <rank-list title="门店销售排行榜" :list="rankList"/>
-              </a-col>-->
             </a-row>
           </a-tab-pane>
         </a-tabs>
@@ -227,10 +182,23 @@
         indicator: <a-icon type="loading" style="font-size: 24px" spin />
       }
     },
+    computed: {  //为了消除页面报错
+      tasksum() {
+        if(this.tasktotal.dataSource.length>0){
+          return String(this.tasktotal.dataSource[0].total);
+        }
+      },
+      flowsum() {
+        if(this.flowtotal.dataSource.length>0){
+          return String(this.flowtotal.dataSource[0].total);
+        }
+      },
+    },  
     created() {
       setTimeout(() => {
         this.loading = !this.loading
-      }, 1000)
+      }, 100)
+      console.log("created tasktotal=",this.tasktotal);  
       this.loadData(this.tasktotal);
       this.loadData(this.flowtotal);
       this.loadData(this.taskmonth);
@@ -243,7 +211,7 @@
         this.$http.get(data.url)
           .then(res => data.dataSource =  res.result.data.records)
           .finally(() => data.loading = false);
-        console.log("loadData data=",data);  
+        //console.log("loadData data=",data);  
       },
       initLogInfo () {
         getLoginfo(null).then((res)=>{

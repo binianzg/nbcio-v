@@ -243,7 +243,12 @@ export default {
        console.log("save this.formData=",this.formData); 
        this.form.formContent = JSON.stringify(this.formData);
        this.formOpen = true;
-       this.formTitle = "添加表单";
+       if (this.inform.id) {
+         this.formTitle = "修改表单";
+       }
+       else {
+         this.formTitle = "添加表单";
+       }
        console.log("save form=",this.form);
     },
     preview(){
