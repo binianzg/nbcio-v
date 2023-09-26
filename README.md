@@ -1,5 +1,10 @@
 NBCIO Vue
 ====
+[![码云Gitee](https://gitee.com/nbacheng/nbcio-vue/badge/star.svg?theme=blue)](https://gitee.com/nbacheng/nbcio-vue)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://gitee.com/nbacheng/nbcio-vue/blob/master/LICENSE)
+[![](https://img.shields.io/badge/Author-宁波阿成-orange.svg)](http://122.227.135.243:9888/)
+[![](https://img.shields.io/badge/Blog-个人博客-blue.svg)](https://nbacheng.blog.csdn.net)
+[![](https://img.shields.io/badge/version-1.0.0-brightgreen.svg)](https://gitee/nbacheng/nbcio-boot)
 
 基于ant-design-vue-jeecg的前端版本： 3.0.0（发布日期：2021-11-01）
 
