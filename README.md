@@ -18,7 +18,7 @@ nbcio-boot 的前端UI框架，采用前后端分离方案，提供强大代码�
 ## 在线演示(包括H5) ：[http://122.227.135.243:9888](http://122.227.135.243:9888)
 
     H5地址是：http://122.227.135.243:9888/h5/
-    演示账号：admin，zhangsan，01015521328526密码都是123456
+    演示账号：演示账号：目前演示用户只能通过gitee授权登录，或star后进群要账号与密码
 	如果你对项目感兴趣，请Watch、Star项目
 
 ## 联系作者
@@ -29,6 +29,7 @@ nbcio-boot 的前端UI框架，采用前后端分离方案，提供强大代码�
 - QQ交流群 ：655054809
 
 ## 友情链接
+- Ruoyi-NBCIO项目: https://gitee.com/nbacheng/ruoyi-nbcio
 - Uniapp项目: https://gitee.com/pzy332/jeecg-app-flowable.git 
 
 #### 前端技术
