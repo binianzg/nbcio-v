@@ -7,6 +7,7 @@ NBCIO Vue
 [![](https://img.shields.io/badge/version-1.0.0-brightgreen.svg)](https://gitee/nbacheng/nbcio-boot)
 
 基于ant-design-vue-jeecg的前端版本： 3.0.0（发布日期：2021-11-01）
+后端地址 https://gitee.com/nbacheng/nbcio-boot
 
 Overview
 ----
