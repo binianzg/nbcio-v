@@ -204,4 +204,3 @@ Docker 镜像使用
    
    ![](https://oscimg.oschina.net/oscnet/up-6af11135ef1e923ef9f75af716886bc1b51.png)
    
-   ![](https://oscimg.oschina.net/oscnet/up-cc49627b43df4c9abe7baf68272523c70e1.png)
