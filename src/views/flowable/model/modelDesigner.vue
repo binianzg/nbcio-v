@@ -27,8 +27,7 @@
         </el-form-item>
       </el-form>
 
-      <el-table v-loading="loading" fit :data="definitionList" 
-      :default-sort = "{prop: 'deploymentTime', order: 'descending'}" border>
+      <el-table v-loading="loading" fit :data="definitionList" border>
         <el-table-column label="流程定义id" align="center" prop="id" />
         <el-table-column label="流程标识Key" align="center" prop="key" />
         <el-table-column label="流程分类" align="center">

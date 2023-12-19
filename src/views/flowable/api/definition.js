@@ -5,7 +5,8 @@ export function listDefinition(query) {
   return request({
     url: '/flowable/definition/list',
     method: 'get',
-    params: query
+    params: query,
+    timeout: 15000 // 设置该请求的超时时间为15秒
   })
 }
 
