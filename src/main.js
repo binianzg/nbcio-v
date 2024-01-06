@@ -8,6 +8,12 @@ import router from './router'
 import store from './store/'
 import { VueAxios } from "@/utils/request"
 
+// ElementUI 放置最前，Antd放置于后
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
+// ElementUI分页组件
+import Pagination from "@/components/Pagination";
+Vue.component('Pagination', Pagination);
 
 import ViewUI from "view-design";
 import "view-design/dist/styles/iview.css";
@@ -51,9 +57,7 @@ import '@/assets/less/JAreaLinkage.less'
 import VueAreaLinkage from 'vue-area-linkage'
 import '@/components/jeecg/JVxeTable/install'
 import '@/components/JVxeCells/install'
-// ElementUI 放置最前，Antd放置于后
-import ElementUI from 'element-ui';
-import 'element-ui/lib/theme-chalk/index.css';
+
 //For IM add by nbacheng 2022-08-17
 import { dateStr, formatDateTime } from "@/utils/im/ChatUtils.js";
 if (process.env.VUE_APP_MODE === "web") {

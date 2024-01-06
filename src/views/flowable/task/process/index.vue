@@ -150,8 +150,13 @@
            </template>
          </el-table-column>
        </el-table>
-       <el-pagination v-show="processTotal>0" :total="processTotal" :current-page.sync="queryProcessParams.pageNum"
-         :page-size.sync="queryProcessParams.pageSize" @size-change="listDefinition" @current-change="listDefinition" />
+       <pagination
+         v-show="processTotal > 0"
+         :total="processTotal"
+         :page.sync="queryProcessParams.pageNum"
+         :limit.sync="queryProcessParams.pageSize"
+         @pagination="listDefinition"
+       />
        </a-modal>
     </div>
   </a-card>
@@ -376,6 +381,7 @@
         this.listDefinition();
       },
       listDefinition(){
+        this.processLoading = true;
         listDefinition(this.queryProcessParams).then(response => {
           this.definitionList = response.result.records;
           this.processTotal = response.result.total;
