@@ -102,7 +102,7 @@
           <div class="tr-expand" :style="`height:${getExpandHeight}px; z-index:${loading?'11':'9'};`"></div>
           <!-- 无数据时显示 -->
           <div v-if="rows.length===0" class="tr-nodata">
-            <span>暂无数据</span>
+            <span>暂无数据或等待一下</span>
           </div>
           <!-- v-model="rows"-->
           <draggable

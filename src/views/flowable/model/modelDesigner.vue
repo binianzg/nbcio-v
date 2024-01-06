@@ -1,7 +1,7 @@
 <template>
   <div>
     <!--  ==================流程定义列表===============  -->
-    <a-card v-if="!xmlFrame.open||xmlView">
+    <el-card v-if="!xmlFrame.open||xmlView">
       <el-form :model="queryParams" ref="queryForm" :inline="true" label-width="68px">
         <el-form-item label="流程名称" prop="name">
           <el-input v-model="queryParams.name" placeholder="请输入名称" clearable size="small"
@@ -27,7 +27,7 @@
         </el-form-item>
       </el-form>
 
-      <el-table v-loading="loading" fit :data="definitionList" border>
+      <el-table v-loading="flowLoading" :data="definitionList" :empty-text="loadInfo" border>
         <el-table-column label="流程定义id" align="center" prop="id" />
         <el-table-column label="流程标识Key" align="center" prop="key" />
         <el-table-column label="流程分类" align="center">
@@ -112,9 +112,14 @@
           </template>
         </el-table-column>
       </el-table>
-      <el-pagination v-show="total>0" :total="total" :current-page.sync="queryParams.pageNum"
-        :page-size.sync="queryParams.pageSize" @size-change="getList" @current-change="getList" />
-    </a-card>
+      <pagination
+        v-show="total > 0"
+        :total="total"
+        :page.sync="queryParams.pageNum"
+        :limit.sync="queryParams.pageSize"
+        @pagination="getList"
+      />
+    </el-card>
     <!--用workflow-bpmn-modeler 流程图 -->
     <!-- <a-card v-if="xmlFrame.open&&!xmlView" :title="xmlFrame.title">
       <a slot="extra" href="#" @click="()=>{xmlFrame.open=false}">返回</a>
@@ -422,6 +427,8 @@
         loading: true,
         // 总条数
         total: 0,
+        flowLoading: false,
+        loadInfo: '',
         // 流程定义表格数据
         definitionList: [],
         // 弹出层标题
@@ -610,12 +617,16 @@
       },
       /** 查询流程定义列表 */
       getList() {
-        this.loading = true;
+        this.flowLoading = true;
+        this.loadInfo = "数据加载中..."
         listDefinition(this.queryParams).then(response => {
           console.log("getList response=",response);
-          this.definitionList = response.result.records;
-          this.total = response.result.total;
-          this.loading = false;
+          if(response.code == 200) {
+            this.loadInfo = "";
+            this.definitionList = response.result.records;
+            this.total = response.result.total;
+          }
+          this.flowLoading = false;
         });
       },
       /** 重置按钮操作 */
