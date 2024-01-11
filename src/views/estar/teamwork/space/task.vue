@@ -1183,8 +1183,12 @@
         this.project = data;
       },
       collectProject() {
-        const type = this.project.collected ? 'cancel' : 'collect';
-        collect(this.project.id, type).then((res) => {
+        const type = this.project.collected ? 'collect' : 'cancel';
+        let params = {
+          id: this.project.id,
+          type: type,
+        }
+        collect(params).then((res) => {
           if (!res.success) {
             return;
           }
