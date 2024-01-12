@@ -142,7 +142,7 @@
                               <template slot="title">
                                 <span>{{task.executor.name}}</span>
                               </template>
-                              <img :src="task.executor.avatar" :title="task.executor.name"
+                              <img :src="getImgView(task.executor.avatar)" :title="task.executor.name"
                                 class="avatar img-circle img-24 hinted">
                             </a-tooltip>
                           </div>
@@ -478,6 +478,8 @@
   import TaskTag from '../components/taskTag'
   import TaskSearch from '../components/taskSearch'
   import WrapperContent from '../components/WrapperContent'
+  
+  import { deleteAction, getAction,downFile,getFileAccessHttpUrl } from '@/api/manage'
 
   import {
     getStagesByProjectId as getTaskStages,
@@ -992,6 +994,24 @@
             });
             break;
         }
+      },
+      /* 图片预览 */
+      getImgView(text){
+        if(text && text.indexOf(",")>0){
+          text = text.substring(0,text.indexOf(","))
+        }
+        return getFileAccessHttpUrl(text)
+      },
+      downloadFile(text){
+        if(!text){
+          this.$message.warning("未知的文件")
+          return;
+        }
+        if(text.indexOf(",")>0){
+          text = text.substring(0,text.indexOf(","))
+        }
+        let url = getFileAccessHttpUrl(text)
+        window.open(url);
       },
       creteStage() {
         if (!this.stageName) {

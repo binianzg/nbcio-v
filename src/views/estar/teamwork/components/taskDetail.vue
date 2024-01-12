@@ -613,9 +613,9 @@
                             <a-list-item :key="index" v-for="(item, index) in taskSourceList">
                               <a-list-item-meta>
                                 <a-avatar size="small" slot="avatar" shape="square" icon="link"
-                                  :src="item.sourceDetail.file_url" />
+                                  :src="getImgView(item.sourceDetail.file_url)" />
                                 <div slot="title">
-                                  <a class="muted" target="_blank" :href="item.sourceDetail.file_url">{{ item.title
+                                  <a class="muted" target="_blank" :href="downloadFile(item.sourceDetail.file_url)">{{ item.title
                                                                         }}</a>
                                 </div>
                                 <div slot="description">
@@ -859,6 +859,7 @@
     COMMON
   } from '../const/common'
   import editor from './editor'
+  import { deleteAction, getAction,downFile,getFileAccessHttpUrl } from '@/api/manage'
   import {
     createComment,
     del,
@@ -1266,6 +1267,24 @@
           this.taskMemberList = res.result.list;
           this.loading = false;
         })
+      },
+      /* 图片预览 */
+      getImgView(text){
+        if(text && text.indexOf(",")>0){
+          text = text.substring(0,text.indexOf(","))
+        }
+        return getFileAccessHttpUrl(text)
+      },
+      downloadFile(text){
+        if(!text){
+          this.$message.warning("未知的文件")
+          return;
+        }
+        if(text.indexOf(",")>0){
+          text = text.substring(0,text.indexOf(","))
+        }
+        let url = getFileAccessHttpUrl(text)
+        return url;
       },
       doTask(action) {
         let that = this;
