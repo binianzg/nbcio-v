@@ -17,7 +17,10 @@ function vModel(self, dataObject) {
     if (dataObject.props.value != '') {
       const filevalue = JSON.parse(dataObject.props.value);
       dataObject.props['file-list'] = filevalue;
-    } 
+    }
+    dataObject.attrs['on-preview'] = (file) => {
+      window.open(file.url, "_blank")
+    }
   }  
 }
 
