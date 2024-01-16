@@ -68,8 +68,7 @@ function vModel(self, dataObject) {
     }
     
     dataObject.attrs['on-preview'] = (file) => {
-      console.log("on-preview file",file);
-      //download(file);
+      window.open(file.response.message, "_blank")
     }
     //for get return file url add by nbacheng 2022-09-07
   }
