@@ -31,6 +31,7 @@ nbcio-boot 的前端UI框架，采用前后端分离方案，提供强大代码�
 - 个人网页:  https://nbacheng.blog.csdn.net/
 
 - QQ交流群 ：655054809
+- 微信：![微信](https://oscimg.oschina.net/oscnet/up-b3a9af64dbe74a868a021ea16e1a55317d0.jpg)
 
 ## 友情链接
 - Ruoyi-NBCIO项目: https://gitee.com/nbacheng/ruoyi-nbcio
