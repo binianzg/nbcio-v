@@ -4,7 +4,7 @@
   <span>
       <a-button :type="btnType"  @click="history()" >{{text}}</a-button>
       <a-modal title="审批历史" v-model="modalLsVisible" :mask-closable="true" :width="'80%'" :footer="null">
-          <div v-if="modalLsVisible">
+          <div v-if="modalLsVisible" style="max-height: 550px; overflow-y: scroll;">
               <HistoricDetail ref="historicDetail" :data-id="dataId"></HistoricDetail>
           </div>
       </a-modal>

@@ -248,7 +248,7 @@
     },
     created() {
       this.pcaData = new Area()
-    this.getSuperFieldList();
+      this.getSuperFieldList();
     },
     computed: {
       importExcelUrl: function(){

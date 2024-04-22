@@ -17,6 +17,8 @@
           <!--                <el-button  icon="el-icon-edit-outline" type="primary" size="mini" @click="handleDelegate">委派</el-button>-->
           <!--                <el-button  icon="el-icon-edit-outline" type="primary" size="mini" @click="handleAssign">转办</el-button>-->
           <!--                <el-button  icon="el-icon-edit-outline" type="primary" size="mini" @click="handleDelegate">签收</el-button>-->
+          <el-button icon="el-icon-refresh-left" type="warning" size="mini" @click="handleAddSign">加签</el-button>
+          <el-button icon="el-icon-refresh-left" type="warning" size="mini" @click="handleJump">跳转</el-button>
           <el-button icon="el-icon-refresh-left" type="warning" size="mini" @click="handleReturn">退回</el-button>
           <el-button icon="el-icon-circle-close" type="danger" size="mini" @click="handleReject">驳回</el-button>
         </div>
@@ -85,6 +87,8 @@
               <!--                <el-button  icon="el-icon-edit-outline" type="primary" size="mini" @click="handleDelegate">委派</el-button>-->
               <!--                <el-button  icon="el-icon-edit-outline" type="primary" size="mini" @click="handleAssign">转办</el-button>-->
               <!--                <el-button  icon="el-icon-edit-outline" type="primary" size="mini" @click="handleDelegate">签收</el-button>-->
+              <el-button icon="el-icon-refresh-left" type="warning" size="mini" @click="handleAddSign">加签</el-button>
+              <el-button icon="el-icon-refresh-left" type="warning" size="mini" @click="handleJump">跳转</el-button>
               <el-button icon="el-icon-refresh-left" type="warning" size="mini" @click="handleReturn">退回</el-button>
               <el-button icon="el-icon-circle-close" type="danger" size="mini" @click="handleReject">驳回</el-button>
             </div>
@@ -92,9 +96,6 @@
 
       <!--流程处理表单设计器模块,从flowable表里获取表单数据-->
       <el-col :span="16" :offset="4" v-if="variableOpen">
-        <!--<div > <!--处理流程过程中显示formgenerator表单信息
-          <parser :key="new Date().getTime()" :form-conf="variablesData" />
-        </div>-->
           <div > <!--处理流程过程中显示formdesigner表单信息-->
             <form-builder v-if = "this.startUserForm.isStartUserNode && this.startUserForm.editFormType === 'oa' && finished === 'true'" ref="refStartBuilder" v-model="formVal" :buildData="formViewData" />
             <form-viewer v-else ref="formViewer" v-model="formVal" :buildData="formViewData" />
@@ -115,19 +116,13 @@
           <!--                <el-button  icon="el-icon-edit-outline" type="primary" size="mini" @click="handleDelegate">委派</el-button>-->
           <!--                <el-button  icon="el-icon-edit-outline" type="primary" size="mini" @click="handleAssign">转办</el-button>-->
           <!--                <el-button  icon="el-icon-edit-outline" type="primary" size="mini" @click="handleDelegate">签收</el-button>-->
+          <el-button icon="el-icon-refresh-left" type="warning" size="mini" @click="handleAddSign">加签</el-button>
+          <el-button icon="el-icon-refresh-left" type="warning" size="mini" @click="handleJump">跳转</el-button>
           <el-button icon="el-icon-refresh-left" type="warning" size="mini" @click="handleReturn">退回</el-button>
           <el-button icon="el-icon-circle-close" type="danger" size="mini" @click="handleReject">驳回</el-button>
         </div>
       </el-col>
 
-
-      <!--初始化流程加载默认formgenerator表单信息-->
-      <!-- <el-col :span="16" :offset="4" v-if="formConfOpen">
-        <div class="test-form">
-          <parser :key="new Date().getTime()" :form-conf="formConf" @submit="submitForm" ref="parser"
-            @getData="getData" />
-        </div>
-      </el-col> -->
       <!--初始化流程加载默认formdesigner表单信息-->
       <el-col :span="16" :offset="4" v-if="formConfOpen">
         <div class="test-form">
@@ -157,7 +152,10 @@
             <el-timeline-item v-for="(item,index ) in flowRecordList" :key="index" :icon="setIcon(item.finishTime)"
               :color="setColor(item.finishTime)">
               <p style="font-weight: 700">{{item.taskName}}</p>
-              <el-card :body-style="{ padding: '10px' }">
+              <el-card v-if="item.activityType === 'startEvent'" class="box-card" shadow="hover">
+                {{ item.assigneeName }} 在 {{ item.createTime }} 发起流程
+              </el-card>
+              <el-card v-if="item.activityType === 'userTask'" :body-style="{ padding: '10px' }">
                 <label v-if="item.assigneeName" style="font-weight: normal;margin-right: 30px;">实际办理：
                   {{item.assigneeName}}
                   <el-tag type="info" size="mini">{{item.deptName}}</el-tag>
@@ -177,13 +175,13 @@
                           <j-upload  v-if="fileitem.type === '1'" v-model="fileitem.fileurl" :disabled = "true"  text="上传的文件" ></j-upload>                 
                      </el-form-item>
                    </el-form>  
-                   <el-tag type="warning" v-if="commentitem.type === '2'"> {{commentitem.comment}}</el-tag>
+                   <el-tag type="warning" v-if="commentitem.type === '2'"> {{"退回: "+ commentitem.comment}}</el-tag>
                    <el-form v-if= "commentitem.type === '2' && fileitem.type === '2'  && item.listcommentFileDto.length>0" v-for="(fileitem,fileindex ) in item.listcommentFileDto" :key="fileindex">
                      <el-form-item label="附件"  prop="listcommentFileDto">
                           <j-upload v-if="fileitem.type === '2'" v-model="fileitem.fileurl" :disabled = "true"  text="退回上传的文件" ></j-upload> 
                      </el-form-item>
                    </el-form>  
-                   <el-tag type="danger" v-if="commentitem.type === '3'">  {{commentitem.comment}}</el-tag>
+                   <el-tag type="danger" v-if="commentitem.type === '3'">  {{"驳回: "+commentitem.comment}}</el-tag>
                    <el-form v-if= "commentitem.type === '3' && fileitem.type === '3'  && item.listcommentFileDto.length>0" v-for="(fileitem,fileindex ) in item.listcommentFileDto" :key="fileindex">
                      <el-form-item label="附件"  prop="listcommentFileDto">
                         <j-upload v-if="fileitem.type === '3'"  v-model="fileitem.fileurl" :disabled = "true"  text="驳回上传的文件" ></j-upload>
@@ -201,10 +199,17 @@
                          <j-upload v-model="fileitem.fileurl" :disabled = "true"  text="转办上传的文件" ></j-upload>
                       </el-form-item>
                     </el-form>  
-                    <el-tag type="warning" v-if="commentitem.type === '7'"> {{commentitem.comment}}</el-tag>  <!--撤回信息-->
+                    <el-tag type="warning" v-if="commentitem.type === '7'"> {{"撤回: "+commentitem.comment}}</el-tag>  <!--撤回信息-->
                     <el-tag type="warning" v-if="commentitem.type === '6'"> {{commentitem.comment}}</el-tag>  <!--终止信息-->
                     <el-tag type="warning" v-if="commentitem.type === '8'"> {{commentitem.comment}}</el-tag>  <!--跳过信息-->
+                    <el-tag type="success" v-if="commentitem.type === '9'"> {{commentitem.comment}}</el-tag>  <!--前加签-->
+                    <el-tag type="success" v-if="commentitem.type === '10'"> {{commentitem.comment}}</el-tag>  <!--后加签-->
+                    <el-tag type="success" v-if="commentitem.type === '11'"> {{commentitem.comment}}</el-tag>  <!--多实例加签-->
+                    <el-tag type="success" v-if="commentitem.type === '12'"> {{commentitem.comment}}</el-tag>  <!--跳转信息-->
                  </p>
+              </el-card>
+              <el-card v-if="item.activityType === 'endEvent'" class="box-card" shadow="hover">
+                {{ item.createTime }} 流程结束
               </el-card>
             </el-timeline-item>
           </el-timeline>
@@ -215,7 +220,6 @@
       <div slot="header" class="clearfix">
         <span class="el-icon-picture-outline">流程图</span>
       </div>
-      <!--<flow :xmlData="xmlData" :taskData="taskList"></flow>-->
       <!-- 流程图 -->
       <bpmn-modeler v-if="xmlShow" ref="refNode" :xml="xmlData" :taskData="taskList" :users="users" :groups="groups"
         class="bpmn-modeler" :categorys="categorys" :is-view="false" />
@@ -224,7 +228,7 @@
     <!--审批正常流程-->
     <a-modal :z-index="100" :title="completeTitle" @cancel="completeOpen = false" :visible.sync="completeOpen" :width="checkSendUser? '60%':'40%'" append-to-body>
       <el-form ref="taskForm" :model="taskForm" label-width="160px">
-        <el-form-item v-if="checkSendUser" prop="targetKey">
+        <el-form-item v-if="checkSendUser" prop="targetKey" style="max-height: 300px; overflow-y: scroll;">
           <el-row :gutter="20">
             <el-col :span="12" :xs="24">
               <h6>待选人员</h6>
@@ -237,7 +241,7 @@
             </el-col>
             <el-col :span="8" :xs="24">
               <h6>已选人员</h6>
-              <el-tag v-for="tag in userData" :key="tag" closable @close="handleClose(tag)">
+              <el-tag v-for="(tag,index) in userData" :key="index" closable @close="handleClose(tag)">
                 {{tag.realname}} {{tag.orgCodeTxt}}
               </el-tag>
             </el-col>
@@ -251,6 +255,10 @@
         </el-form-item>
         <el-form-item label="选择抄送人" prop="ccUsers">
           <j-select-user-by-dep v-model="taskForm.ccUsers" />
+        </el-form-item>
+        <el-form-item label="选择下一审批人" prop="nextUsers">
+          <j-select-user-by-dep v-model="taskForm.nextUsers" />
+          <el-tag type="danger">注意: 多实例目前仅支持选择下一个审批人数要与原先设置的人数一致</el-tag>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -291,6 +299,60 @@
         <el-button type="primary" @click="taskReject">确 定</el-button>
       </span>
     </el-dialog>
+    
+    <!--加签流程-->
+    <a-modal :z-index="100" :title="addSignTitle" @cancel="addSignOpen = false" :visible.sync="addSignOpen" :width="'40%'" append-to-body>
+      <el-form ref="addSignForm" :model="addSignForm" label-width="160px">
+        <el-form-item label="加签类型" prop="addSignType" :rules="[{ required: true, message: '请选择加签类型', trigger: 'blur' }]">
+          <el-radio-group v-model="addSignForm.addSignType" @change="changeAddSignType">
+              <el-radio :label="0">前加签</el-radio>
+              <el-radio :label="1">后加签</el-radio>
+              <el-radio :label="2">多实例加签</el-radio>
+            </el-radio-group>
+        </el-form-item>
+        <el-form-item label="用户选择" prop="addSignUsers" :rules="[{ required: true, message: '请选择用户', trigger: 'blur' }]">
+          <j-select-user-by-dep v-model="addSignForm.addSignUsers" />
+        </el-form-item>
+        <el-form-item label="处理意见" prop="comment" :rules="[{ required: true, message: '请输入处理意见', trigger: 'blur' }]">
+          <el-input type="textarea" v-model="addSignForm.comment" placeholder="请输入处理意见" />
+        </el-form-item>
+        <el-form-item label="附件"  prop="commentFileDto.fileurl">
+          <j-upload v-model="addSignForm.commentFileDto.fileurl"   ></j-upload>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="addSignOpen = false">取 消</el-button>
+        <el-button type="primary" @click="addSignComplete(true)">确 定</el-button>
+      </span>
+    </a-modal>
+    
+    <!--跳转流程-->
+    <a-modal :z-index="100" :title="jumpTitle" @cancel="jumpOpen = false" :visible.sync="jumpOpen" :width="'40%'" append-to-body>
+      <el-form ref="jumpForm" :model="jumpForm" label-width="160px">
+        <el-form-item label="跳转节点" prop="jumpType" :rules="[{ required: true, message: '请选择跳转节点', trigger: 'blur' }]">
+          <a-table
+            size="middle"
+            :columns="jumpNodeColumns"
+            :loading="jumpNodeLoading"
+            :pagination="false"
+            :dataSource="jumpNodeData"
+            :rowKey="(record) => record.id"
+            :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange ,type:'radio' }"
+          />
+        </el-form-item>
+        
+        <el-form-item label="处理意见" prop="comment" :rules="[{ required: true, message: '请输入处理意见', trigger: 'blur' }]">
+          <el-input type="textarea" v-model="jumpForm.comment" placeholder="请输入处理意见" />
+        </el-form-item>
+        <el-form-item label="附件"  prop="commentFileDto.fileurl">
+          <j-upload v-model="jumpForm.commentFileDto.fileurl"   ></j-upload>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="jumpOpen = false">取 消</el-button>
+        <el-button type="primary" @click="jumpComplete(true)">确 定</el-button>
+      </span>
+    </a-modal>
   </div>
 </template>
 
@@ -315,6 +377,10 @@
     delegateTask,
     assignTask,
     nextApprovedEG,
+    addSignTask,
+    multiInstanceAddSignTask,
+    userTaskList,
+    jumpTask,
   } from "@/views/flowable/api/todo";
   import {
     queryMyDepartTreeList
@@ -540,6 +606,66 @@
           editFormType: '', //第一发起人节点编辑的表单类型
         },
         bapproved: false,  //获取下个节点是否通用同意拒绝网关，以便显示拒绝按钮
+        addSignOpen: false, //前加签
+        addSignTitle: null,  //加签标题
+        addSignForm: {
+          multiple: true,
+          comment: "", // 意见内容
+          commentFileDto: { //意见里的附件
+            type: '',
+            fileurl: ''
+          }, 
+          procInsId: "", // 流程实例编号
+          instanceId: "", // 流程实例编号
+          deployId: "", // 流程定义编号
+          taskId: "", // 流程任务编号
+          procDefId: "", // 流程编号
+          businessKey: "", //业务主键编号
+          dataId: "",//业务主键编号
+          nodeType: "", //当前节点类型 目前只针对多实例会签做处理
+          vars: "",
+          targetKey: "",
+          category: "",//流程类别，目前主要区别online与自定义使用
+          onlineId: "",//online表单Id
+          onlineDataId: "",//online数据Id
+          addSignUsers: "", //委托加签人员
+          addSignType: 0, //加签类型
+        },
+        
+        jumpOpen: false, //跳转
+        jumpTitle: null,  //跳转标题
+        jumpForm: {
+          multiple: true,
+          comment: "", // 意见内容
+          commentFileDto: { //意见里的附件
+            type: '',
+            fileurl: ''
+          }, 
+          procInsId: "", // 流程实例编号
+          instanceId: "", // 流程实例编号
+          deployId: "", // 流程定义编号
+          taskId: "", // 流程任务编号
+          procDefId: "", // 流程编号
+          businessKey: "", //业务主键编号
+          dataId: "",//业务主键编号
+          nodeType: "", //当前节点类型 目前只针对多实例会签做处理
+          vars: "",
+          targetKey: "",
+          category: "",//流程类别，目前主要区别online与自定义使用
+          onlineId: "",//online表单Id
+          onlineDataId: "",//online数据Id
+          jumpNode: "", //跳转节点
+        },
+        jumpNodeLoading: false,
+        jumpNodeData: [],
+        jumpNodeColumns: [
+          {
+            title: '节点名称',
+            dataIndex: 'name'
+          }
+        ],
+        selectedRowKeys: [],
+        selectedRows: [],
       };
     }, 
     created() {
@@ -565,15 +691,12 @@
       console.log("created this.taskForm.taskId=",this.taskForm.taskId);
       console.log("created this.taskForm.deployId=",this.taskForm.deployId);
       this.getModelDetail(this.taskForm.deployId);
-      //this.getFlowViewer(this.taskForm.procInsId);
       // 流程任务重获取变量表单
       if (this.taskForm.taskId) {
         this.processVariables(this.taskForm.taskId)
         this.getNextApprovedEG(this.taskForm.taskId)
-        this.getNextFlowNode(this.taskForm.taskId)
+        //this.getNextFlowNode(this.taskForm.taskId)
         console.log("userDataList=", this.userDataList)
-        //this.taskForm.deployId = null
-        //this.getFlowRecordList(this.taskForm.procInsId, this.taskForm.deployId, this.taskForm.businessKey, this.taskForm.taskId);
       }
       this.getFlowRecordList(this.taskForm.procInsId, this.taskForm.deployId, this.taskForm.businessKey, this.taskForm.taskId, this.taskForm.category);
       this.finished = this.$route.query && this.$route.query.finished
@@ -680,7 +803,6 @@
         const canvas = modeler.get('canvas')
         console.log("fillColor modeler=",modeler)
         modeler._definitions.rootElements[0].flowElements.forEach(n => {
-          //const completeTask = this.taskList.find(m => m.key === n.id)
           const completeTask = this.taskList.filter(m => m.key === n.id)
           const todoTask = this.taskList.find(m => !m.completed)
           const endTask = this.taskList[this.taskList.length - 1]
@@ -788,9 +910,6 @@
         this.$refs.DeptUserInfo.currentDeptId = '';
       },
       onExpand(expandedKeys) {
-        // console.log('onExpand', expandedKeys)
-        // if not set autoExpandParent to false, if children expanded, parent can not collapse.
-        // or, you can remove all expanded children keys.
         this.iExpandedKeys = expandedKeys
         this.autoExpandParent = false
       },
@@ -834,7 +953,6 @@
             this.onlineForm.onlineFormData = res.result.formData;
             this.onlineForm.disabled = false;
             this.onlineForm.isNew = true;
-            //this.onlineForm.disableSubmit = false;
             this.onlineForm.visible = true;
             console.log("onlineForm.onlineFormData=",this.onlineForm.onlineFormData);
             getOnlineFormItem(formId).then(itemres => {//获取从表相关信息
@@ -858,7 +976,6 @@
                 this.$message.error(itemres.message);
               }  
             })
-            //this.formConfOpen = true;
           })    
         }
         else if (businessKey == 'newkey') {
@@ -882,6 +999,9 @@
               console.log("this.flowRecordList", this.flowRecordList);
               if (res.result.hasOwnProperty('flowList')) {
                 this.flowRecordList.forEach((item, index) => {
+                  if (item.activityType === 'startEvent' || item.activityType === 'endEvent' ){
+                    return;
+                  }
                   this.taskFormList[index] = JSON.stringify(item.taskFormValues);
                   //对下个节点是会签同时可以选择用户的做特殊处理taskformvalues
                   if(item.taskFormValues.formValue.hasOwnProperty('taskformvalues')) {
@@ -1027,6 +1147,7 @@
                 this.taskForm.values = JSON.parse(this.formVal);
                 console.log("this.taskForm.values=",this.taskForm.values);
               }
+              this.getNextFlowNode(this.taskForm.taskId);
             }
             else {
               this.$message.error(res.message);
@@ -1044,38 +1165,6 @@
         a.dispatchEvent(event);
         console.log(file)
       },
-      //for formgenerator
-      /*fillFormData(fields, formConf) {
-        const { formModel, formRef } = formConf
-        fields.forEach((item, i) => {
-          const vModel = item.__vModel__
-          const val = item.__config__.defaultValue 
-          // 特殊处理el-upload，包括 回显图片
-          if (item.__config__.tag === 'el-upload') {
-            
-            // 回显图片
-            console.log("fillFormData val=",JSON.parse(val))
-            this.fileDisplay = true
-            console.log('item=',item['list-type'])
-            if(item['list-type'] != 'text') {
-              this.fileList = ''    //隐藏加的el-upload文件列表
-              item['file-list'] = JSON.parse(val)
-            }
-            else {  //图片
-              this.fileList = JSON.parse(val)
-              item['file-list'] = '' //隐藏加的表单设计器的文件列表
-            }
-            
-          }
-          // 设置各表单项的默认值（回填表单），包括el-upload的默认值
-          if (val) {
-            item.__config__.defaultValue = val
-          }
-          if (Array.isArray(item.__config__.children)) {
-            this.fillFormData(item.__config__.children, formConf)
-          }
-        })
-      },*/
       fillFormData(list, formConf) { // for formdesigner 
         console.log("fillFormData list=",list);
         console.log("fillFormData formConf=",formConf);
@@ -1110,14 +1199,16 @@
       /** 根据当前任务或者流程设计配置的下一步节点 */
       getNextFlowNode(taskId) {
         // 根据当前任务或者流程设计配置的下一步节点 todo 暂时未涉及到考虑网关、表达式和多节点情况
+        let nextValues = this.taskForm.values;
         const params = {
-          taskId: taskId
+          taskId: taskId,
+          values: nextValues
         }
         getNextFlowNode(params).then(res => {
           const data = res.result;
+          console.log("getNextFlowNode data=",data)
           if (data) {
             this.checkSendUser = true
-            console.log("getNextFlowNode data=",data)
             if (data.type === 'assignee') { // 指定人员
               this.userDataList = res.result.userList;
               this.checkSendUser = false;
@@ -1125,7 +1216,7 @@
               this.userDataList = res.result.userList;
               //console.log("candidateUsers nodeType,bmutiInstanceFinish=",this.taskForm.nodeType,this.taskForm.bmutiInstanceFinish) 
               if(this.userDataList.length===1) {
-                this.checkSendUser = true;
+                this.checkSendUser = false;
               }
               else if(this.userDataList.length>1) {
                  console.log("candidateUsers nodeType=",this.taskForm.nodeType) 
@@ -1195,13 +1286,17 @@
       },
       /** 审批任务 */
       taskComplete(approved) {
-        if (!this.taskForm.values && this.checkSendUser) {
-            this.$message.error("请选择流程接收人员");
-            return;
-        }
-        else if( this.checkSendUser && (this.taskForm.values.approval.split(",").length>1)) {
+        if(this.taskForm.hasOwnProperty("values")) {
+          if ((!this.taskForm.values.hasOwnProperty("approval") || (this.taskForm.values.hasOwnProperty("approval") && this.taskForm.values.approval === "") ) && this.checkSendUser ) {
+            if(!this.taskForm.hasOwnProperty("nextUsers") || (this.taskForm.hasOwnProperty("nextUsers") && this.taskForm.nextUsers === "") ) {
+              this.$message.error("请选择流程接收人员或选择下一审批人");
+              return;
+            } 
+          }
+          else if( this.checkSendUser && (this.taskForm.values.hasOwnProperty("approval") && this.taskForm.values.approval.split(",").length>1)) {
             this.$message.error("目前流程只能选择一个接收人员");
             return;
+          }
         }
 
         if (!this.taskForm.comment) {
@@ -1228,7 +1323,7 @@
           }
         }
         if (this.startUserForm.isStartUserNode && this.startUserForm.editFormType === 'zdyyw' ) {
-          this.$message.error("目前还不支持自定义表单的编辑修改功能！！！");
+          //this.$message.error("目前还不支持自定义表单的编辑修改功能！！！");
           //this.$refs.refCustomForm.submitForm();
         }  
         if (this.startUserForm.isStartUserNode && this.startUserForm.editFormType === 'online' ) {
@@ -1280,24 +1375,6 @@
           console.log("this.variables=",variables)
         }
       },
-      /** 申请流程表单formgenerator数据提交 */
-      /*submitForm(data) {
-        if (data) {
-          const variables = data.valData;
-          const formData = data.formData;
-          formData.disabled = true;
-          formData.formBtns = false;
-          if (this.taskForm.procDefId) {
-            variables.variables = formData;
-            console.log("variables=", variables);
-            // 启动流程并将表单数据加入流程变量
-            definitionStartByDefId(this.taskForm.procDefId, JSON.stringify(variables)).then(res => {
-              this.$message.success(res.message);
-              this.goBack();
-            })
-          }
-        }
-      },*/
       /** 申请流程表单formdesigner数据提交 nbacheng2022-09-05 */
       submitForm() {
         this.$refs.formBuilder.validate();
@@ -1391,6 +1468,125 @@
           }
         }
       },
+      /** 加签 */
+      handleAddSign() {
+        this.addSignOpen = true;
+        this.addSignTitle = "前加签流程";
+      },
+      changeAddSignType(val) {
+        this.addSignForm.addSignType = val;
+        if(this.addSignForm.addSignType === 0) {
+          this.addSignTitle = "前加签流程";
+        }
+        if(this.addSignForm.addSignType === 1) {
+          this.addSignTitle = "后加签流程";
+        }
+        if(this.addSignForm.addSignType === 2) {
+          this.addSignTitle = "多实例加签流程";
+        }
+        console.log("changeAddSignType =",val);
+        console.log("this.addSignTitle =",this.addSignTitle);
+      },
+      /** 加签任务 */
+      addSignComplete() {
+        if (!this.addSignForm.addSignUsers ) {
+            this.$message.error("请选择用户");
+            return;
+        }
+        // 流程信息
+        this.addSignForm.deployId = this.$route.query && this.$route.query.deployId;
+        this.addSignForm.taskId = this.$route.query && this.$route.query.taskId;
+        this.addSignForm.procInsId = this.$route.query && this.$route.query.procInsId;
+        this.addSignForm.instanceId = this.$route.query && this.$route.query.procInsId;
+        // 初始化表单
+        this.addSignForm.procDefId = this.$route.query && this.$route.query.procDefId;
+        this.addSignForm.businessKey = this.$route.query && this.$route.query.businessKey;
+        this.addSignForm.category = this.$route.query && this.$route.query.category;
+        this.addSignForm.dataId = this.$route.query && this.$route.query.businessKey;
+        //节点类型
+        this.addSignForm.nodeType = this.$route.query && this.$route.query.nodeType;
+        //online表单id和数据id
+        this.addSignForm.onlineId = this.$route.query && this.$route.query.onlineId;
+        if (this.addSignForm.category === 'online') {
+          this.addSignForm.onlineDataId = this.$route.query && this.$route.query.businessKey;
+        }  
+        //对formdesigner后续加签审批的时候需要用到
+        this.addSignForm.values = this.taskForm.values;
+        console.log("this.addSignForm=",this.addSignForm);
+        
+        if(this.addSignForm.addSignType === 2) {
+          multiInstanceAddSignTask(this.addSignForm).then(response => {
+          this.$message.success(response.message);
+          this.addSignOpen = false;
+          this.goBack();
+          });
+        }
+        else {
+          addSignTask(this.addSignForm).then(response => {
+          this.$message.success(response.message);
+          this.addSignOpen = false;
+          this.goBack();
+          });
+        }
+      },
+      
+      /** 跳转 */
+      handleJump() {
+        this.jumpOpen = true;
+        this.jumpTitle = "跳转流程";
+        this.jumpNodeLoading = true
+        userTaskList({ taskId: this.taskForm.taskId }).then((res) => {
+          this.jumpNodeLoading = false
+          this.jumpNodeData = res.result
+        })
+      },
+      jumpComplete() {
+        if (this.selectedRows.length < 1) {
+          this.$message.warning('请选择跳转节点')
+          return
+        }
+        // 流程信息
+        this.jumpForm.deployId = this.$route.query && this.$route.query.deployId;
+        this.jumpForm.taskId = this.$route.query && this.$route.query.taskId;
+        this.jumpForm.procInsId = this.$route.query && this.$route.query.procInsId;
+        this.jumpForm.instanceId = this.$route.query && this.$route.query.procInsId;
+        // 初始化表单
+        this.jumpForm.procDefId = this.$route.query && this.$route.query.procDefId;
+        this.jumpForm.businessKey = this.$route.query && this.$route.query.businessKey;
+        this.jumpForm.category = this.$route.query && this.$route.query.category;
+        this.jumpForm.dataId = this.$route.query && this.$route.query.businessKey;
+        //节点类型
+        this.jumpForm.nodeType = this.$route.query && this.$route.query.nodeType;
+        //online表单id和数据id
+        this.jumpForm.onlineId = this.$route.query && this.$route.query.onlineId;
+        if (this.jumpForm.category === 'online') {
+          this.jumpForm.onlineDataId = this.$route.query && this.$route.query.businessKey;
+        }  
+        //对formdesigner后续加签审批的时候需要用到
+        this.jumpForm.values = this.taskForm.values;
+        //目标选择的节点信息
+        this.jumpForm.targetActId = this.selectedRows[0].id;
+        this.jumpForm.targetActName = this.selectedRows[0].name;
+        console.log("this.jumpForm=",this.jumpForm);
+        jumpTask(this.jumpForm).then(res => {
+          if (res.success) {
+            this.$message.success('跳转成功')
+            this.jumpOpen = false;
+            this.goBack();
+          } else {
+            this.$message.error('跳转失败：' + res.message)
+          }
+        });
+      },
+      
+      /**
+       * 跳转节点列表选择
+       */
+      onSelectChange (selectedRowKeys, selectedRows) {
+        this.selectedRowKeys = selectedRowKeys
+        this.selectedRows = selectedRows
+      },
+      
       /** 驳回任务 */
       handleReject() {
         this.rejectOpen = true;
@@ -1509,17 +1705,6 @@
     stroke: green !important;
   }
 
-  // .djs-connection > .djs-visual > path {
-  //   stroke: orange !important;
-  //   stroke-dasharray: 4px !important;
-  //   fill-opacity: 0.2 !important;
-  // }
-  // .djs-shape .djs-visual > :nth-child(1) {
-  //   fill: orange !important;
-  //   stroke: orange !important;
-  //   stroke-dasharray: 4px !important;
-  //   fill-opacity: 0.2 !important;
-  // }
   .highlight-todo.djs-connection>.djs-visual>path {
     stroke: orange !important;
     stroke-dasharray: 4px !important;
@@ -1610,17 +1795,6 @@
           stroke: green !important;
         }
   
-        // .djs-connection > .djs-visual > path {
-        //   stroke: orange !important;
-        //   stroke-dasharray: 4px !important;
-        //   fill-opacity: 0.2 !important;
-        // }
-        // .djs-shape .djs-visual > :nth-child(1) {
-        //   fill: orange !important;
-        //   stroke: orange !important;
-        //   stroke-dasharray: 4px !important;
-        //   fill-opacity: 0.2 !important;
-        // }
         .highlight-todo.djs-connection > .djs-visual > path {
           stroke: orange !important;
           stroke-dasharray: 4px !important;

@@ -198,7 +198,6 @@
     methods: {
       /** 新增按钮操作 */
       handleAdd() {
-        //this.$router.push({ path: '/tool/build/index', query: {id: null }})
         this.$router.push({ path: '/formdesigner/formdesigner', query: {id: null }})
       },
       /** 表单配置信息 */
@@ -213,7 +212,6 @@
       },
       /** 修改按钮操作 */
       handleUpdate(row) {
-        //this.$router.push({ path: '/tool/build/index', query: {id: row.id }})
         this.$router.push({ path: '/formdesigner/formdesigner', query: {id: row.id }})
       },
       /** 提交按钮 */

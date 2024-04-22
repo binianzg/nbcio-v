@@ -80,7 +80,7 @@
     </a-card>
 
     <a-card style="margin-top: 24px" :bordered="false" title="用户近半年来电记录">
-      <div class="no-data"><a-icon type="frown-o"/>暂无数据</div>
+      <div class="no-data"><a-icon type="frown-o"/>暂无数据或等待一下</div>
     </a-card>
 
     <!-- 操作 -->
