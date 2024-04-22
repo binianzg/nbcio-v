@@ -91,6 +91,42 @@ export function rejectTask(data) {
   })
 }
 
+// 跳转任务
+export function jumpTask(data) {
+  return request({
+    url: '/flowable/task/jump',
+    method: 'post',
+    data: data
+  })
+}
+
+// 跳转任务节点列表
+export function userTaskList(data) {
+  return request({
+    url: '/flowable/task/userTask',
+    method: 'post',
+    data: data
+  })
+}
+
+// 加签任务
+export function addSignTask(data) {
+  return request({
+    url: '/flowable/task/addSign',
+    method: 'post',
+    data: data
+  })
+}
+
+// 多实例加签任务
+export function multiInstanceAddSignTask(data) {
+  return request({
+    url: '/flowable/task/multiInstanceAddSign',
+    method: 'post',
+    data: data
+  })
+}
+
 // 可退回任务列表
 export function returnList(data) {
   return request({

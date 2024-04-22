@@ -93,6 +93,9 @@
                 <a @click="handleFlowRecord(record)">流转记录</a>
               </a-menu-item>
               <a-menu-item>
+                <a @click="handleRecall(record)"> 收回</a>
+              </a-menu-item>
+              <a-menu-item>
                 <a @click="handleRevoke(record)"> 撤回</a>
               </a-menu-item>
             </a-menu>
@@ -110,7 +113,7 @@
   import { mixinDevice } from '@/utils/mixin'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'  
   import { finishedList, finishedListNew, getDeployment, delDeployment, addDeployment, 
-           updateDeployment, exportDeployment, revokeProcess } from "@/views/flowable/api/finished";
+           updateDeployment, exportDeployment, revokeProcess, recallProcess } from "@/views/flowable/api/finished";
   import moment from 'moment';
 export default {
   name: "finishedIndex",
@@ -381,6 +384,17 @@ export default {
         dataId: row.businessKey
       }
       revokeProcess(params).then( res => {
+        this.$message.success(res.message);
+        this.getList();
+      });
+    },
+    /** 收回任务 */
+    handleRecall(row){
+      const params = {
+        instanceId: row.procInsId,
+        dataId: row.businessKey
+      }
+      recallProcess(params).then( res => {
         this.$message.success(res.message);
         this.getList();
       });

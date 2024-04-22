@@ -45,6 +45,15 @@ export function revokeProcess(data) {
   })
 }
 
+// 收回任务
+export function recallProcess(data) {
+  return request({
+    url: '/flowable/task/recallProcess',
+    method: 'post',
+    data: data
+  })
+}
+
 // 部署流程实例
 export function deployStart(deployId) {
   return request({

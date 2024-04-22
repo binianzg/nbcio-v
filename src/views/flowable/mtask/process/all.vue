@@ -101,13 +101,13 @@
               <a-menu-item>
                 <a @click="handleFlowRecord(record)">详情</a>
               </a-menu-item>
-              <a-menu-item>
-                <a @click="SelectUser(record,'1')">委派</a>
+              <a-menu-item v-if="record.finishTime === null">
+                <a  @click="SelectUser(record,'1')">委派</a>
               </a-menu-item>
-              <a-menu-item>
-                <a @click="SelectUser(record,'2')">转办</a>
+              <a-menu-item v-if="record.finishTime === null">
+                <a  @click="SelectUser(record,'2')">转办</a>
               </a-menu-item>
-              <a-menu-item>
+              <a-menu-item v-if="record.finishTime === null">
                 <a @click="handleStop(record)">取消申请</a>
               </a-menu-item>
               <a-menu-item>
@@ -327,7 +327,7 @@
         url: {
           list: "/flowable/task/allProcess",
           deleteBatch: "/flowable/task/deleteBatch",
-          exportXlsUrl: "/flowable/task/exportXls",
+          exportXlsUrl: "/flowable/task/allExportXls",
         },
         dataSource: [], //表格数据源
         /* 表格分页参数 */
@@ -379,6 +379,7 @@
         taskId: '',
         dataId: '',
         type: '',
+        category: '',
         // 表头
         labelCol: {
           xs: { span: 4 },
@@ -575,8 +576,9 @@
       //弹出选择委派人员界面
       SelectUser(row,type){
         this.taskId = row.taskId;
-        this.dataId = row.businessKey
+        this.dataId = row.businessKey;
         this.type = type;
+        this.category = row.category;
         this.delegateassign = true ;
       },
       
@@ -586,6 +588,7 @@
           taskId: this.taskId,
           assignee: this.assignee,
           dataId: this.dataId,
+          category: this.category,
         }
         delegateTask(params).then( res => {
           this.$message.success(res.message);
@@ -599,6 +602,7 @@
           taskId: this.taskId,
           assignee: this.assignee,
           dataId: this.dataId,
+          category: this.category,
         }
         assignTask(params).then( res => {
           this.$message.success(res.message);

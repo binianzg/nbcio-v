@@ -38,6 +38,27 @@ export function definitionStartByDataId(dataId,serviceName,data) {
   })
 }
 
+// 查询当前节点是否是属于退回或驳回的第一个发起人节点,业务数据dataid
+
+export function isFirstInitiator(dataId,data) {
+  return request({
+    url: '/flowable/task/isFirstInitiator/' + dataId,
+    method: 'post',
+    data: data
+  })
+}
+
+// 删除自定义业务任务关联表与流程历史表
+//以便可以重新发起流程,业务数据dataid
+
+export function deleteActivityAndJoin(dataId,data) {
+  return request({
+    url: '/flowable/task/deleteActivityAndJoin/' + dataId,
+    method: 'post',
+    data: data
+  })
+}
+
 // 部署流程实例,online数据dataid
 
 export function definitionStartByOnlineDataId(dataId,onlineId,deployId,data) {

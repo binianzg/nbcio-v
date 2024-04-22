@@ -88,10 +88,59 @@
   
         <span slot="action" slot-scope="text, record">
           <a @click="handleProcess(record)">处理</a>
+          <a-divider type="vertical" />
+          <a  @click="SelectUser(record,'1')">委派</a>
+          <a-divider type="vertical" />
+          <a  @click="SelectUser(record,'2')">转办</a>
         </span>
   
       </a-table>
-  
+      <!-- 委派 转办 选择人员 -->
+      <a-modal
+        title="选择委派或转办人员" width="900px" :maskClosable="false"
+        :confirmLoading="confirmLoading"
+        :visible="delegateassign"
+        :footer="null"
+        @cancel="closeNode"
+      >   
+        <a-form :form="selUserForm" v-if="delegateassign">
+          <a-form-item :label-col="labelCol" :wrapper-col="wrapperCol"  label="请选择委派或转办人员" v-show="true">
+            <a-checkbox-group @change="spryType" v-model="spryTypes" >
+                <!-- 1用户 5 部门负责人 4发起人的部门负责人-->
+            
+              <a-checkbox value="1"> 直接选择人员 </a-checkbox>
+              <a-checkbox value="5"> 部门负责人 </a-checkbox>
+              <a-checkbox value="4">
+                发起人的部门负责人
+                <a-tooltip placement="topLeft" title="自动获取发起人所在部门的负责人，即其上级领导。（如果其本身就是部门负责人，则指向发起人自己。）">
+                  <a-icon type="exclamation-circle" />
+                </a-tooltip>
+              </a-checkbox>
+        
+            </a-checkbox-group>
+          </a-form-item>
+          <!--            1用户  4发起人的部门负责人-->
+         
+          <a-form-item :label-col="labelCol" :wrapper-col="wrapperCol" label="选择人员" v-if="spryTypes.indexOf('1')>-1" >
+            <!--  通过部门选择用户控件 -->
+            <j-select-user-by-dep v-model="spry.userIds" :multi="false"></j-select-user-by-dep>
+          </a-form-item>
+          
+          <a-form-item :label-col="labelCol" :wrapper-col="wrapperCol" label="选择部门负责人" v-if="spryTypes.indexOf('5')>-1" >
+            <j-select-depart v-model="spry.departmentManageIds" :multi="false"></j-select-depart>
+          </a-form-item>
+          <!--btn-->
+          <a-form-item :wrapper-col="{ span: 12, offset: 5 }">
+            <a-button @click="sprySubmit" type="primary" html-type="submit" :disabled="userNode.type==0||userNode.type==2||confirmLoading">
+              提交
+            </a-button>
+        
+            <a-button @click="closeNode" style="margin-left: 10px">
+              关闭
+            </a-button>
+          </a-form-item>
+        </a-form>
+      </a-modal>  
     </div>
   </a-card>
   
@@ -110,8 +159,11 @@ import {
   rejectTask,
   getDeployment,
   delDeployment,
-  exportDeployment
+  exportDeployment,
+  delegateTask,
+  assignTask,
 } from "@/views/flowable/api/todo";
+import JSelectUserByDep from '@/components/jeecgbiz/JSelectUserByDep'
 import moment from 'moment';
 
 export default {
@@ -220,7 +272,7 @@ export default {
       url: {
         list: "/flowable/task/todoListNew",
         deleteBatch: "/flowable/task/deleteBatch",
-        exportXlsUrl: "/flowable/task/exportXls",
+        exportXlsUrl: "/flowable/task/todoExportXls",
       },
       dataSource: [], //表格数据源
       /* 表格分页参数 */
@@ -235,6 +287,26 @@ export default {
         showSizeChanger: true,
         total: 0
       },
+      //委派与转办选择用户界面
+      delegateassign: false,
+      confirmLoading:false,
+      current:0,
+      selUserForm: this.$form.createForm(this),
+      userNode:{},
+      spryTypes:[],
+      spry:{
+        //选中的用户
+        userIds:'',
+        departmentManageIds:'',
+        chooseSponsor:false,
+        chooseDepHeader:false,
+      },       
+      //传入处理委派或转办参数
+      assignee: '',
+      taskId: '',
+      dataId: '',
+      type: '',
+      category: '',
       // 表单参数
       form: {},
       // 表单校验
@@ -333,6 +405,80 @@ export default {
         this.title = "修改流程定义";
       });
     },
+    spryType(types){
+      /*  1用户 4发起人的部门负责人 5部门负责人*/
+      // this.spryTypes = types;
+      if (this.spryTypes.indexOf('1')==-1) this.spry.userIds = '';
+      if (this.spryTypes.indexOf('5')==-1) this.spry.departmentManageIds = '';
+      //是否选中发起人的部门领导
+      this.spry.chooseDepHeader = this.spryTypes.indexOf('4')>-1 ;
+    
+      console.log("this.spry",this.spry)
+    },
+    sprySubmit() {
+      var that = this;
+     if (this.spryTypes.length==0){
+       that.$message.error("必须选择委托或转办人员！");
+       return;
+     }
+     if (this.spry.userIds == ''){
+       that.$message.error("必须选择委托或转办人员！");
+       return;
+     }
+      this.delegateassign = false;      
+      this.assignee = this.spry.userIds;
+      console.log("this.assign=",this.assign);
+      if(this.type == "1") { //委派
+        that.handleDelegate();
+      }
+      else if(this.type == "2") { //转办
+        that.handleAssign();
+      }
+      else {
+        that.$message.error("不认识的类型，未知的错误！");
+      }
+    },
+    
+    closeNode() {
+      this.delegateassign = false,
+      this.current=0,
+      this.spryTypes=[],
+      this.spry={}
+    },
+    //弹出选择委派人员界面
+    SelectUser(row,type){
+      this.taskId = row.taskId;
+      this.dataId = row.businessKey;
+      this.type = type;
+      this.category = row.category;
+      this.delegateassign = true ;
+    },
+    //委派流程
+    handleDelegate(){
+      const params = {
+        taskId: this.taskId,
+        assignee: this.assignee,
+        dataId: this.dataId,
+        category: this.category,
+      }
+      delegateTask(params).then( res => {
+        this.$message.success(res.message);
+        this.getList();
+      });
+    }, 
+    //转办流程
+    handleAssign(){
+      const params = {
+        taskId: this.taskId,
+        assignee: this.assignee,
+        dataId: this.dataId,
+        category: this.category,
+      }
+      assignTask(params).then( res => {
+        this.$message.success(res.message);
+        this.getList();
+      });
+    },  
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
