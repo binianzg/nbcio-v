@@ -27,7 +27,7 @@ export let upload = {
   // 是否必填
   required: false,
   //上传地址
-  action:'http://122.227.135.243:9080/nbcio-boot/sys/common/upload/',
+  action:'http://218.75.87.38:9080/nbcio-boot/sys/common/upload/',
   //action:'https://jsonplaceholder.typicode.com/posts/',
   //多选上传
   multiple:false,

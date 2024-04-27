@@ -2,7 +2,7 @@ NBCIO Vue
 ====
 [![码云Gitee](https://gitee.com/nbacheng/nbcio-vue/badge/star.svg?theme=blue)](https://gitee.com/nbacheng/nbcio-vue)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://gitee.com/nbacheng/nbcio-vue/blob/master/LICENSE)
-[![](https://img.shields.io/badge/Author-宁波阿成-orange.svg)](http://122.227.135.243:9888/)
+[![](https://img.shields.io/badge/Author-宁波阿成-orange.svg)](http://218.75.87.38:9888/)
 [![](https://img.shields.io/badge/Blog-个人博客-blue.svg)](https://nbacheng.blog.csdn.net)
 [![](https://img.shields.io/badge/version-1.0.0-brightgreen.svg)](https://gitee/nbacheng/nbcio-boot)
 
@@ -17,9 +17,9 @@ Overview
 nbcio-boot 的前端UI框架，采用前后端分离方案，提供强大代码生成器的低代码平台。
 前端页面代码和后端功能代码一键生成，不需要写任何代码，保持jeecg一贯的强大！！
 
-## 在线演示(包括H5) ：[http://122.227.135.243:9888](http://122.227.135.243:9888)
+## 在线演示(包括H5) ：[http://218.75.87.38:9888](http://218.75.87.38:9888)
 
-    H5地址是：http://122.227.135.243:9888/h5/
+    H5地址是：http://218.75.87.38:9888/h5/
     演示账号：目前演示用户只能通过gitee授权免密码登录，或进群咨询
 	如果你对项目感兴趣，请Watch、Star项目
 
