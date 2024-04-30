@@ -218,14 +218,14 @@ export default {
         this.bpmnElement.businessObject.get("extensionElements") || window.bpmnInstances.moddle.create("bpmn:ExtensionElements", { values: [] });
       // 获取元素表单配置 或者 创建新的表单配置
       this.formData =
-        this.elExtensionElements.values.filter(ex => ex.$type === `${this.prefix}:FormData`)?.[0] ||
+        this.elExtensionElements.values?.filter(ex => ex.$type === `${this.prefix}:FormData`)?.[0] ||
         window.bpmnInstances.moddle.create(`${this.prefix}:FormData`, { fields: [] });
 
       // 业务标识 businessKey， 绑定在 formData 中
       this.businessKey = this.formData.businessKey;
 
       // 保留剩余扩展元素，便于后面更新该元素对应属性
-      this.otherExtensions = this.elExtensionElements.values.filter(ex => ex.$type !== `${this.prefix}:FormData`);
+      this.otherExtensions = this.elExtensionElements.values?.filter(ex => ex.$type !== `${this.prefix}:FormData`);
 
       // 复制原始值，填充表格
       this.fieldList = JSON.parse(JSON.stringify(this.formData.fields || []));
@@ -372,7 +372,7 @@ export default {
     updateElementExtensions() {
       // 更新回扩展元素
       const newElExtensionElements = window.bpmnInstances.moddle.create(`bpmn:ExtensionElements`, {
-        values: this.otherExtensions.concat(this.formData)
+        values: this.otherExtensions?.concat(this.formData)
       });
       // 更新到元素上
       window.bpmnInstances.modeling.updateProperties(this.bpmnElement, {

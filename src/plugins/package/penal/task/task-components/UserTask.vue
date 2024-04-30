@@ -98,35 +98,36 @@ export default {
                this.bpmnElement.businessObject.candidateUsers != null) {
             this.defaultTaskForm.dataType = "USERS";
           }
-          if (this.containsKey(this.bpmnElement.businessObject, 'candidateUsers') &&
-               this.bpmnElement.businessObject.candidateUsers === '${DepManagerHandler.getUsers(execution)}') {
-            this.defaultTaskForm.dataType = "MANAGER";
-          }
           if (this.containsKey(this.bpmnElement.businessObject, 'candidateGroups') &&
                this.bpmnElement.businessObject.candidateGroups != null) {
             this.defaultTaskForm.dataType = "ROLES";
+          }
+          if (this.containsKey(this.bpmnElement.businessObject, 'candidateGroups') &&
+               this.bpmnElement.businessObject.candidateGroups === '${DepManagerHandler.getUsers(execution)}') {
+            this.defaultTaskForm.dataType = "MANAGER";
           }
         }
         else {
+          this.bDisplayUser = true;
           if (this.containsKey(this.bpmnElement.businessObject, 'assignee') &&
-             this.bpmnElement.businessObject.assignee != null) {
-             this.defaultTaskForm.dataType = "ASSIGNEE";
+            this.bpmnElement.businessObject.assignee != null) {
+            this.defaultTaskForm.dataType = "ASSIGNEE";
           } 
           if (this.containsKey(this.bpmnElement.businessObject, 'candidateUsers') &&
-               this.bpmnElement.businessObject.candidateUsers != null) {
+            this.bpmnElement.businessObject.candidateUsers != null) {
             this.defaultTaskForm.dataType = "USERS";
           }
           if (this.containsKey(this.bpmnElement.businessObject, 'candidateGroups') &&
-               this.bpmnElement.businessObject.candidateGroups != null) {
+            this.bpmnElement.businessObject.candidateGroups != null) {
             this.defaultTaskForm.dataType = "ROLES";
           }
-          if (this.containsKey(this.bpmnElement.businessObject, 'assignee') &&
-               this.bpmnElement.businessObject.assignee === '${INITIATOR}') {
-            this.defaultTaskForm.dataType = "INITIATOR";
-          }
-          if (this.containsKey(this.bpmnElement.businessObject, 'candidateUsers') &&
-               this.bpmnElement.businessObject.candidateUsers === '${DepManagerHandler.getUsers(execution)}') {
+          if (this.containsKey(this.bpmnElement.businessObject, 'candidateGroups') &&
+            this.bpmnElement.businessObject.candidateGroups === '${DepManagerHandler.getUsers(execution)}') {
             this.defaultTaskForm.dataType = "MANAGER";
+          }
+          if (this.containsKey(this.bpmnElement.businessObject, 'assignee') &&
+            this.bpmnElement.businessObject.assignee === '${INITIATOR}') {
+            this.defaultTaskForm.dataType = "INITIATOR";
           }
         }
         this.$nextTick(() => this.resetTaskForm());
@@ -167,29 +168,16 @@ export default {
         window.bpmnInstances.modeling.updateProperties(this.bpmnElement, taskAttr);
       }
       if (val === 'MANAGER') {
-        this.userTaskForm.candidateUsers = "${DepManagerHandler.getUsers(execution)}";
+        this.userTaskForm.candidateGroups = "${DepManagerHandler.getUsers(execution)}";
+        this.userTaskForm.assignee="${assignee}"
         this.userTaskForm.text = "部门经理";
         const taskAttr = Object.create(null);
-        taskAttr['assignee'] = null;
-        taskAttr['candidateGroups'] = null;
-        this.userTaskForm['assignee'] = null;
-        this.userTaskForm['candidateGroups'] = null;
-        taskAttr['candidateUsers'] = this.userTaskForm['candidateUsers'] || null;
-        window.bpmnInstances.modeling.updateProperties(this.bpmnElement, taskAttr);
-      }
-      /*if (val === 'ASSIGNEE' && this.userTaskForm['assignee'] === '${INITIATOR}') {
-        this.userTaskForm['assignee'] = null;
-        const taskAttr = Object.create(null);
-        taskAttr['assignee'] = null;
-        window.bpmnInstances.modeling.updateProperties(this.bpmnElement, taskAttr);
-      }
-      if (val === 'MANAGER' && this.userTaskForm['candidateUsers'] === '${DepManagerHandler.getUsers(execution)}') {
+        taskAttr['candidateUsers'] = null;ull;
         this.userTaskForm['candidateUsers'] = null;
-        const taskAttr = Object.create(null);
-        taskAttr['candidateUsers'] = null;
+        taskAttr['candidateGroups'] = this.userTaskForm['candidateGroups'] || null;
+        taskAttr['assignee'] = this.userTaskForm['assignee'] || null;
         window.bpmnInstances.modeling.updateProperties(this.bpmnElement, taskAttr);
-      }*/
-      
+      }   
     },  
     updateElementTask(key) {
       const taskAttr = Object.create(null);
