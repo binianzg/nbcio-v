@@ -902,8 +902,8 @@
       
       /** 搜索按钮操作 */
       handleOnlineQuery() {
-        this.queryProcessParams.pageNo = 1;
-        this.listDefinition();
+        this.formQueryParams.pageNo = 1;
+        this.ListOnlineForm();
       },
       /** 重置按钮操作 */
       resetOnlineQuery() {
