@@ -4,7 +4,7 @@
     <el-card v-if="!xmlFrame.open||xmlView">
       <el-form :model="queryParams" ref="queryForm" :inline="true" label-width="68px">
         <el-form-item label="流程名称" prop="name">
-          <el-input v-model="queryParams.name" placeholder="请输入名称" clearable size="small"
+          <el-input v-model="queryParams.name" placeholder="请输入名称,可模糊查询" clearable size="small"
             @keyup.enter.native="handleQuery" />
         </el-form-item>
         <el-form-item label="流程分类" prop="category">
@@ -218,8 +218,11 @@
       <el-row :gutter="64">
         <el-form :model="formQueryParams" ref="queryDeployForm" :inline="true" label-width="100px">
           <el-form-item label="表单名称" prop="formName">
-            <el-input v-model="formQueryParams.formName" placeholder="请输入名称" clearable size="small"
-              @keyup.enter.native="handleFormQuery" />
+            <el-input v-model="formQueryParams.formName" 
+               placeholder="请输入*名称*,支持模糊查询" 
+               size="small"
+               class="el-input-whole"
+               @keyup.enter.native="handleFormQuery" />
           </el-form-item>
           <el-form-item>
             <el-button type="primary" icon="el-icon-search" size="mini" @click="handleFormQuery">搜索</el-button>
@@ -298,8 +301,9 @@
         <el-form-item label="表名称" prop="tableName">
           <el-input
             v-model="formQueryParams.tableName"
-            placeholder="请输入名称"
+            placeholder="请输入*名称*,支持模糊查询"
             clearable
+            class="el-input-whole"
             size="small"
             @keyup.enter.native="handleOnlineQuery"
           />
@@ -1109,5 +1113,8 @@
             height: auto;
             overflow: hidden;
             overflow-y: auto;
+    }
+    .el-input-whole {
+      width: 360px;
     }
 </style>
