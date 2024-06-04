@@ -21,53 +21,31 @@ export const flowableMixin = {
     }
   },
   created() {
-    //this.ListCustomForm();
+    this.ListCustomForForm();
   },
   computed:{
-    /*todo 所有的流程表单，组件化注册，在此维护*/
+    /*所有的流程表单，组件化注册，无需维护，从后端获取*/
     allFormComponent:function(){
-      //return this.customformList;
-      return [
-          {
-            text:'单表示例',
-            routeName:'@/views/flowable/demo/modules/TestDemoForm',
-            component:() => import(`@/views/flowable/demo/modules/TestDemoForm`),
-            businessTable:'test_demo'
-          },
-          {
-            text:'主子表示例',
-            routeName:'@/views/flowable/demo/modules/CesOrderMainForm',
-            component:() => import(`@/views/flowable/demo/modules/CesOrderMainForm`),
-            businessTable:'ces_order_main'
-          }
-      ]
+      return this.customformList;
     }
   },
   methods:{
-    /*StringToComponent (str) {
-      return function (resolve) {
-        require([`${str}.vue`], resolve)
-      }
-    },
-    replacer(key, value) {
-      if ( key === "component") {
-        console.log("key-value=",key,value);
-        return StringToComponent (value);
-      }
-      return value;
-    },*/
-    /** 挂载自定义业务表单列表 */
-    /*ListCustomForm() {
-       console.log("flowableMixin ListCustomForm");
+    /* 挂载自定义业务表单列表 */
+    async ListCustomForForm() {
       listCustomForm(this.formQueryParams).then(res => {
-        console.log("flowableMixin res");
-        console.log("res.result.records",res.result.records);
-        
-        this.customformList = JSON.stringify(res.result.records,this.replacer);
-        
-        console.log("this.customformList =",this.customformList);
+        let that = this;
+        let  cfList = res.result.records;
+        cfList.forEach((item, index) => {
+          let cms = {
+              text:item.flowName,
+              routeName:item.routeName,
+              component:() => import(`@/views/${item.routeName}.vue`),
+              businessTable:'test_demo'
+          }
+          that.customformList.push(cms);
+        })
       })
-    },*/
+    },
     getFormComponent(routeName){
       return _.find(this.allFormComponent,{routeName:routeName})||{};
     },

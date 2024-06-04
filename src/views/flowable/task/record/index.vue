@@ -168,33 +168,33 @@
                   style="color:#8a909c;font-weight: normal">{{item.finishTime}}</label>
                 <label v-if="item.duration" style="margin-left: 30px;font-weight: normal">耗时： </label><label
                   style="color:#8a909c;font-weight: normal">{{item.duration}}</label>
-                <p v-if="item.listFlowCommentDto" v-for="(commentitem,index ) in item.listFlowCommentDto" :key="index">
+                <p v-if="item.listFlowCommentDto.length > 0" v-for="(commentitem,index ) in item.listFlowCommentDto" :key="index">
                    <el-tag type="success" v-if="commentitem.type === '1'"> {{commentitem.comment}}</el-tag>
-                   <el-form  v-if= "commentitem.type === '1' && fileitem.type === '1'  && item.listcommentFileDto.length>0" v-for="(fileitem,fileindex ) in item.listcommentFileDto" :key="fileindex">
+                   <el-form  v-if= "commentitem.type === '1' && fileitem.type === '1'" v-for="(fileitem,fileindex ) in item.listcommentFileDto" :key="fileindex">
                      <el-form-item label="附件"  prop="listcommentFileDto">
                           <j-upload  v-if="fileitem.type === '1'" v-model="fileitem.fileurl" :disabled = "true"  text="上传的文件" ></j-upload>                 
                      </el-form-item>
                    </el-form>  
                    <el-tag type="warning" v-if="commentitem.type === '2'"> {{"退回: "+ commentitem.comment}}</el-tag>
-                   <el-form v-if= "commentitem.type === '2' && fileitem.type === '2'  && item.listcommentFileDto.length>0" v-for="(fileitem,fileindex ) in item.listcommentFileDto" :key="fileindex">
+                   <el-form v-if= "commentitem.type === '2' && fileitem.type === '2'" v-for="(fileitem,fileindex ) in item.listcommentFileDto" :key="fileindex">
                      <el-form-item label="附件"  prop="listcommentFileDto">
                           <j-upload v-if="fileitem.type === '2'" v-model="fileitem.fileurl" :disabled = "true"  text="退回上传的文件" ></j-upload> 
                      </el-form-item>
                    </el-form>  
                    <el-tag type="danger" v-if="commentitem.type === '3'">  {{"驳回: "+commentitem.comment}}</el-tag>
-                   <el-form v-if= "commentitem.type === '3' && fileitem.type === '3'  && item.listcommentFileDto.length>0" v-for="(fileitem,fileindex ) in item.listcommentFileDto" :key="fileindex">
+                   <el-form v-if= "commentitem.type === '3' && fileitem.type === '3' " v-for="(fileitem,fileindex ) in item.listcommentFileDto" :key="fileindex">
                      <el-form-item label="附件"  prop="listcommentFileDto">
                         <j-upload v-if="fileitem.type === '3'"  v-model="fileitem.fileurl" :disabled = "true"  text="驳回上传的文件" ></j-upload>
                      </el-form-item>
                    </el-form>  
                    <el-tag type="success" v-if="commentitem.type === '4'">  {{commentitem.comment}}</el-tag>
-                   <el-form  v-if= "commentitem.type === '4' && fileitem.type === '4'  && item.listcommentFileDto.length>0" v-for="(fileitem,fileindex ) in item.listcommentFileDto" :key="fileindex">
+                   <el-form  v-if= "commentitem.type === '4' && fileitem.type === '4'" v-for="(fileitem,fileindex ) in item.listcommentFileDto" :key="fileindex">
                      <el-form-item label="附件"  prop="listcommentFileDto">
                           <j-upload  v-if="fileitem.type === '4'" v-model="fileitem.fileurl" :disabled = "true"  text="委派上传的文件" ></j-upload>                 
                      </el-form-item>
                    </el-form>  
                    <el-tag type="success" v-if="commentitem.type === '5'">  {{commentitem.comment}}</el-tag>  
-                    <el-form v-if= "commentitem.type === '5' && fileitem.type === '5' && item.listcommentFileDto.length>0" v-for="(fileitem,fileindex ) in item.listcommentFileDto" :key="fileindex">
+                    <el-form v-if= "commentitem.type === '5' && fileitem.type === '5'" v-for="(fileitem,fileindex ) in item.listcommentFileDto" :key="fileindex">
                       <el-form-item label="附件"  prop="listcommentFileDto" >
                          <j-upload v-model="fileitem.fileurl" :disabled = "true"  text="转办上传的文件" ></j-upload>
                       </el-form-item>
