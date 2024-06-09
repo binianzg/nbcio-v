@@ -1312,9 +1312,6 @@
           this.$refs.refStartBuilder.validate();
           const approval = this.taskForm.values.approval;
           const variables=JSON.parse(this.formVal);
-          const formData = JSON.parse(this.formViewData);
-          formData.formValue = JSON.parse(this.formVal);
-          variables.variables = formData;
           console.log("variables=", variables);
           this.taskForm.variables = variables;
           this.taskForm.values = variables;
