@@ -13,7 +13,7 @@
             <a target="_blank" href="https://nbacheng.blog.csdn.net/"><span class="profile-name">博客地址</span></a></a>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<a target="_blank" href="https://www.kancloud.cn/nbacheng/nbcio_estar/3201127"><span class="profile-name">在线帮助</span></a>
           </div>
           <template slot="footer">
-             <a target="_blank" href="https://qm.qq.com/cgi-bin/qm/qr?k=NH67tV_dqCGQaFhzxsl2B_fdXxWvkBs6&jump_from=webapi&authKey=nf2iLush7UnIOgdVfEl+qqPZdLiUnH1LG+3nEHlwtAAWAJX4UuH1IEOj3APFZDmR"><img border="0" src="//pub.idqqimg.com/wpa/images/group.png" alt="NBCIO 亿事达企业管理平" title="NBCIO 亿事达企业管理平"></a>
+             <a target="_blank" href="https://qm.qq.com/q/ciPKv6d572"><img border="0" src="//pub.idqqimg.com/wpa/images/group.png" alt="NBCIO 亿事达企业管理平台" title="NBCIO 亿事达企业管理平台"></a>
           </template>
         </chart-card> 
       </a-col>
