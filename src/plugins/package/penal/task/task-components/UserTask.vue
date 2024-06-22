@@ -99,12 +99,12 @@ export default {
             this.defaultTaskForm.dataType = "USERS";
           }
           if (this.containsKey(this.bpmnElement.businessObject, 'candidateGroups') &&
-               this.bpmnElement.businessObject.candidateGroups != null) {
-            this.defaultTaskForm.dataType = "ROLES";
-          }
-          if (this.containsKey(this.bpmnElement.businessObject, 'candidateGroups') &&
                this.bpmnElement.businessObject.candidateGroups === '${DepManagerHandler.getUsers(execution)}') {
             this.defaultTaskForm.dataType = "MANAGER";
+          }
+          if (this.containsKey(this.bpmnElement.businessObject, 'candidateGroups') &&
+               this.bpmnElement.businessObject.candidateGroups != '${DepManagerHandler.getUsers(execution)}') {
+            this.defaultTaskForm.dataType = "ROLES";
           }
         }
         else {
@@ -118,12 +118,12 @@ export default {
             this.defaultTaskForm.dataType = "USERS";
           }
           if (this.containsKey(this.bpmnElement.businessObject, 'candidateGroups') &&
-            this.bpmnElement.businessObject.candidateGroups != null) {
-            this.defaultTaskForm.dataType = "ROLES";
-          }
-          if (this.containsKey(this.bpmnElement.businessObject, 'candidateGroups') &&
             this.bpmnElement.businessObject.candidateGroups === '${DepManagerHandler.getUsers(execution)}') {
             this.defaultTaskForm.dataType = "MANAGER";
+          }
+          if (this.containsKey(this.bpmnElement.businessObject, 'candidateGroups') &&
+            this.bpmnElement.businessObject.candidateGroups != '${DepManagerHandler.getUsers(execution)}') {
+            this.defaultTaskForm.dataType = "ROLES";
           }
           if (this.containsKey(this.bpmnElement.businessObject, 'assignee') &&
             this.bpmnElement.businessObject.assignee === '${INITIATOR}') {
@@ -172,7 +172,7 @@ export default {
         this.userTaskForm.assignee="${assignee}"
         this.userTaskForm.text = "部门经理";
         const taskAttr = Object.create(null);
-        taskAttr['candidateUsers'] = null;ull;
+        taskAttr['candidateUsers'] = null;
         this.userTaskForm['candidateUsers'] = null;
         taskAttr['candidateGroups'] = this.userTaskForm['candidateGroups'] || null;
         taskAttr['assignee'] = this.userTaskForm['assignee'] || null;
