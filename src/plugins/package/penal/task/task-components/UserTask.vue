@@ -103,6 +103,7 @@ export default {
             this.defaultTaskForm.dataType = "MANAGER";
           }
           if (this.containsKey(this.bpmnElement.businessObject, 'candidateGroups') &&
+               this.bpmnElement.businessObject.candidateGroups != null &&
                this.bpmnElement.businessObject.candidateGroups != '${DepManagerHandler.getUsers(execution)}') {
             this.defaultTaskForm.dataType = "ROLES";
           }
@@ -122,6 +123,7 @@ export default {
             this.defaultTaskForm.dataType = "MANAGER";
           }
           if (this.containsKey(this.bpmnElement.businessObject, 'candidateGroups') &&
+            this.bpmnElement.businessObject.candidateGroups != null &&
             this.bpmnElement.businessObject.candidateGroups != '${DepManagerHandler.getUsers(execution)}') {
             this.defaultTaskForm.dataType = "ROLES";
           }
