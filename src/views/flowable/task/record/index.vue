@@ -14,8 +14,8 @@
         </div>
         <div style="margin-left:10%;margin-bottom: 20px;font-size: 14px;" v-if="finished === 'true'">
           <el-button icon="el-icon-edit-outline" type="success" size="mini" @click="handleComplete">审批</el-button>
-          <!--                <el-button  icon="el-icon-edit-outline" type="primary" size="mini" @click="handleDelegate">委派</el-button>-->
-          <!--                <el-button  icon="el-icon-edit-outline" type="primary" size="mini" @click="handleAssign">转办</el-button>-->
+          <el-button  icon="el-icon-edit-outline" type="primary" size="mini" @click="SelectUser('1')">委派</el-button>
+          <el-button  icon="el-icon-edit-outline" type="primary" size="mini" @click="SelectUser('2')">转办</el-button>
           <!--                <el-button  icon="el-icon-edit-outline" type="primary" size="mini" @click="handleDelegate">签收</el-button>-->
           <el-button icon="el-icon-refresh-left" type="warning" size="mini" @click="handleAddSign">加签</el-button>
           <el-button icon="el-icon-refresh-left" type="warning" size="mini" @click="handleJump">跳转</el-button>
@@ -84,8 +84,8 @@
             </a-form>   
             <div style="margin-left:10%;margin-bottom: 20px;font-size: 14px;" v-if="finished === 'true'">
               <el-button icon="el-icon-edit-outline" type="success" size="mini" @click="handleComplete">审批</el-button>
-              <!--                <el-button  icon="el-icon-edit-outline" type="primary" size="mini" @click="handleDelegate">委派</el-button>-->
-              <!--                <el-button  icon="el-icon-edit-outline" type="primary" size="mini" @click="handleAssign">转办</el-button>-->
+              <el-button  icon="el-icon-edit-outline" type="primary" size="mini" @click="SelectUser('1')">委派</el-button>
+              <el-button  icon="el-icon-edit-outline" type="primary" size="mini" @click="SelectUser('2')">转办</el-button>
               <!--                <el-button  icon="el-icon-edit-outline" type="primary" size="mini" @click="handleDelegate">签收</el-button>-->
               <el-button icon="el-icon-refresh-left" type="warning" size="mini" @click="handleAddSign">加签</el-button>
               <el-button icon="el-icon-refresh-left" type="warning" size="mini" @click="handleJump">跳转</el-button>
@@ -113,8 +113,8 @@
         </div>
         <div style="margin-left:10%;margin-bottom: 20px;font-size: 14px;" v-if="finished === 'true'">
           <el-button icon="el-icon-edit-outline" type="success" size="mini" @click="handleComplete">审批</el-button>
-          <!--                <el-button  icon="el-icon-edit-outline" type="primary" size="mini" @click="handleDelegate">委派</el-button>-->
-          <!--                <el-button  icon="el-icon-edit-outline" type="primary" size="mini" @click="handleAssign">转办</el-button>-->
+          <el-button  icon="el-icon-edit-outline" type="primary" size="mini" @click="SelectUser('1')">委派</el-button>
+          <el-button  icon="el-icon-edit-outline" type="primary" size="mini" @click="SelectUser('2')">转办</el-button>
           <!--                <el-button  icon="el-icon-edit-outline" type="primary" size="mini" @click="handleDelegate">签收</el-button>-->
           <el-button icon="el-icon-refresh-left" type="warning" size="mini" @click="handleAddSign">加签</el-button>
           <el-button icon="el-icon-refresh-left" type="warning" size="mini" @click="handleJump">跳转</el-button>
@@ -187,13 +187,13 @@
                         <j-upload v-if="fileitem.type === '3'"  v-model="fileitem.fileurl" :disabled = "true"  text="驳回上传的文件" ></j-upload>
                      </el-form-item>
                    </el-form>  
-                   <el-tag type="success" v-if="commentitem.type === '4'">  {{commentitem.comment}}</el-tag>
+                   <el-tag type="success" v-if="commentitem.type === '4'">  {{commentitem.comment + "\xa0\xa0\xa0\xa0委派时间:" + commentitem.time}}</el-tag>
                    <el-form  v-if= "commentitem.type === '4' && fileitem.type === '4'" v-for="(fileitem,fileindex ) in item.listcommentFileDto" :key="fileindex">
                      <el-form-item label="附件"  prop="listcommentFileDto">
                           <j-upload  v-if="fileitem.type === '4'" v-model="fileitem.fileurl" :disabled = "true"  text="委派上传的文件" ></j-upload>                 
                      </el-form-item>
                    </el-form>  
-                   <el-tag type="success" v-if="commentitem.type === '5'">  {{commentitem.comment}}</el-tag>  
+                   <el-tag type="success" v-if="commentitem.type === '5'">  {{commentitem.comment + "\xa0\xa0\xa0\xa0转办时间:" + commentitem.time}}</el-tag>  
                     <el-form v-if= "commentitem.type === '5' && fileitem.type === '5'" v-for="(fileitem,fileindex ) in item.listcommentFileDto" :key="fileindex">
                       <el-form-item label="附件"  prop="listcommentFileDto" >
                          <j-upload v-model="fileitem.fileurl" :disabled = "true"  text="转办上传的文件" ></j-upload>
@@ -353,6 +353,55 @@
         <el-button type="primary" @click="jumpComplete(true)">确 定</el-button>
       </span>
     </a-modal>
+    <!-- 委派 转办 选择人员 -->
+    <a-modal
+      title="选择委派或转办人员" width="900px" :maskClosable="false"
+      :confirmLoading="confirmLoading"
+      :visible="delegateassign"
+      :footer="null"
+      @cancel="closeNode"
+    >   
+      <a-form :form="selUserForm" v-if="delegateassign">
+        <a-form-item label="处理意见" prop="comment" :rules="[{ required: true, message: '请输入处理意见', trigger: 'blur' }]">
+          <el-input type="textarea" v-model="ADTaskForm.comment" placeholder="请输入处理意见" />
+        </a-form-item>
+        <a-form-item label="请选择委派或转办人员" v-show="true">
+          <a-checkbox-group @change="spryType" v-model="spryTypes" >
+              <!-- 1用户 5 部门负责人 4发起人的部门负责人-->
+          
+            <a-checkbox value="1"> 直接选择人员 </a-checkbox>
+            <a-checkbox value="5"> 部门负责人 </a-checkbox>
+            <a-checkbox value="4">
+              发起人的部门负责人
+              <a-tooltip placement="topLeft" title="自动获取发起人所在部门的负责人，即其上级领导。（如果其本身就是部门负责人，则指向发起人自己。）">
+                <a-icon type="exclamation-circle" />
+              </a-tooltip>
+            </a-checkbox>
+      
+          </a-checkbox-group>
+        </a-form-item>
+        <!--            1用户  4发起人的部门负责人-->
+       
+        <a-form-item label="选择人员" v-if="spryTypes.indexOf('1')>-1" >
+          <!--  通过部门选择用户控件 -->
+          <j-select-user-by-dep v-model="spry.userIds" :multi="false"></j-select-user-by-dep>
+        </a-form-item>
+        
+        <a-form-item label="选择部门负责人" v-if="spryTypes.indexOf('5')>-1" >
+          <j-select-depart v-model="spry.departmentManageIds" :multi="false"></j-select-depart>
+        </a-form-item>
+        <!--btn-->
+        <a-form-item >
+          <a-button @click="sprySubmit" type="primary" html-type="submit" :disabled="userNode.type==0||userNode.type==2||confirmLoading">
+            提交
+          </a-button>
+      
+          <a-button @click="closeNode" style="margin-left: 10px">
+            关闭
+          </a-button>
+        </a-form-item>
+      </a-form>
+    </a-modal>  
   </div>
 </template>
 
@@ -666,6 +715,31 @@
         ],
         selectedRowKeys: [],
         selectedRows: [],
+        //转办委派变量
+        ADTaskForm: {
+          taskId: '',
+          instanceId: '',
+          assignee: '',
+          dataId: '',
+          category: '',
+          comment:'',
+        },
+        delegateassign: false,
+        confirmLoading: false,
+        daassignee: '',
+        adcurrent: 0,
+        adType: '',
+        selUserForm: this.$form.createForm(this),
+        userNode:{},
+        spryTypes:[],
+        spry:{
+          //选中的用户
+          userIds:'',
+          departmentManageIds:'',
+          chooseSponsor:false,
+          chooseDepHeader:false,
+        },       
+          
       };
     }, 
     created() {
@@ -1334,13 +1408,69 @@
           this.goBack();
         });
       },
+      spryType(types){
+        /*  1用户 4发起人的部门负责人 5部门负责人*/
+        // this.spryTypes = types;
+        if (this.spryTypes.indexOf('1')==-1) this.spry.userIds = '';
+        if (this.spryTypes.indexOf('5')==-1) this.spry.departmentManageIds = '';
+        //是否选中发起人的部门领导
+        this.spry.chooseDepHeader = this.spryTypes.indexOf('4')>-1 ;
+      
+        console.log("this.spry",this.spry)
+      },
+      sprySubmit() {
+        var that = this;
+       if (this.spryTypes.length==0){
+         that.$message.error("必须选择委托或转办人员！");
+         return;
+       }
+       if (this.spry.userIds == ''){
+         that.$message.error("必须选择委托或转办人员！");
+         return;
+       }
+        this.delegateassign = false;      
+        this.daassignee = this.spry.userIds;
+        console.log("this.daassignee=",this.daassignee);
+        this.ADTaskForm.assignee = this.daassignee;
+        if(this.adType == "1") { //委派
+          that.handleDelegate();
+        }
+        else if(this.adType == "2") { //转办
+          that.handleAssign();
+        }
+        else {
+          that.$message.error("不认识的类型，未知的错误！");
+        }
+      },
+      closeNode() {
+        this.delegateassign = false,
+        this.adcurrent=0,
+        this.spryTypes=[],
+        this.spry={}
+      },
+      //弹出选择委派人员界面
+      SelectUser(type){
+        this.ADTaskForm.taskId = this.taskForm.taskId;
+        this.ADTaskForm.instanceId = this.taskForm.procInsId;
+        this.ADTaskForm.dataId = this.taskForm.dataId;
+        this.ADTaskForm.category = this.taskForm.category;
+        this.adType = type;
+        this.delegateassign = true ;
+      },
       /** 委派任务 */
       handleDelegate() {
-        this.taskForm.delegateTaskShow = true;
-        this.taskForm.defaultTaskShow = false;
+        delegateTask(this.ADTaskForm).then( res => {
+          this.$message.success(res.message);
+          this.goBack();
+        });
       },
+      /** 转办任务 */
       handleAssign() {
-
+        console.log("handleAssign this.ADTaskForm",this.ADTaskForm)
+        assignTask(this.ADTaskForm).then( res => {
+          this.$message.success(res.message);
+          this.goBack();
+        });
       },
       /** 返回页面 */
       goBack() {

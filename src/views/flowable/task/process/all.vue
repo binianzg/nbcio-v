@@ -176,6 +176,9 @@
          @cancel="closeNode"
        >   
          <a-form :form="selUserForm" v-if="delegateassign">
+           <a-form-item :label-col="labelCol" :wrapper-col="wrapperCol" label="处理意见" prop="comment" :rules="[{ required: true, message: '请输入处理意见', trigger: 'blur' }]">
+             <el-input type="textarea" v-model="comment" placeholder="请输入处理意见" />
+           </a-form-item>
            <a-form-item :label-col="labelCol" :wrapper-col="wrapperCol"  label="请选择委派或转办人员" v-show="true">
              <a-checkbox-group @change="spryType" v-model="spryTypes" >
                  <!-- 1用户 5 部门负责人 4发起人的部门负责人-->
@@ -382,9 +385,11 @@
         //传入处理委派或转办参数
         assignee: '',
         taskId: '',
+        procInsId: '',
         dataId: '',
         type: '',
         category: '',
+        comment:'',
         // 表头
         labelCol: {
           xs: { span: 4 },
@@ -582,6 +587,7 @@
       //弹出选择委派人员界面
       SelectUser(row,type){
         this.taskId = row.taskId;
+        this.procInsId = row.procInsId;
         this.dataId = row.businessKey;
         this.type = type;
         this.category = row.category;
@@ -592,9 +598,11 @@
       handleDelegate(){
         const params = {
           taskId: this.taskId,
+          instanceId: this.procInsId,
           assignee: this.assignee,
           dataId: this.dataId,
           category: this.category,
+          comment: this.comment,
         }
         delegateTask(params).then( res => {
           this.$message.success(res.message);
@@ -606,9 +614,11 @@
       handleAssign(){
         const params = {
           taskId: this.taskId,
+          instanceId: this.procInsId,
           assignee: this.assignee,
           dataId: this.dataId,
           category: this.category,
+          comment: this.comment,
         }
         assignTask(params).then( res => {
           this.$message.success(res.message);
