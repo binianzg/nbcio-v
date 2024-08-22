@@ -6,8 +6,11 @@ NBCIO Vue
 [![](https://img.shields.io/badge/Blog-个人博客-blue.svg)](https://nbacheng.blog.csdn.net)
 [![](https://img.shields.io/badge/version-1.0.0-brightgreen.svg)](https://gitee/nbacheng/nbcio-boot)
 
-基于ant-design-vue-jeecg的前端版本： 3.0.0（发布日期：2021-11-01）
-因License变化,需要咨询vue3版本技术支持的请联系作者
+- 基于ant-design-vue-jeecg的前端版本： 3.0.0（发布日期：2021-11-01）
+
+- 因License变化,需要咨询最新vue3版本技术支持服务的请联系作者；
+
+- 更多技术支持与服务请加入我的知识星球，名称:亿事达nbcio技术交流社区。
 
 后端地址 https://gitee.com/nbacheng/nbcio-boot
 
