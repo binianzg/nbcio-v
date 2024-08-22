@@ -15,6 +15,11 @@ function vModel(self, dataObject) {
     //for token add by nbacheng 2022-09-07
     const token = Vue.ls.get(ACCESS_TOKEN);
     dataObject.attrs['headers'] = {"X-Access-Token":token};
+    if(dataobject.props.value !='') {
+      const filevalue = JsoN.parse(data0bject.props.value);
+      console.log("编辑附件:",filevalue);
+      dataobject.props['file-list']= filevalue;
+    }
     dataObject.attrs['before-upload'] = file=>{
       //非限定后缀不允许上传
       const fileName = file.name;
