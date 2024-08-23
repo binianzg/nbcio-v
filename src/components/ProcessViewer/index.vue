@@ -119,7 +119,7 @@ export default {
     processReZoom() {
       console.log("processReZoom"); 
       this.defaultZoom = 1;
-      this.bpmnViewer.get('canvas').zoom('fit-viewport', 'auto');
+      this.bpmnViewer?.get('canvas').zoom('fit-viewport', 'auto');
     },
     processZoomIn(zoomStep = 0.1) {
       let newZoom = Math.floor(this.defaultZoom * 100 + zoomStep * 100) / 100;
