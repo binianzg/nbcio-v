@@ -10,7 +10,7 @@ NBCIO Vue
 
 - 因License变化,需要咨询最新vue3版本技术支持服务的请联系作者；
 
-- 更多技术支持与服务请加入我的知识星球，名称:亿事达nbcio技术交流社区。
+- 更多技术支持与服务请加入我的知识星球，名称:亿事达nbcio技术交流社区https://t.zsxq.com/iPi8F
 
 后端地址 https://gitee.com/nbacheng/nbcio-boot
 
