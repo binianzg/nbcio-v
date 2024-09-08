@@ -8,7 +8,9 @@ NBCIO Vue
 
 - 基于ant-design-vue-jeecg的前端版本： 3.0.0（发布日期：2021-11-01）
 
-- 因License变化,需要咨询最新vue3版本技术支持服务的请联系作者；
+- 因License变化,需要咨询最新vue3版本技术支持服务的请联系作者,视频如下：
+- B2地址：https://www.bilibili.com/video/BV1bapeebEms/?spm_id_from=333.337.search-card.all.click；
+- youku地址：https://v.youku.com/v_show/id_XNjQyMTU0Mjc1Mg==.html?playMode=pugv&frommaciku=1&false
 
 - 更多技术支持与服务请加入我的知识星球，名称:亿事达nbcio技术交流社区https://t.zsxq.com/iPi8F
 
