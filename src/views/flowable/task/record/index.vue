@@ -1291,6 +1291,9 @@
               //console.log("candidateUsers nodeType,bmutiInstanceFinish=",this.taskForm.nodeType,this.taskForm.bmutiInstanceFinish) 
               if(this.userDataList.length===1) {
                 this.checkSendUser = false;
+                this.taskForm.values = {
+                  "approval": this.userDataList[0].username
+                }
               }
               else if(this.userDataList.length>1) {
                  console.log("candidateUsers nodeType=",this.taskForm.nodeType) 
